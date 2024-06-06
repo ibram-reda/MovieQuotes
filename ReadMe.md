@@ -12,7 +12,7 @@ in this application we need two main section
 ## Progress
 **Population**:
 - [x] Read and Parse Subtitle Files
-- [ ] setup DI Container
+- [x] setup DI Container
 - [ ] Read and Process Video File
 - [ ] Build Database persistence mechanism
 

@@ -6,6 +6,7 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MovieQuotes.UI.Models;
+using MovieQuotes.UI.Services;
 using System;
 using System.Collections;
 using System.IO;
@@ -16,7 +17,13 @@ using System.Threading.Tasks;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
+    private readonly IFilesService filesService;
     [ObservableProperty] private IEnumerable? _moviePhrases;
+
+    public MainWindowViewModel(IFilesService filesService)
+    {
+        this.filesService = filesService;
+    }    
 
     [RelayCommand]
     private async Task LoadSubtitle(CancellationToken token)
@@ -24,7 +31,7 @@ public partial class MainWindowViewModel : ViewModelBase
         ErrorMessages?.Clear();
         try
         {
-            var file = await DoOpenFilePickerAsync();
+            var file = await filesService.OpenFileAsync();
             if (file is null) return;
 
             var fileInfo = await file.GetBasicPropertiesAsync();
@@ -50,27 +57,5 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
-
-
-    private async Task<IStorageFile?> DoOpenFilePickerAsync()
-    {
-        // TODO: you should follow the MVVM principles
-        // by making service classes and locating them with DI/IoC.
-        // instead of directly get the reference
-        // for StorageProvider APIs here inside the ViewModel. 
-
-        // See IoCFileOps project for an example of how to accomplish this.
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-            desktop.MainWindow?.StorageProvider is not { } provider)
-            throw new NullReferenceException("Missing StorageProvider instance.");
-
-        var files = await provider.OpenFilePickerAsync(new FilePickerOpenOptions()
-        {
-            Title = "Select subtitle File",
-            AllowMultiple = false
-        });
-
-        return files?.Count >= 1 ? files[0] : null;
-    }
-
+         
 }
