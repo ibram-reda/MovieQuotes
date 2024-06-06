@@ -11,15 +11,16 @@ in this application we need two main section
  
 ## Progress
 **Population**:
-- [ ] Read and Parse Subtitle Files
+- [x] Read and Parse Subtitle Files
+- [ ] setup DI Container
 - [ ] Read and Process Video File
-- [ ] Build Database
+- [ ] Build Database persistence mechanism
 
 **Search section**
 - [ ] retrieve phrases 
 - [ ] display video with phrase on it
 
-## Technolagy Stack
+## Technology Stack
 1. dotnet 8
 2. [avalonia 11][2] for building the UI
 

@@ -1,0 +1,45 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MovieQuotes.UI.ViewModels"
+        xmlns:models="using:MovieQuotes.UI.Models"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="MovieQuotes.UI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="MovieQuotes.UI">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+  <DockPanel LastChildFill="True">
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+      <Button Command="{Binding LoadSubtitleCommand}">Load Subtitle</Button>
+    </StackPanel>
+    
+    <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding ErrorMessages}"/>
+    
+    
+     
+
+    <ListBox ItemsSource="{Binding MoviePhrases}">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="models:SubtitlePhrase">
+          <StackPanel>
+            <TextBlock Text="{Binding Sequence}" />
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="{Binding StartTime,StringFormat='[{0}]'}"/>
+              <TextBlock Text=" --> " Foreground="Magenta"/>
+              <TextBlock Text="{Binding EndTime,StringFormat='[{0}]'}"/>
+            </StackPanel>
+            <Grid ColumnDefinitions="auto,*">              
+              <TextBlock Text="{Binding Text}" Foreground="AliceBlue" Background="#333" Padding="5"/>
+            </Grid>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </DockPanel>
+</Window>
