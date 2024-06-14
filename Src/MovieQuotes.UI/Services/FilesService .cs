@@ -13,15 +13,12 @@ public class FilesService : IFilesService
         _target = target;
     }
 
-    public async Task<IStorageFile?> OpenFileAsync()
+    public async Task<IStorageFile?> OpenFileAsync(string title = "select file")
     {
         var files = await _target.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
         {
-            Title = "Select Subtitle File",
-            AllowMultiple = false,
-            FileTypeFilter = [new("subtitle File") {
-                Patterns = ["*.srt"],
-            }]
+            Title = title,
+            AllowMultiple = false, 
         });
 
         return files.Count >= 1 ? files[0] : null;

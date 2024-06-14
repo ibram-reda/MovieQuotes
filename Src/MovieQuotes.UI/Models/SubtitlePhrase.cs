@@ -10,6 +10,7 @@ public class SubtitlePhrase : IParsable<SubtitlePhrase>
     public TimeSpan StartTime { get; private set; }
     public TimeSpan EndTime { get; private set; }
     public string Text { get; private set; } = string.Empty;
+    public TimeSpan Duration => EndTime - StartTime;
 
     public static string RegexText => @"(?<Order>\d+)\r\n(?<StartTime>(\d\d:){2}\d\d,\d{3}) --> (?<EndTime>(\d\d:){2}\d\d,\d{3})\r\n(?<Sub>(.|[\r\n])+?(?=\r\n\r\n|$))";
     public static Regex SubtitleBlockRegex { get; private set; } = new Regex(RegexText);

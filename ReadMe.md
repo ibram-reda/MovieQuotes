@@ -13,7 +13,8 @@ in this application we need two main section
 **Population**:
 - [x] Read and Parse Subtitle Files
 - [x] setup DI Container
-- [ ] Read and Process Video File
+- [x] Read and Process Video File
+- [ ] Add Logging System
 - [ ] Build Database persistence mechanism
 
 **Search section**
