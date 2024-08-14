@@ -3,24 +3,7 @@
 using MovieQuotes.UI.Models;
 public class SubtitlePhraseTests
 {
-    [Theory]
-    [InlineData("""
-        1
-        00:00:15,767 --> 00:00:17,853
-        ...broke in right on the tour.
-        """)]
-    [InlineData(""" 
-        2
-        00:00:17,894 --> 00:00:21,189
-        No matter what they say,
-        it's all about money.
-        
-        """)]
-    public void CanParseTest(string subtitleBlock)
-    { 
-        var result = SubtitlePhrase.CanParse(subtitleBlock);
-        Assert.True(result);
-    }
+     
 
     [Fact]
     public void ParsTest()

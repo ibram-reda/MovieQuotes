@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MovieQuotes.UI.ViewModels"
+             x:DataType="vm:WelcomeScreenViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MovieQuotes.UI.Views.WelcomeScreenView">
+
+  <Design.DataContext>
+    <vm:WelcomeScreenViewModel/>
+  </Design.DataContext>
+
+  <Grid>
+    <StackPanel Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+      <Button Command="{Binding InsertNewMovieCommand}"> Insert New Moview </Button>
+      <Button Command="{Binding PlayBackCommand}"> Play Back Vedioes </Button>
+      
+    </StackPanel>
+  </Grid>
+</UserControl>

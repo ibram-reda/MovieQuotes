@@ -15,10 +15,10 @@ in this application we need two main section
 - [x] setup DI Container
 - [x] Read and Process Video File
 - [ ] Add Logging System
-- [ ] Build Database persistence mechanism
+- [x] Build Database persistence mechanism
 
 **Search section**
-- [ ] retrieve phrases 
+- [x] retrieve phrases 
 - [ ] display video with phrase on it
 
 ## Technology Stack
