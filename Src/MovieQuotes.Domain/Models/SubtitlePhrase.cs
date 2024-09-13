@@ -13,6 +13,7 @@ public class SubtitlePhrase
     private SubtitlePhrase()
     {
     }
+    public int Id { get; private set; }
     public int MovieId { get; private set; }
     public int Sequence { get; private set; }
     public TimeSpan StartTime { get; private set; }

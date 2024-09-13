@@ -18,18 +18,12 @@ public partial class PlaybackViewModel : ViewModelBase
     {
         Phrases.Clear();
         var query = new SearchForPhraseQuery(SearchText);
-        var result = await this.mediator.Send(query, token);
-        if (result.IsError)
-        {
-            foreach (var error in result.Errors)
-                ErrorMessages?.Add(error.Message);
-            return;
-        }
-
-        foreach (var p in result.Payload ?? [])
-        {
-            Phrases.Add(p.Text);
-        }
+        var result =  await this.mediator.Send(query, token);
+         
+        foreach (var phrase in result?.Payload ?? []) 
+        {  
+            Phrases.Add(phrase!.Text);
+        } 
     }
 
     [RelayCommand]

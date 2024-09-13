@@ -2,10 +2,8 @@
 
 using MediatR;
 using MovieQuotes.Application.Models;
-using MovieQuotes.Domain.Models;
 
-
-public class SearchForPhraseQuery : IRequest<OperationResult<List<SubtitlePhrase>>>
+public class SearchForPhraseQuery : IRequest<OperationResult<List<Phrase>>>
 {
     public SearchForPhraseQuery(string searchText)
     {
@@ -13,4 +11,6 @@ public class SearchForPhraseQuery : IRequest<OperationResult<List<SubtitlePhrase
     }
 
     public string SearchText { get; }
+    public int ResultPerPage { get; init; }
+    public int PageNumber { get; init; }
 }

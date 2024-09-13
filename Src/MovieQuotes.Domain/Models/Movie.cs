@@ -63,15 +63,10 @@ public class Movie
         Subtitles.AddRange(subtitlePhrases);
     }
 
-    public void AddSubtitles(string subtitle)
-    {
-         var phrases = SubtitlePhrase.GetPhrases(subtitle);
-        AddSubtitlesFromList(phrases);
-    }
 
-    public async Task AddSubtitleFromFileAsync(string subtitleLocation)
+    public async Task AddSubtitleFromFileAsync(string subtitleFilePath)
     {
-        using var fileStream = File.OpenRead(subtitleLocation);
+        using var fileStream = File.OpenRead(subtitleFilePath);
         using var reader = new StreamReader(fileStream);
         await AddSubtitlesFromStreamAsync(reader);
     }

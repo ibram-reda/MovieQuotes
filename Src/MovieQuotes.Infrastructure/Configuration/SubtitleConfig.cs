@@ -9,11 +9,9 @@ public class SubtitleConfig : IEntityTypeConfiguration<SubtitlePhrase>
 {
     public void Configure(EntityTypeBuilder<SubtitlePhrase> builder)
     {
-        builder.HasKey(a => new {a.MovieId,a.Sequence});
-                
-
-
-
+        builder.HasKey(x => x.Id);
+        builder.HasAlternateKey(a => new {a.MovieId,a.Sequence});
+              
         builder.HasIndex(a => a.Text);
 
         builder.Property(a=>a.Text)
@@ -22,7 +20,5 @@ public class SubtitleConfig : IEntityTypeConfiguration<SubtitlePhrase>
 
         builder.Property(a=>a.VideoClipPath)
             .HasMaxLength(700);
-
-
     }
 }
