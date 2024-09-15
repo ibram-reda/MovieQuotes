@@ -25,10 +25,5 @@ public partial class PlaybackViewModel : ViewModelBase
             Phrases.Add(phrase!.Text);
         } 
     }
-
-    [RelayCommand]
-    private void BackToWelcomeScreen()
-    {
-        this.NavigationService.NavigateTo<WelcomeScreenViewModel>();
-    }
+     
 }

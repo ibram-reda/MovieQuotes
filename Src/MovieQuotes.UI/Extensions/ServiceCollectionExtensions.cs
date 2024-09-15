@@ -2,12 +2,13 @@
 
 using Avalonia.Controls;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using MovieQuotes.Application.Operations.Commands;
 using MovieQuotes.Infrastructure;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
+using System.Linq;
+using System.Reflection;
 
 public static class ServiceCollectionExtensions
 {
@@ -17,10 +18,15 @@ public static class ServiceCollectionExtensions
         Services.AddSingleton<NavigationService>();
 
 
-        Services.AddTransient<WelcomeScreenViewModel>();
-        Services.AddTransient<NewMovieViewModel>();
-        Services.AddTransient<PlaybackViewModel>();
-        Services.AddTransient<MainWindowViewModel>();
+        var viewModelsTypes = typeof(ViewModelBase).Assembly.GetTypes()
+            .Where(t => t.IsAssignableTo(typeof(ViewModelBase)))
+            .Where(t => !t.IsAbstract);
+        foreach (var type in viewModelsTypes)
+        {
+            Services.AddTransient(type);
+        } 
+
+        Services.AddLogging();
 
         Services.AddAutoMapper(typeof(MainWindowViewModel));
 

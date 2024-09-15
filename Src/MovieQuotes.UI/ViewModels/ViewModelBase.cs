@@ -1,19 +1,19 @@
-﻿using AutoMapper;
+﻿namespace MovieQuotes.UI.ViewModels;
+
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using MovieQuotes.UI.Services;
 using System;
 using System.Collections.ObjectModel;
-using System.Net.Http;
 
-namespace MovieQuotes.UI.ViewModels;
 
 public partial class ViewModelBase : ObservableObject
 {
-    private IMediator? _mediator; 
+    private IMediator? _mediator;
     private NavigationService? _navigationService;
-    protected IMediator mediator => this._mediator ??= GetService<IMediator>(); 
+    protected IMediator mediator => this._mediator ??= GetService<IMediator>();
     protected NavigationService NavigationService => _navigationService ??= GetService<NavigationService>();
     protected ViewModelBase()
     {
@@ -29,5 +29,12 @@ public partial class ViewModelBase : ObservableObject
         return App.Current?.Services?.GetService<T>() ??
             throw new ArgumentException("Can not locate Services", nameof(T));
     }
-     
+
+
+    [RelayCommand]
+    private void BackToWelcomeScreen()
+    {
+        this.NavigationService.NavigateTo<WelcomeScreenViewModel>();
+    }
+
 }

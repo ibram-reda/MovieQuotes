@@ -17,13 +17,18 @@ public partial class WelcomeScreenViewModel : ViewModelBase
     private void InsertNewMovie()
     { 
         this.navigation.NavigateTo<NewMovieViewModel>();
-    }
-
+    } 
 
     [RelayCommand]
     private void PlayBack()
     {
         this.navigation.NavigateTo<PlaybackViewModel>();
+    }
+
+    [RelayCommand]
+    private void GetMovies()
+    {
+        this.navigation.NavigateTo<MoviesListViewModel>();
     }
 
 }

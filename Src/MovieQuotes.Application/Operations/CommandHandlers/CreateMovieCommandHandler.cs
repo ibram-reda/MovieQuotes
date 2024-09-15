@@ -1,6 +1,8 @@
 ﻿namespace MovieQuotes.Application.Operations.CommandHandlers;
 
 using MediatR;
+using MediatR.Pipeline;
+using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Enums;
 using MovieQuotes.Application.Models;
 using MovieQuotes.Application.Operations.Commands;
@@ -21,29 +23,57 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
     {
         var result = new OperationResult<Movie>();
 
-        try
-        {
-            var movie = Movie.CreateMovie(request.Title, request.VideoLocation, request.Description);
+        var movie = Movie.CreateMovie(request.Title, request.VideoLocation, request.Description,request.IMDBId,request.CoverUrl??"");
 
-            
-            await movie.AddSubtitleFromFileAsync(request.SubtitleLocation);
+        await movie.AddSubtitleFromFileAsync(request.SubtitleLocation);
 
-            dbContext.Movies.Add(movie);
-            await dbContext.SaveChangesAsync();
+        dbContext.Movies.Add(movie);
+        await dbContext.SaveChangesAsync();
 
-            result.Payload = movie;
-        }
-        catch (MovieNotValidException ex)
-        {
-            foreach (var e in ex.ValidationErrors)
-            {
-                result.AddError(ErrorCode.ValidationError, e);
-            }
-        }
-        catch (Exception ex)
-        {
-            result.AddUnknownError(ex.Message);
-        }
+        result.Payload = movie;
+
         return result;
     }
 }
+
+public class CreateMovieCommandExceptionHandler : IRequestExceptionHandler<CreateMovieCommand, OperationResult<Movie>, Exception>
+{
+    private readonly ILogger<CreateMovieCommandExceptionHandler> logger;
+
+    public CreateMovieCommandExceptionHandler(ILogger<CreateMovieCommandExceptionHandler> logger)
+    {
+        this.logger = logger;
+    }
+    public Task Handle(CreateMovieCommand request, Exception exception, RequestExceptionHandlerState<OperationResult<Movie>> state, CancellationToken cancellationToken)
+    {
+        logger.LogError(
+            exception,
+            $"--- Exception Handler: '{nameof(CreateMovieCommandExceptionHandler)}'"
+            );
+        
+        var result = new OperationResult<Movie>();
+
+        switch (exception)
+        {
+            case MovieNotValidException validException:
+                foreach (var e in validException.ValidationErrors)
+                {
+                    result.AddError(ErrorCode.ValidationError, e);
+                }
+                break;
+            default:
+                var ex = exception;
+                while (ex is not null)
+                {
+                    result.AddUnknownError(ex.Message);
+                    ex = ex.InnerException;
+                }
+                break;
+        }
+
+        state.SetHandled(result);
+        return Task.CompletedTask;
+    }
+}
+
+ 

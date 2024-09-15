@@ -19,8 +19,11 @@ public class MovieConfig : IEntityTypeConfiguration<Movie>
             .IsRequired()
             .HasMaxLength(300);
 
+        builder.Property(a=>a.IMDBId).HasMaxLength(12);
+
         builder.Property(x => x.Description).HasMaxLength(700);
 
         builder.Property(a => a.LocalPath).HasMaxLength(700);
+        builder.Property(a => a.CoverUrl).HasMaxLength(700);
     }
 }

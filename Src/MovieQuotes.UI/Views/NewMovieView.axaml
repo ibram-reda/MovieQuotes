@@ -32,18 +32,25 @@
                 HorizontalAlignment="Stretch"
                 Margin="10">
       <Grid ColumnDefinitions="*,10,150">
-        <TextBox Text="{Binding MovieVideoPath}" />
+        <TextBox Text="{Binding MovieVideoPath,Mode=TwoWay}" />
         <Button Grid.Column="2"
                 Command="{Binding LoadVideoCommand}"
                 Content="Load Viedo"/>
       </Grid>
 
       <Grid ColumnDefinitions="*,10,150">
-        <TextBox Text="{Binding MovieSubtitlePath}" />
+        <TextBox Text="{Binding MovieSubtitlePath,Mode=TwoWay}" />
         <Button Grid.Column="2"
                 Command="{Binding LoadSubtitleCommand}"
-                Content="Load Subtitle"/>
+                Content="Load Subtitle"/>        
       </Grid>
+
+      <Grid ColumnDefinitions="*,10,150">
+        <TextBox Text="{Binding CoverURl,Mode=TwoWay}" />
+        <Button Grid.Column="2"
+                Command="{Binding LoadCoverCommand}"
+                Content="Load Cover Image"/>
+        </Grid>
 
     </StackPanel>
 
@@ -55,21 +62,22 @@
         <Button Content="back to welcom screen"
         Command="{Binding BackToWelcomeScreenCommand}"/>
         <Button Command="{Binding SaveIntoDbCommand}" Content="save to database"  />
-        <Button Command="{Binding StartProcessCommand}" Content="Start Process"  />
-        <Button Command="{Binding StartProcessCancelCommand}" Content="Stop Process" />
+         
       </StackPanel>
 
-      <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="5">
-        <TextBlock Text="{Binding ProcessedMoviePhrases.Count}"/>
-        <TextBlock Text=" out of "/>
-        <TextBlock Text="{Binding  MoviePhrases.Count}" />
+      <StackPanel Orientation="Horizontal"
+                  Grid.Column="1" Margin="5">
+        <TextBlock Text=" message: "/>
+        <TextBlock Text="  "/>
       </StackPanel>
     </Grid>
 
     <ProgressBar DockPanel.Dock="Bottom"
                  IsVisible="{Binding IsProcessing}"
-                 Margin="0 10" Height="20"
-                 Minimum="0" Maximum="{Binding MoviePhrases.Count}" Value="{Binding ProcessedMoviePhrases.Count}"
+                 Margin="0 10" Height="20"                 
+                 Minimum="0"
+                 Maximum=" 10" 
+                 Value=" 10"
                  ShowProgressText="True"/>
 
 
@@ -78,19 +86,34 @@
 
 
     <Grid ColumnDefinitions="*,10,*" Margin="10" >
-      <Border Grid.Column="0" BorderThickness="1" BorderBrush="Yellow" Padding="10">
+
+      <Border Grid.Column="0" 
+              BorderThickness="0" 
+              Padding="10">
+        
+        <Grid RowDefinitions="auto,5,auto,5,auto"
+              ColumnDefinitions="auto,5,*">
+          
+          <TextBlock Text="Movie Name:" VerticalAlignment="Center" />
+          <TextBox Grid.Column="2" Text="{Binding MovieName,Mode=TwoWay}" Padding="5" />
+
+          <TextBlock Grid.Row="2" Text="Imdb Id:" VerticalAlignment="Center" />
+          <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding IMDBId,Mode=TwoWay}" Padding="5" />
+
+          <TextBlock Grid.Row="4" Text="Discription:" VerticalAlignment="Center" />
+          <TextBox  Grid.Row="4" Grid.Column="2" Text="{Binding Discription,Mode=TwoWay}" Padding="5" />
+          
+        </Grid>
+      </Border>
+      
+      <Border Grid.Column="2" BorderThickness="1" BorderBrush="Yellow" Padding="10">
         <Grid RowDefinitions="auto,*" Grid.Column="1">
           <TextBlock Text="Phrasses"/>
           <ListBox Grid.Row="1" ItemsSource="{Binding  MoviePhrases}"/>
         </Grid>
       </Border>
 
-      <Border Grid.Column="2" BorderThickness="1" BorderBrush="Yellow" Padding="10">
-        <Grid RowDefinitions="auto,*" Grid.Column="1">
-          <TextBlock Text="Processed Phrasses"/>
-          <ListBox Grid.Row="1" ItemsSource="{Binding ProcessedMoviePhrases}"/>
-        </Grid>
-      </Border>
+      
 
     </Grid>
 
