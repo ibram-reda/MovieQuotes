@@ -10,26 +10,93 @@
              x:DataType="vm:MoviesListViewModel"
              >
 
+  <UserControl.Styles>
+    <Style Selector="TextBlock.title">
+      <Setter Property="FontSize"  Value="18"/>
+      <Setter Property="FontWeight"  Value="Bold"/>
+      <Setter Property="Margin"  Value="0,10,0,10"/>
+    </Style>
+  </UserControl.Styles>
+  <UserControl.DataTemplates>
+    <DataTemplate DataType="models:MovieInfo" >
+      <StackPanel Spacing="5">
+        <Image Width="100"  DockPanel.Dock="Top" Source="{Binding CoverUrl,Converter={StaticResource myConverter}}" />
+        <TextBlock Text="{Binding Title}" Width="100" TextWrapping="Wrap"/>
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.DataTemplates>
   <UserControl.Resources>
     <converters:BitmapValueConverter x:Key="myConverter" />
+ 
   </UserControl.Resources>
-  <Grid RowDefinitions="*,auto">
+  <Grid RowDefinitions="auto,* ,auto">
 
-    <ListBox ItemsSource="{Binding MoviesInfo}">
-      <ListBox.ItemTemplate>
-        <DataTemplate >
-          <DockPanel>
-            <Image Width="50"  DockPanel.Dock="Left" Source="{Binding CoverUrl,Converter={StaticResource myConverter}}" />
-            <StackPanel VerticalAlignment="Center" Margin="5">
-              <TextBlock Text="{Binding Title}"/>
-              <TextBlock Text="{Binding LocalPath}"/>
-              <TextBlock Text="{Binding CoverUrl}"/>
-            </StackPanel>
-          </DockPanel>
-        </DataTemplate>
-      </ListBox.ItemTemplate> 
-    </ListBox>
-    <StackPanel Grid.Row="1" Orientation="Horizontal">
+    <Grid ColumnDefinitions="auto,*,auto,auto" Margin="5">
+      <TextBlock Text="Base Folder:" 
+                 VerticalAlignment="Center" 
+                 Margin="5" />
+      <TextBox Grid.Column="1" 
+               Text="{Binding BaseFolder}"
+               Watermark="Folder contains movies"/>  
+      <Button Grid.Column="2" Content="change folder" Command="{Binding ChoseFolderCommand}" />
+      <Button Grid.Column="3" Content="sync" />
+    </Grid>
+
+
+    <Border Grid.Row="1">
+      <ScrollViewer Margin="10,0,10,10">
+        
+      <Grid   RowDefinitions="auto,auto" >
+        <Grid Grid.Row="0" RowDefinitions="auto,auto" IsVisible="{Binding NeedToSync }">
+          <TextBlock Text="Movie Out Of Sync" Classes="title" />
+          <ListBox Grid.Row="1"
+                 ItemsSource="{Binding OutOfSyncMovies}">
+
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Spacing="5">
+                  <Image Width="100"  
+                         DockPanel.Dock="Top" 
+                         Source="{Binding CoverUrl,Converter={StaticResource myConverter}}" />
+                  <TextBlock Text="{Binding Title}" 
+                             Height="50"
+                             Width="100" 
+                             TextWrapping="Wrap"/>
+                  <Button Content="Add To Database"
+                          Command="{Binding $parent[ListBox].((vm:MoviesListViewModel)DataContext).SelectCommand}"
+                          CommandParameter="{Binding .}"/>
+                        
+                </StackPanel>
+              </DataTemplate> 
+            </ListBox.ItemTemplate>
+
+            <ListBox.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Center" />
+              </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+          </ListBox>
+        </Grid>
+
+        <Grid Grid.Row="1" RowDefinitions="auto,auto">
+          <TextBlock Text="Movie In DB" Classes="title" />
+
+          <ListBox Grid.Row="1"
+                 ItemsSource="{Binding DBMovies}">
+                
+            <ListBox.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel />
+                  </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+           </ListBox>
+        </Grid>
+      </Grid>
+      </ScrollViewer>
+    </Border>
+    
+    
+    <StackPanel Grid.Row="2" Orientation="Horizontal">
       <Button Content="back to welcom screen"
               Command="{Binding BackToWelcomeScreenCommand}"/>
     </StackPanel>

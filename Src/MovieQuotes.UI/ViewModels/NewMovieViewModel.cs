@@ -3,6 +3,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MovieQuotes.Application.Models;
 using MovieQuotes.Application.Operations.Commands;
 using MovieQuotes.UI.Models;
 using MovieQuotes.UI.Services;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 internal partial class NewMovieViewModel : ViewModelBase
 {
     private readonly IFilesService filesService;
+    private bool returnToPreviousPageAfterSave = false;
     [ObservableProperty] private List<SubtitlePhrase>? _moviePhrases = new();
     [ObservableProperty] private string _movieVideoPath = string.Empty;
     [ObservableProperty] private string _movieName = string.Empty;
@@ -23,7 +25,7 @@ internal partial class NewMovieViewModel : ViewModelBase
     [ObservableProperty] private bool _isProcessing = false;
     [ObservableProperty] private string? _IMDBId = string.Empty;
     [ObservableProperty] private string? _coverURl = string.Empty;
-    [ObservableProperty] private string? _discription = string.Empty;
+    [ObservableProperty] private string? _description = string.Empty;
 
     public NewMovieViewModel()
     {
@@ -82,7 +84,7 @@ internal partial class NewMovieViewModel : ViewModelBase
     private async Task SaveIntoDb(CancellationToken token = default)
     {
         ErrorMessages?.Clear();
-        var command = new CreateMovieCommand(MovieName, MovieVideoPath, MovieSubtitlePath,Discription,IMDBId,CoverURl);
+        var command = new CreateMovieCommand(MovieName, MovieVideoPath, MovieSubtitlePath, Description, IMDBId, CoverURl);
 
         var result = await mediator.Send(command);
 
@@ -93,13 +95,33 @@ internal partial class NewMovieViewModel : ViewModelBase
             return;
         }
 
+        if(returnToPreviousPageAfterSave) 
+            this.NavigationService.GoBack(MovieName);
+
+        ResetProperties();
+    }
+
+    public override void Init(object? initValue)
+    {
+        if (initValue is MovieInfo info) 
+        {
+            this.returnToPreviousPageAfterSave = true;
+            MovieVideoPath = info.LocalPath;
+            MovieSubtitlePath = info.SubtitlePath??"";
+            IMDBId = info.IMDBId;
+            MovieName = info.Title;
+            CoverURl = info.CoverUrl;
+            Description = info.Description;
+        }
+    }
+    private void ResetProperties()
+    {
         MoviePhrases?.Clear();
         MovieVideoPath = string.Empty;
         MovieSubtitlePath = string.Empty;
         IMDBId = string.Empty;
         MovieName = string.Empty;
         CoverURl = string.Empty;
-        Discription = string.Empty;
-    } 
-
+        Description = string.Empty;
+    }
 }

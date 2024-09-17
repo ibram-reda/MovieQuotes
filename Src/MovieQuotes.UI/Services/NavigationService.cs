@@ -10,6 +10,7 @@ public class NavigationService
     {
 
     }
+    ViewModelBase? _OldViewModel = null;   
     private ViewModelBase? _CurrentViewModel;
     public event Action<ViewModelBase>? CurrentViewModelChanged;
     public ViewModelBase CurrentViewModel
@@ -22,9 +23,21 @@ public class NavigationService
         }
     }
 
-    public void NavigateTo<T>() where T : ViewModelBase 
+    public void NavigateTo<T>(object? initValue = null) where T : ViewModelBase 
     {
+        _OldViewModel = CurrentViewModel;
         CurrentViewModel = App.Current?.Services?.GetRequiredService<T>()!;
+        if (initValue is not null) 
+            CurrentViewModel.Init(initValue);
+    }
+
+    public void GoBack(object? message = null)
+    {
+        if (_OldViewModel is null)
+            return;
+
+        _OldViewModel.ConsumeMessage(message);
+        CurrentViewModel = _OldViewModel;
     }
 
 

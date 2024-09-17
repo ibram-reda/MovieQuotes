@@ -32,21 +32,27 @@
                 HorizontalAlignment="Stretch"
                 Margin="10">
       <Grid ColumnDefinitions="*,10,150">
-        <TextBox Text="{Binding MovieVideoPath,Mode=TwoWay}" />
+        <TextBox Text="{Binding MovieVideoPath,Mode=TwoWay}" 
+                 Watermark="Source Video path (.mp4,.mkv,.avi)"
+                 Padding="5"/>
         <Button Grid.Column="2"
                 Command="{Binding LoadVideoCommand}"
                 Content="Load Viedo"/>
       </Grid>
 
       <Grid ColumnDefinitions="*,10,150">
-        <TextBox Text="{Binding MovieSubtitlePath,Mode=TwoWay}" />
+        <TextBox Text="{Binding MovieSubtitlePath,Mode=TwoWay}"
+                 Watermark="Source Subtitle file path (.srt)"
+                 Padding="5"/>
         <Button Grid.Column="2"
                 Command="{Binding LoadSubtitleCommand}"
                 Content="Load Subtitle"/>        
       </Grid>
 
       <Grid ColumnDefinitions="*,10,150">
-        <TextBox Text="{Binding CoverURl,Mode=TwoWay}" />
+        <TextBox Text="{Binding CoverURl,Mode=TwoWay}"
+                 Watermark="cover poster photo"
+                 Padding="5"/>
         <Button Grid.Column="2"
                 Command="{Binding LoadCoverCommand}"
                 Content="Load Cover Image"/>
@@ -95,13 +101,27 @@
               ColumnDefinitions="auto,5,*">
           
           <TextBlock Text="Movie Name:" VerticalAlignment="Center" />
-          <TextBox Grid.Column="2" Text="{Binding MovieName,Mode=TwoWay}" Padding="5" />
+          <TextBox Grid.Column="2" 
+                   Text="{Binding MovieName,Mode=TwoWay}" 
+                   Watermark="Movie Name i.e 'Forrest Gump (1994)'"
+                   Padding="5" />
 
           <TextBlock Grid.Row="2" Text="Imdb Id:" VerticalAlignment="Center" />
-          <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding IMDBId,Mode=TwoWay}" Padding="5" />
+          <TextBox Grid.Row="2"
+                   Grid.Column="2" 
+                   Text="{Binding IMDBId,Mode=TwoWay}" 
+                   Watermark="imdb id i.e 'tt0109830'"
+                   Padding="5" />
 
           <TextBlock Grid.Row="4" Text="Discription:" VerticalAlignment="Center" />
-          <TextBox  Grid.Row="4" Grid.Column="2" Text="{Binding Discription,Mode=TwoWay}" Padding="5" />
+          <TextBox  Grid.Row="4" 
+                    Grid.Column="2" 
+                    Text="{Binding Description,Mode=TwoWay}"
+                    TextWrapping="Wrap"
+                    Watermark="Movie Description ..."
+                    AcceptsReturn="True"
+                    Height="150"
+                    Padding="5" />
           
         </Grid>
       </Border>

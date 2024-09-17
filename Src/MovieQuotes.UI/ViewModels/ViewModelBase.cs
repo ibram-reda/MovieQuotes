@@ -37,4 +37,11 @@ public partial class ViewModelBase : ObservableObject
         this.NavigationService.NavigateTo<WelcomeScreenViewModel>();
     }
 
+    public virtual void Init(object? initValue)
+    { 
+    }
+
+    public virtual void ConsumeMessage(object? message)
+    {        
+    }
 }
