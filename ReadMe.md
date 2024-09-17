@@ -14,13 +14,16 @@ structure will be look like the following
 
 ![image](./Images/MovieQuotes.drawio.svg)
 
+
+
+
 ## Installation
 
 1. we need to setup SqlServer and get a connection string to database similar to the following
    ```
    Server=localhost;Database=MovieQuotesDb;Trusted_Connection=True;TrustServerCertificate=True
    ```
-2. update your connection string in AppSetting in api project and in the UI Project
+2. update your connection string in AppSetting in [api project][5] and in the [UI Project][4]
 3. open Terminal and install [Entity Framework Core tools][3]  `dotnet tool install --global dotnet-ef`
 4. Navigate your Terminal to the location `.\Src\MovieQuotes.Infrastructure\` and write the following command
    ```
@@ -38,3 +41,5 @@ structure will be look like the following
 [1]:  https://playphrase.me
 [2]: https://avaloniaui.net/
 [3]: https://learn.microsoft.com/en-gb/ef/core/cli/dotnet#installing-the-tools
+[4]: https://github.com/ibram-reda/MovieQuotes/blob/c998380d594a228ee3aeaaeaae2c1e8d6ecedd36/Src/MovieQuotes.UI/Extensions/ServiceCollectionExtensions.cs#L34
+[5]: https://github.com/ibram-reda/MovieQuotes/blob/c998380d594a228ee3aeaaeaae2c1e8d6ecedd36/Src/MovieQuotes.Api/appsettings.json#L11
