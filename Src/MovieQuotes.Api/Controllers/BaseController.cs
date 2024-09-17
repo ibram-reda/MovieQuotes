@@ -3,6 +3,7 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using MovieQuotes.Api.Contracts;
 using MovieQuotes.Application.Models;
 
 [ApiController]
@@ -17,6 +18,10 @@ public abstract class BaseController :ControllerBase
 
     protected IActionResult HandelErrors(IEnumerable<Error> errors)
     {
-        throw new NotImplementedException();
+        var result = new BaseResponse<string>();
+        result.IsSuccess = false;
+        result.Errors = errors.Select(e => e.Message).ToList();
+
+        return BadRequest(result);
     }
 }

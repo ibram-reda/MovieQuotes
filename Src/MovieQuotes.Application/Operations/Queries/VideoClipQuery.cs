@@ -1,7 +1,7 @@
-﻿using MediatR;
-using MovieQuotes.Application.Models;
+﻿namespace MovieQuotes.Application.Operations.Queries;
 
-namespace MovieQuotes.Application.Operations.Queries;
+using MediatR;
+using MovieQuotes.Application.Models;
 
 public class VideoClipQuery : IRequest<OperationResult<string>>
 {

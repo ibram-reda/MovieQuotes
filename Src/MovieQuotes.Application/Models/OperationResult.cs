@@ -8,6 +8,7 @@ public class OperationResult<T>
     public T? Payload { get; set; }
 
     public bool IsError { get; private set; }
+    public bool IsSuccess => !IsError;
 
     public IEnumerable<Error> Errors => errors;
 

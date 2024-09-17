@@ -3,7 +3,7 @@
 using MediatR;
 using MovieQuotes.Application.Models;
 
-public class SearchForPhraseQuery : IRequest<OperationResult<List<Phrase>>>
+public class SearchForPhraseQuery : IRequest<OperationPageResult<Phrase>>
 {
     public SearchForPhraseQuery(string searchText)
     {
@@ -11,6 +11,7 @@ public class SearchForPhraseQuery : IRequest<OperationResult<List<Phrase>>>
     }
 
     public string SearchText { get; }
-    public int ResultPerPage { get; init; }
-    public int PageNumber { get; init; }
+
+    public uint ResultPerPage { get; init; }
+    public uint PageNumber { get; init; }
 }

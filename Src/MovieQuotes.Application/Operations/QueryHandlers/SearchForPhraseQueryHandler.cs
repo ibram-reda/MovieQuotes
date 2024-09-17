@@ -2,25 +2,25 @@
 
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MovieQuotes.Application.Enums;
 using MovieQuotes.Application.Models;
 using MovieQuotes.Application.Operations.Queries;
 using MovieQuotes.Infrastructure;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery, OperationResult<List<Phrase>>>
+public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery, OperationPageResult<Phrase>>
 {
     private readonly MovieQuotesDbContext dbContext;
     public SearchForPhraseQueryHandler(MovieQuotesDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
-    public async Task<OperationResult<List<Phrase>>> Handle(SearchForPhraseQuery request, CancellationToken cancellationToken)
+    public async Task<OperationPageResult<Phrase>> Handle(SearchForPhraseQuery request, CancellationToken cancellationToken)
     {
-        var result = new OperationResult<List<Phrase>>();
-        var d = await dbContext.SubtitlePhrases.Include(a => a.Movie)
+        var result = new OperationPageResult<Phrase>();
+        var query = dbContext.SubtitlePhrases.Include(a => a.Movie)
             .Where(a => a.Text.Contains(request.SearchText))
             .Select(a => new Phrase()
             {
@@ -33,12 +33,27 @@ public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery,
                 Duration = a.Duration,
                 StartTime = a.StartTime,
                 EndTime = a.EndTime,
-            })
-            .Skip(request.ResultPerPage * request.PageNumber)
-            .Take(request.ResultPerPage)
+            });
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var itemCountToSkip = (int)(request.ResultPerPage * request.PageNumber);
+
+        if (itemCountToSkip > totalCount)
+        {
+            result.AddError(ErrorCode.NotFound, OperationsMessages.PageNotFound, request.PageNumber, totalCount / request.ResultPerPage);
+            return result;
+        }
+
+        result.Payload = await query.Skip(itemCountToSkip)
+            .Take((int)request.ResultPerPage)
             .ToListAsync(cancellationToken);
 
-        result.Payload = d;
+        result.Count = totalCount;
+        result.CurrentPageNumber = request.PageNumber;
+        result.ItemPerPage = request.ResultPerPage;
+        result.HasNext = itemCountToSkip + result.ItemPerPage < totalCount;
+
+
         return result;
 
     }
