@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MovieQuotes.Application\MovieQuotes.Application.csproj" />
-    <ProjectReference Include="..\MovieQuotes.Domain\MovieQuotes.Domain.csproj" />
     <ProjectReference Include="..\MovieQuotes.Infrastructure\MovieQuotes.Infrastructure.csproj" />
   </ItemGroup>
 
