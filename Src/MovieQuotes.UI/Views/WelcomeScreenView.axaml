@@ -11,12 +11,27 @@
     <vm:WelcomeScreenViewModel/>
   </Design.DataContext>
 
-  <Grid>
-    <StackPanel Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center">
-      <Button Command="{Binding InsertNewMovieCommand}"> Insert New Moview </Button>
-      <Button Command="{Binding PlayBackCommand}"> Play Back Vedioes </Button>
-      <Button Command="{Binding GetMoviesCommand}"> Brows avalible movies </Button>
-      
-    </StackPanel>
+  <Grid RowDefinitions="auto,auto" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <StackPanel>
+      <TextBlock  Classes="title">
+        Welcom to the 
+        <Span Foreground="Green" >Movie Quotes</Span>
+        Admin Panal
+      </TextBlock>
+      <TextBlock TextAlignment="Center" VerticalAlignment="Center">
+        in this Pannal you can do two things 
+      </TextBlock>
+
+      <StackPanel HorizontalAlignment="Center" >
+        <Button Classes="link"
+                Command="{Binding InsertNewMovieCommand}">
+          01. Insert New Moview
+        </Button>
+        <Button Classes="link"
+                Command="{Binding GetMoviesCommand}">
+          02. Brows avalible movies
+        </Button>
+      </StackPanel>
+    </StackPanel> 
   </Grid>
 </UserControl>

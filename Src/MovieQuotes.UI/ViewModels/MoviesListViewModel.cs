@@ -1,4 +1,4 @@
-namespace MovieQuotes.UI.ViewModels;
+﻿namespace MovieQuotes.UI.ViewModels;
 
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -20,6 +20,8 @@ public partial class MoviesListViewModel : ViewModelBase
     [ObservableProperty] private string _BaseFolder = string.Empty;
 
     public bool NeedToSync => OutOfSyncMovies.Any();
+
+    public override string Title => "🎥 movie List";
 
     public MoviesListViewModel()
     {
@@ -91,8 +93,9 @@ public partial class MoviesListViewModel : ViewModelBase
     public async Task GetAllMovies()
     {
         var query = new GetAllMoviesQuery();
+        IsBusy = true;
         var result = await this.mediator.Send(query);
-
+        IsBusy = false;
         if (result.IsError)
         {
             foreach (var error in result.Errors)

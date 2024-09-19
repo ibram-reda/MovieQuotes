@@ -1,11 +1,10 @@
 ﻿namespace MovieQuotes.UI.ViewModels;
 
-
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MovieQuotes.Application.Models;
-using MovieQuotes.Application.Operations.Commands;
-using MovieQuotes.UI.Models;
+using MovieQuotes.Application.Operations.Commands; 
 using MovieQuotes.UI.Services;
 using System;
 using System.Collections.Generic;
@@ -17,15 +16,15 @@ using System.Threading.Tasks;
 internal partial class NewMovieViewModel : ViewModelBase
 {
     private readonly IFilesService filesService;
-    private bool returnToPreviousPageAfterSave = false;
-    [ObservableProperty] private List<SubtitlePhrase>? _moviePhrases = new();
+    private bool returnToPreviousPageAfterSave = false; 
     [ObservableProperty] private string _movieVideoPath = string.Empty;
     [ObservableProperty] private string _movieName = string.Empty;
     [ObservableProperty] private string _movieSubtitlePath = string.Empty;
-    [ObservableProperty] private bool _isProcessing = false;
     [ObservableProperty] private string? _IMDBId = string.Empty;
     [ObservableProperty] private string? _coverURl = string.Empty;
     [ObservableProperty] private string? _description = string.Empty;
+
+    public override string Title => "➕ insert new movie";
 
     public NewMovieViewModel()
     {
@@ -41,13 +40,7 @@ internal partial class NewMovieViewModel : ViewModelBase
         {
             var file = await filesService.OpenFileAsync("select subtitleFolder");
             if (file is null) return;
-            MovieSubtitlePath = file.Path.LocalPath;
-
-            await using var readStream = await file.OpenReadAsync();
-            using var reader = new StreamReader(readStream);
-
-            MoviePhrases = await SubtitlePhrase.GetPhrasesFromStreamAsync(reader);
-
+            MovieSubtitlePath = file.Path.LocalPath;  
         }
         catch (Exception e)
         {
@@ -61,7 +54,7 @@ internal partial class NewMovieViewModel : ViewModelBase
         ErrorMessages?.Clear();
         try
         {
-            var file = await filesService.OpenFileAsync("select Cover");
+            var file = await filesService.OpenFileAsync("select Cover Photo", [FilePickerFileTypes.ImageAll]);
             if (file is null) return;
             CoverURl = file.Path.LocalPath; 
         }
@@ -74,7 +67,7 @@ internal partial class NewMovieViewModel : ViewModelBase
     [RelayCommand]
     private async Task LoadVideo(CancellationToken token)
     {
-        var file = await filesService.OpenFileAsync("open movie file");
+        var file = await filesService.OpenFileAsync("Select movie file");
         if (file is null) return;
         MovieVideoPath = file.Path.LocalPath;
         MovieName = file.Name.Remove(file.Name.LastIndexOf('.'));
@@ -86,7 +79,9 @@ internal partial class NewMovieViewModel : ViewModelBase
         ErrorMessages?.Clear();
         var command = new CreateMovieCommand(MovieName, MovieVideoPath, MovieSubtitlePath, Description, IMDBId, CoverURl);
 
+        IsBusy = true;
         var result = await mediator.Send(command);
+        IsBusy = false;
 
         if (result.IsError)
         {
@@ -115,8 +110,7 @@ internal partial class NewMovieViewModel : ViewModelBase
         }
     }
     private void ResetProperties()
-    {
-        MoviePhrases?.Clear();
+    { 
         MovieVideoPath = string.Empty;
         MovieSubtitlePath = string.Empty;
         IMDBId = string.Empty;

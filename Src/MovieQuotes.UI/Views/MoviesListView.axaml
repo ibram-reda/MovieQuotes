@@ -5,30 +5,18 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MovieQuotes.UI.Views.MoviesListView"
              xmlns:vm ="using:MovieQuotes.UI.ViewModels"
-             xmlns:converters ="using:MovieQuotes.UI.Converters"
              xmlns:models ="using:MovieQuotes.Application.Models"
              x:DataType="vm:MoviesListViewModel"
              >
-
-  <UserControl.Styles>
-    <Style Selector="TextBlock.title">
-      <Setter Property="FontSize"  Value="18"/>
-      <Setter Property="FontWeight"  Value="Bold"/>
-      <Setter Property="Margin"  Value="0,10,0,10"/>
-    </Style>
-  </UserControl.Styles>
+ 
   <UserControl.DataTemplates>
     <DataTemplate DataType="models:MovieInfo" >
       <StackPanel Spacing="5">
-        <Image Width="100"  DockPanel.Dock="Top" Source="{Binding CoverUrl,Converter={StaticResource myConverter}}" />
+        <Image Width="100"  DockPanel.Dock="Top" Source="{Binding CoverUrl,Converter={StaticResource PathToBitmapConverter}}" />
         <TextBlock Text="{Binding Title}" Width="100" TextWrapping="Wrap"/>
       </StackPanel>
     </DataTemplate>
-  </UserControl.DataTemplates>
-  <UserControl.Resources>
-    <converters:BitmapValueConverter x:Key="myConverter" />
- 
-  </UserControl.Resources>
+  </UserControl.DataTemplates> 
   <Grid RowDefinitions="auto,* ,auto">
 
     <Grid ColumnDefinitions="auto,*,auto,auto" Margin="5">
@@ -54,10 +42,10 @@
 
             <ListBox.ItemTemplate>
               <DataTemplate>
-                <StackPanel Spacing="5">
-                  <Image Width="100"  
+                <StackPanel Spacing="5" Height="200">
+                  <Image Width="100" 
                          DockPanel.Dock="Top" 
-                         Source="{Binding CoverUrl,Converter={StaticResource myConverter}}" />
+                         Source="{Binding CoverUrl,Converter={StaticResource PathToBitmapConverter}}" />
                   <TextBlock Text="{Binding Title}" 
                              Height="50"
                              Width="100" 

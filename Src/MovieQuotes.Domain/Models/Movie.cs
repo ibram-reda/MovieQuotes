@@ -71,6 +71,10 @@ public class Movie
 
     public async Task AddSubtitleFromFileAsync(string subtitleFilePath)
     {
+        if (string.IsNullOrEmpty(subtitleFilePath))
+            throw new ArgumentNullException(nameof(subtitleFilePath),"Subtitle File path is Required");
+        if (!File.Exists(subtitleFilePath))
+            throw new ArgumentException("Subtitle Path is not exist or maybe you don't have a permission to access it.", nameof(subtitleFilePath));
         using var fileStream = File.OpenRead(subtitleFilePath);
         using var reader = new StreamReader(fileStream);
         await AddSubtitlesFromStreamAsync(reader);

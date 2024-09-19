@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="MovieQuotes.UI.App"
              xmlns:local="using:MovieQuotes.UI"
+             xmlns:converters ="using:MovieQuotes.UI.Converters"             
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -11,5 +12,10 @@
   
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude  Source="/Assets/MainStyle.axaml" />
     </Application.Styles>
+
+  <Application.Resources>
+    <converters:BitmapValueConverter x:Key="PathToBitmapConverter" />
+  </Application.Resources>
 </Application>

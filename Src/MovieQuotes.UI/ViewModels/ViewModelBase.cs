@@ -9,8 +9,9 @@ using System;
 using System.Collections.ObjectModel;
 
 
-public partial class ViewModelBase : ObservableObject
+public abstract partial class ViewModelBase : ObservableObject
 {
+    abstract public string  Title { get; }
     private IMediator? _mediator;
     private NavigationService? _navigationService;
     protected IMediator mediator => this._mediator ??= GetService<IMediator>();
@@ -23,7 +24,8 @@ public partial class ViewModelBase : ObservableObject
 
     [ObservableProperty]
     private ObservableCollection<string>? _errorMessages;
-
+    [ObservableProperty] private bool _IsBusy = false;
+     
     protected T GetService<T>() where T : class
     {
         return App.Current?.Services?.GetService<T>() ??

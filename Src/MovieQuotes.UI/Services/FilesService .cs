@@ -2,6 +2,7 @@
 
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 public class FilesService : IFilesService
@@ -23,12 +24,13 @@ public class FilesService : IFilesService
         return result.Count >= 1 ? result[0] : null;
     }
 
-    public async Task<IStorageFile?> OpenFileAsync(string title = "select file")
+    public async Task<IStorageFile?> OpenFileAsync(string title = "select file",IReadOnlyList<FilePickerFileType>? type = null)
     {
         var files = await _target.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
         {
             Title = title,
             AllowMultiple = false, 
+            FileTypeFilter = type,
         });
 
         return files.Count >= 1 ? files[0] : null;

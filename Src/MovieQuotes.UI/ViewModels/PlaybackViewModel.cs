@@ -13,6 +13,8 @@ public partial class PlaybackViewModel : ViewModelBase
     [ObservableProperty] private string searchText = "";
     public ObservableCollection<string> Phrases { get; } = new();
 
+    public override string Title => "Search for phrase";
+
     [RelayCommand(IncludeCancelCommand = true)]
     private async Task search(CancellationToken token = default)
     {

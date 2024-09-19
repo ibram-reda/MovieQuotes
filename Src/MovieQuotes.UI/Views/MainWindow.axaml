@@ -7,11 +7,42 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MovieQuotes.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        MinWidth="650"
+        MinHeight="450"
         Icon="/Assets/avalonia-logo.ico"
-        Title="MovieQuotes.UI">
+        Title="{Binding WindowTitle}">
    
   
-  <Grid>
-     <ContentControl Content="{Binding CurrentViewModel}"/>
+  <Grid RowDefinitions="auto,*">
+
+    <StackPanel Classes="navigation" 
+                IsVisible="{Binding RenderNavigationBar}">
+      <Button Classes="link"
+                Command="{Binding InsertNewMovieCommand}">
+        01. Insert New Moview
+      </Button>
+      <Button Classes="link"
+              Command="{Binding GetMoviesCommand}">
+        02. Brows avalible movies
+      </Button>
+      
+    </StackPanel>
+    
+     <ContentControl Grid.Row="1"
+       Content="{Binding CurrentViewModel}"/>
+    
+    <Border Grid.Row="1" IsVisible="{Binding CurrentViewModel.IsBusy}"  >
+      <Grid Background="#30303091" >
+        <TextBlock VerticalAlignment="Center" 
+                   Background="#333"
+                   Foreground="#999"
+                   Padding="5"
+                   FontSize="24"
+                   HorizontalAlignment="Center"
+                   Text="the current view is Bussy ..."/>
+        
+      </Grid>
+      
+    </Border>
   </Grid>
 </Window>

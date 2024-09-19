@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using MovieQuotes.UI.Services;
 
@@ -8,6 +8,8 @@ namespace MovieQuotes.UI.ViewModels;
 public partial class WelcomeScreenViewModel : ViewModelBase
 {
     private readonly NavigationService navigation;
+
+    public override string Title => "Welcome Screen 😃";
 
     public WelcomeScreenViewModel()
     {

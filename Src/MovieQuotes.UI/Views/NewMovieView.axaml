@@ -2,32 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:MovieQuotes.UI.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             x:DataType="vm:NewMovieViewModel"
-             xmlns:models="using:MovieQuotes.UI.Models"
+             x:DataType="vm:NewMovieViewModel" 
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MovieQuotes.UI.Views.NewMovieView">
-
  
-  <UserControl.DataTemplates>
-    <DataTemplate x:DataType="models:SubtitlePhrase">
-      <StackPanel>
-        <TextBlock Text="{Binding Sequence}" />
-        <StackPanel Orientation="Horizontal">
-          <TextBlock Text="{Binding StartTime,StringFormat='[{0}]'}"/>
-          <TextBlock Text=" --> " Foreground="Magenta"/>
-          <TextBlock Text="{Binding EndTime,StringFormat='[{0}]'}"/>
-        </StackPanel>
-        <Grid ColumnDefinitions="auto,*">
-          <TextBlock Text="{Binding Text}" Foreground="AliceBlue" Background="#333" Padding="5"/>
-        </Grid>
-      </StackPanel>
-    </DataTemplate>
 
-  </UserControl.DataTemplates>
-
-  <DockPanel LastChildFill="True" >
-    <StackPanel DockPanel.Dock="Top"
+  <Grid RowDefinitions="auto,*,auto" >
+    <!--First part-->
+    <StackPanel Grid.Row="0"
                 Spacing="10"
                 HorizontalAlignment="Stretch"
                 Margin="10">
@@ -60,85 +43,94 @@
 
     </StackPanel>
 
-    <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding ErrorMessages}" Foreground="Red"/>
+    <!--Medil part-->
+    <Grid Grid.Row="1" 
+          ColumnDefinitions="*,10,200" 
+          Margin="10" >
 
-    <Grid DockPanel.Dock="Bottom" ColumnDefinitions="*,auto">
-
-      <StackPanel Orientation="Horizontal">
-        <Button Content="back to welcom screen"
-        Command="{Binding BackToWelcomeScreenCommand}"/>
-        <Button Command="{Binding SaveIntoDbCommand}" Content="save to database"  />
-         
-      </StackPanel>
-
-      <StackPanel Orientation="Horizontal"
-                  Grid.Column="1" Margin="5">
-        <TextBlock Text=" message: "/>
-        <TextBlock Text="  "/>
-      </StackPanel>
-    </Grid>
-
-    <ProgressBar DockPanel.Dock="Bottom"
-                 IsVisible="{Binding IsProcessing}"
-                 Margin="0 10" Height="20"                 
-                 Minimum="0"
-                 Maximum=" 10" 
-                 Value=" 10"
-                 ShowProgressText="True"/>
-
-
-
-
-
-
-    <Grid ColumnDefinitions="*,10,*" Margin="10" >
-
-      <Border Grid.Column="0" 
-              BorderThickness="0" 
+      <Border Grid.Column="0"
+              BorderThickness="0"
               Padding="10">
-        
+
         <Grid RowDefinitions="auto,5,auto,5,auto"
               ColumnDefinitions="auto,5,*">
-          
+
           <TextBlock Text="Movie Name:" VerticalAlignment="Center" />
-          <TextBox Grid.Column="2" 
-                   Text="{Binding MovieName,Mode=TwoWay}" 
+          <TextBox Grid.Column="2"
+                   Text="{Binding MovieName,Mode=TwoWay}"
                    Watermark="Movie Name i.e 'Forrest Gump (1994)'"
                    Padding="5" />
 
           <TextBlock Grid.Row="2" Text="Imdb Id:" VerticalAlignment="Center" />
           <TextBox Grid.Row="2"
-                   Grid.Column="2" 
-                   Text="{Binding IMDBId,Mode=TwoWay}" 
+                   Grid.Column="2"
+                   Text="{Binding IMDBId,Mode=TwoWay}"
                    Watermark="imdb id i.e 'tt0109830'"
                    Padding="5" />
 
           <TextBlock Grid.Row="4" Text="Discription:" VerticalAlignment="Center" />
-          <TextBox  Grid.Row="4" 
-                    Grid.Column="2" 
+          <TextBox  Grid.Row="4"
+                    Grid.Column="2"
                     Text="{Binding Description,Mode=TwoWay}"
                     TextWrapping="Wrap"
                     Watermark="Movie Description ..."
                     AcceptsReturn="True"
                     Height="150"
                     Padding="5" />
-          
-        </Grid>
-      </Border>
-      
-      <Border Grid.Column="2" BorderThickness="1" BorderBrush="Yellow" Padding="10">
-        <Grid RowDefinitions="auto,*" Grid.Column="1">
-          <TextBlock Text="Phrasses"/>
-          <ListBox Grid.Row="1" ItemsSource="{Binding  MoviePhrases}"/>
+
         </Grid>
       </Border>
 
-      
+      <Border Grid.Column="2"
+              BorderThickness="1"
+              BorderBrush="Yellow"
+              Padding="10">
+        <Grid RowDefinitions="auto,*" ColumnDefinitions="auto,auto,*" Grid.Column="1">
+          <TextBlock Text="Cover Photo" VerticalAlignment="Center"/>
+          <Button Grid.Column="1"
+                  Content="change"
+                  Command="{Binding LoadCoverCommand}"/>
+          <Image Grid.Row="1"
+                 Grid.ColumnSpan="3"
+                 Source="{Binding CoverURl,Converter={StaticResource PathToBitmapConverter}}"/>
+        </Grid>
+      </Border>
+
+
 
     </Grid>
 
+    <!--lower part-->
+
+    <Grid  Grid.Row="2" 
+           
+           RowDefinitions="auto,*"  
+           ColumnDefinitions="*,auto">
+      
+
+      <StackPanel Orientation="Horizontal">
+        <Button Content="back to welcom screen"
+                Command="{Binding BackToWelcomeScreenCommand}"/>
+        <Button Command="{Binding SaveIntoDbCommand}"
+                Content="save to database"  />         
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal"
+                  Grid.Column="1" 
+                  Margin="5">
+        <TextBlock Text=" message: "/>
+        <TextBlock Text="  "/>
+      </StackPanel>
 
 
-  </DockPanel>
+      <ListBox Grid.Row="1"
+               Grid.ColumnSpan="2"
+               ItemsSource="{Binding ErrorMessages}"
+               Foreground="Red"/>
+      
+    </Grid>
+
+
+  </Grid>
   
 </UserControl>

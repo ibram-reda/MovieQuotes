@@ -2,25 +2,31 @@
 
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Enums;
 using MovieQuotes.Application.Models;
 using MovieQuotes.Application.Operations.Queries;
 using MovieQuotes.Infrastructure;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-
+ 
 public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery, OperationPageResult<Phrase>>
 {
     private readonly MovieQuotesDbContext dbContext;
-    public SearchForPhraseQueryHandler(MovieQuotesDbContext dbContext)
+    private readonly ILogger<SearchForPhraseQueryHandler> logger;
+
+    public SearchForPhraseQueryHandler(MovieQuotesDbContext dbContext,ILogger<SearchForPhraseQueryHandler> logger)
     {
         this.dbContext = dbContext;
+        this.logger = logger;
     }
     public async Task<OperationPageResult<Phrase>> Handle(SearchForPhraseQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationPageResult<Phrase>();
-        var query = dbContext.SubtitlePhrases.Include(a => a.Movie)
+        
+        var query = dbContext.SubtitlePhrases
             .Where(a => a.Text.Contains(request.SearchText))
             .Select(a => new Phrase()
             {

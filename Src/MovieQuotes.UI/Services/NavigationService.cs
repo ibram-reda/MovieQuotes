@@ -31,6 +31,13 @@ public class NavigationService
             CurrentViewModel.Init(initValue);
     }
 
+    public void NavigateTo(ViewModelBase viewModel)
+    {
+        if(CurrentViewModel == viewModel) return;
+        _OldViewModel = CurrentViewModel;
+        CurrentViewModel = viewModel;
+    }
+
     public void GoBack(object? message = null)
     {
         if (_OldViewModel is null)
@@ -39,6 +46,4 @@ public class NavigationService
         _OldViewModel.ConsumeMessage(message);
         CurrentViewModel = _OldViewModel;
     }
-
-
 }

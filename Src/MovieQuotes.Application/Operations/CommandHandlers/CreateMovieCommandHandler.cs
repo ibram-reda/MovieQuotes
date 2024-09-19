@@ -23,6 +23,20 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
     {
         var result = new OperationResult<Movie>();
 
+        #region valdition
+        if (string.IsNullOrWhiteSpace(request.Title))
+            result.AddError(ErrorCode.ValidationError, "Title is Required");
+        if(string.IsNullOrWhiteSpace(request.VideoLocation))
+            result.AddError(ErrorCode.ValidationError, "VideoLocation is Required");
+        if (!File.Exists(request.VideoLocation))
+            result.AddError(ErrorCode.NotFound, "VideoLocation should be a valid path on system");
+        if (!string.IsNullOrWhiteSpace(request.CoverUrl))
+            if (!File.Exists(request.CoverUrl))
+                result.AddError(ErrorCode.ValidationError, "the providing CoverUrl is not exist on this system");
+        if(result.IsError)
+            return result;
+        #endregion
+
         var movie = Movie.CreateMovie(request.Title, request.VideoLocation, request.Description,request.IMDBId,request.CoverUrl??"");
 
         await movie.AddSubtitleFromFileAsync(request.SubtitleLocation);

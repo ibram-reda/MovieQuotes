@@ -20,9 +20,12 @@ public class MovieValidator: AbstractValidator<Movie>
             .MaximumLength(700).WithMessage("Description should contains at most 700 characters long");
 
         RuleFor(a => a.LocalPath)
-            .MaximumLength(700).WithMessage("LocalPath can only contains 700 char at most");
+            .NotNull().WithMessage("LocalPath is Required")
+            .NotEmpty().WithMessage("LocalPath can not be Empty") 
+            .MaximumLength(700).WithMessage("LocalPath can only contains 700 char at most")
+            .When ( m =>!File.Exists(m.LocalPath)).WithMessage("LocalPath should be file on system!");
        
-        RuleFor(a => a.LocalPath)
+        RuleFor(a => a.CoverUrl)
             .MaximumLength(700).WithMessage("CoverURL can only contains 700 char at most");
     }
 }
