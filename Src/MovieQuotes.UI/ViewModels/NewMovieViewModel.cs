@@ -23,6 +23,7 @@ internal partial class NewMovieViewModel : ViewModelBase
     [ObservableProperty] private string? _IMDBId = string.Empty;
     [ObservableProperty] private string? _coverURl = string.Empty;
     [ObservableProperty] private string? _description = string.Empty;
+    [ObservableProperty] private int? _year = 0;
 
     public override string Title => "➕ insert new movie";
 
@@ -77,7 +78,8 @@ internal partial class NewMovieViewModel : ViewModelBase
     private async Task SaveIntoDb(CancellationToken token = default)
     {
         ErrorMessages?.Clear();
-        var command = new CreateMovieCommand(MovieName, MovieVideoPath, MovieSubtitlePath, Description, IMDBId, CoverURl);
+
+        var command = new CreateMovieCommand(MovieName,Year??0, MovieVideoPath, MovieSubtitlePath, Description, IMDBId, CoverURl);
 
         IsBusy = true;
         var result = await mediator.Send(command);
@@ -107,6 +109,7 @@ internal partial class NewMovieViewModel : ViewModelBase
             MovieName = info.Title;
             CoverURl = info.CoverUrl;
             Description = info.Description;
+            Year = info.Year; 
         }
     }
     private void ResetProperties()
@@ -117,5 +120,6 @@ internal partial class NewMovieViewModel : ViewModelBase
         MovieName = string.Empty;
         CoverURl = string.Empty;
         Description = string.Empty;
+        Year = null;
     }
 }

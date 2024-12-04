@@ -31,6 +31,11 @@
                 Command="{Binding GetMoviesCommand}">
           02. Brows avalible movies
         </Button>
+
+        <Button Classes="link"
+                Command="{Binding PlayBackCommand}">
+          03. Playback
+        </Button>
       </StackPanel>
     </StackPanel> 
   </Grid>

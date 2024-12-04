@@ -25,5 +25,7 @@ public class MovieConfig : IEntityTypeConfiguration<Movie>
 
         builder.Property(a => a.LocalPath).HasMaxLength(700);
         builder.Property(a => a.CoverUrl).HasMaxLength(700);
+        builder.Property(a => a.AddedDate).ValueGeneratedOnAdd();
+        builder.Property(a => a.Year).HasDefaultValue(0);
     }
 }

@@ -12,6 +12,6 @@ public class SearchForPhraseQuery : IRequest<OperationPageResult<Phrase>>
 
     public string SearchText { get; }
 
-    public uint ResultPerPage { get; init; }
-    public uint PageNumber { get; init; }
+    public uint ResultPerPage { get; init; } = 10;
+    public uint PageNumber { get; init; } = 0;
 }

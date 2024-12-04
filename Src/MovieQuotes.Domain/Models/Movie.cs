@@ -12,8 +12,10 @@ public class Movie
     public string LocalPath { get; private set; } = string.Empty;
     public string? CoverUrl { get; private set; } = string.Empty;
 
+    public int Year { get;  set; } = 0;
     public string? IMDBId { get; private set; }
 
+    public DateTime AddedDate { get; private set; }
     public List<SubtitlePhrase> Subtitles { get; } = new();
 
     /// <summary>
@@ -24,7 +26,7 @@ public class Movie
     /// <param name="description">movie description.</param>
     /// <returns>instance of <see cref="Movie"/>.</returns>
     /// <exception cref="MovieNotValidException"></exception>
-    public static Movie CreateMovie(string title,string localPath ,string? description,string? IMDBID,string coverUrl)
+    public static Movie CreateMovie(string title,string localPath ,string? description,string? IMDBID,string coverUrl,int year)
     {
         var validator = new MovieValidator();
 
@@ -33,7 +35,9 @@ public class Movie
             Description = description,
             LocalPath = localPath,
             IMDBId = IMDBID,
-            CoverUrl = coverUrl
+            CoverUrl = coverUrl,
+            AddedDate = DateTime.Now,
+            Year = year
         }; 
 
         var validationResult = validator.Validate(movie);

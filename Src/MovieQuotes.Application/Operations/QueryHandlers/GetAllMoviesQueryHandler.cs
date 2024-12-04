@@ -36,6 +36,10 @@ public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, Opera
                 LocalPath = a.LocalPath,
             });
 
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+            query = query.Where(m => m.Title.Contains(request.SearchText));
+
         var PayLoad = await query.ToListAsync(cancellationToken);
         
         result.Count = PayLoad.Count;

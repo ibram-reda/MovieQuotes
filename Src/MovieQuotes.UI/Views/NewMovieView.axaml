@@ -52,7 +52,7 @@
               BorderThickness="0"
               Padding="10">
 
-        <Grid RowDefinitions="auto,5,auto,5,auto"
+        <Grid RowDefinitions="auto,5,auto,5,auto,5,auto"
               ColumnDefinitions="auto,5,*">
 
           <TextBlock Text="Movie Name:" VerticalAlignment="Center" />
@@ -60,16 +60,23 @@
                    Text="{Binding MovieName,Mode=TwoWay}"
                    Watermark="Movie Name i.e 'Forrest Gump (1994)'"
                    Padding="5" />
-
-          <TextBlock Grid.Row="2" Text="Imdb Id:" VerticalAlignment="Center" />
+ 
+          <TextBlock Grid.Row="2" Text="Year:" VerticalAlignment="Center" />
           <TextBox Grid.Row="2"
+                   Grid.Column="2"
+                   Text="{Binding Year,Mode=TwoWay}"
+                   Watermark="year i.e 2024"
+                   Padding="5" />
+
+          <TextBlock Grid.Row="4" Text="Imdb Id:" VerticalAlignment="Center" />
+          <TextBox Grid.Row="4"
                    Grid.Column="2"
                    Text="{Binding IMDBId,Mode=TwoWay}"
                    Watermark="imdb id i.e 'tt0109830'"
                    Padding="5" />
 
-          <TextBlock Grid.Row="4" Text="Discription:" VerticalAlignment="Center" />
-          <TextBox  Grid.Row="4"
+          <TextBlock Grid.Row="6" Text="Discription:" VerticalAlignment="Center" />
+          <TextBox  Grid.Row="6"
                     Grid.Column="2"
                     Text="{Binding Description,Mode=TwoWay}"
                     TextWrapping="Wrap"
@@ -109,8 +116,8 @@
       
 
       <StackPanel Orientation="Horizontal">
-        <Button Content="back to welcom screen"
-                Command="{Binding BackToWelcomeScreenCommand}"/>
+        <Button Content="back to Previous screen"
+                Command="{Binding BackToPreviousCommand}"/>
         <Button Command="{Binding SaveIntoDbCommand}"
                 Content="save to database"  />         
       </StackPanel>
@@ -126,7 +133,13 @@
       <ListBox Grid.Row="1"
                Grid.ColumnSpan="2"
                ItemsSource="{Binding ErrorMessages}"
-               Foreground="Red"/>
+               Foreground="Red">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding .}" TextWrapping="Wrap"/>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
       
     </Grid>
 

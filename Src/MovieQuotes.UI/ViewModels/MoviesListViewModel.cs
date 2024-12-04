@@ -4,20 +4,25 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MovieQuotes.Application.Models;
+using MovieQuotes.Application.Operations.Commands;
 using MovieQuotes.Application.Operations.Queries;
+using MovieQuotes.Domain.Models;
 using MovieQuotes.UI.Services;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 
 public partial class MoviesListViewModel : ViewModelBase
 {
     private readonly IFilesService filesService;
-    
+
     public ObservableCollection<MovieInfo> DBMovies { get; } = new();
     public ObservableCollection<MovieInfo> OutOfSyncMovies { get; } = new();
     [ObservableProperty] private string _BaseFolder = string.Empty;
+    [ObservableProperty] string? filterText;
 
     public bool NeedToSync => OutOfSyncMovies.Any();
 
@@ -48,7 +53,7 @@ public partial class MoviesListViewModel : ViewModelBase
             {
                 var movie = await ExtractMovieInfoAsync(movieBaseFolder);
                 if (!IsMovieInDB(movie))
-                    OutOfSyncMovies.Add(movie);
+                   OutOfSyncMovies.Add(movie);
             }
         }
     }
@@ -66,8 +71,9 @@ public partial class MoviesListViewModel : ViewModelBase
     }
     private static async Task<MovieInfo> ExtractMovieInfoAsync(IStorageFolder movieBaseFolder)
     {
-        MovieInfo movie = new MovieInfo();
+        MovieInfo movie = new MovieInfo(); 
         movie.Title = movieBaseFolder.Name;
+        movie.Year = GetYearFromTitle(movie.Title);
         await foreach (var file in movieBaseFolder.GetItemsAsync())
         {
             if (file is IStorageFile movieFilePart)
@@ -81,7 +87,15 @@ public partial class MoviesListViewModel : ViewModelBase
                     movie.LocalPath = path;
                 if (extension.EndsWith("jpg")) 
                     movie.CoverUrl = path;
+            }
 
+            if(file is IStorageFolder subFolder && subFolder.Name == "subtitles")
+            {
+               await foreach(var subtitleFile in subFolder.GetItemsAsync())
+                {
+                    if (subtitleFile is IStorageFile subtitleFilePart && subtitleFilePart.Name.EndsWith("en.srt"))
+                        movie.SubtitlePath = subtitleFilePart.Path.LocalPath;
+                }
             }
         }
 
@@ -92,7 +106,7 @@ public partial class MoviesListViewModel : ViewModelBase
     [RelayCommand]
     public async Task GetAllMovies()
     {
-        var query = new GetAllMoviesQuery();
+        var query = new GetAllMoviesQuery(FilterText);
         IsBusy = true;
         var result = await this.mediator.Send(query);
         IsBusy = false;
@@ -102,17 +116,29 @@ public partial class MoviesListViewModel : ViewModelBase
                 ErrorMessages?.Add(error.Message);
             return;
         }
-
+        DBMovies.Clear();
         foreach (var movie in result?.Payload ?? [])
         {
             DBMovies.Add(movie);
         }
     }
 
+    [RelayCommand]
+    public async Task Sync()
+    {
+        var cleanDb = new CleanDatabaseCommand();
+        IsBusy = true;
+        var result = await this.mediator.Send(cleanDb);
+        IsBusy = false;
 
-
+        if (!result.IsError)
+        {
+            Console.WriteLine(result.Payload);
+        }
+    }
     public override void ConsumeMessage(object? message)
     {
+        if (message is null) return;
         if(message is string s)
         {
             var m = OutOfSyncMovies.FirstOrDefault(a=>a.Title == s);
@@ -122,5 +148,13 @@ public partial class MoviesListViewModel : ViewModelBase
             OutOfSyncMovies.Remove(m);
             DBMovies.Add(m);
         }
+    }
+
+
+    private static int GetYearFromTitle(string title)
+    {
+        Regex regex = new Regex(@"\(([0-9]{4})\)$");
+        var x = regex.Match(title).Groups[1].Value;
+        return int.Parse(x??"0");
     }
 }

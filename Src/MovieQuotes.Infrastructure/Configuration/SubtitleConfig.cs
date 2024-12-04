@@ -20,5 +20,8 @@ public class SubtitleConfig : IEntityTypeConfiguration<SubtitlePhrase>
 
         builder.Property(a=>a.VideoClipPath)
             .HasMaxLength(700);
+
+        builder.HasMany(a => a.PhraseWords)
+            .WithOne(a => a.Phrase);
     }
 }

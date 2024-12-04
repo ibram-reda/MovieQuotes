@@ -10,4 +10,5 @@ public class MovieInfo
 
     public string? SubtitlePath { get; set; } = string.Empty;
     public string? CoverUrl { get; set; } = string.Empty;
+    public int? Year { get; set; }
 }

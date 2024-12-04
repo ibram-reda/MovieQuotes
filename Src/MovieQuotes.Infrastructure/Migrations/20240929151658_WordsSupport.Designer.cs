@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieQuotes.Infrastructure;
 
@@ -11,9 +12,11 @@ using MovieQuotes.Infrastructure;
 namespace MovieQuotes.Infrastructure.Migrations
 {
     [DbContext(typeof(MovieQuotesDbContext))]
-    partial class MovieQuotesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240929151658_WordsSupport")]
+    partial class WordsSupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,10 +32,6 @@ namespace MovieQuotes.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AddedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("CoverUrl")
                         .HasMaxLength(700)
@@ -55,11 +54,6 @@ namespace MovieQuotes.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
-
-                    b.Property<int>("Year")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
 
                     b.HasKey("Id");
 

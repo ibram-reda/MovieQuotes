@@ -24,6 +24,8 @@ public class SubtitlePhrase
 
     public virtual Movie? Movie { get; private set; }
 
+    public List<PhraseWords> PhraseWords { get; private set; } = [];
+
     private static string RegexText => @"(?<Order>\d+)\r\n(?<StartTime>(\d\d:){2}\d\d,\d{3}) --> (?<EndTime>(\d\d:){2}\d\d,\d{3})\r\n(?<Sub>(.|[\r\n])+?(?=\r\n\r\n|$))";
     private static Regex SubtitleBlockRegex { get; } = new(RegexText);
 
@@ -56,10 +58,17 @@ public class SubtitlePhrase
         result.Sequence = int.Parse(m.Groups["Order"].Value);
         result.StartTime = TimeSpan.Parse(m.Groups["StartTime"].Value.Replace(',', '.'));
         result.EndTime = TimeSpan.Parse(m.Groups["EndTime"].Value.Replace(',', '.'));
-        result.Text = m.Groups["Sub"].Value;
+        result.Text = NormalizeText( m.Groups["Sub"].Value );
         return result;
     }
 
+    public readonly static Regex MarkUpRegex = new Regex("<i>|</i>|<b>|</b>|<u>|</u>|<font color=\".*?\">|</font>|-", RegexOptions.Compiled);
+    public readonly static Regex SpaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
+
+    public static string NormalizeText(string Text)
+    {
+       return SpaceRegex.Replace(MarkUpRegex.Replace(Text, string.Empty), " ").Trim();
+    }
     /// <summary>
     /// parse string to <see cref="SubtitlePhrase"/>.
     /// 

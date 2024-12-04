@@ -39,6 +39,11 @@ public abstract partial class ViewModelBase : ObservableObject
         this.NavigationService.NavigateTo<WelcomeScreenViewModel>();
     }
 
+    [RelayCommand]
+    private void BackToPrevious()
+    {
+        this.NavigationService.GoBack();
+    }
     public virtual void Init(object? initValue)
     { 
     }

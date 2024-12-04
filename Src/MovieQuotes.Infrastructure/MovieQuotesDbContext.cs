@@ -18,9 +18,14 @@ public class MovieQuotesDbContext : DbContext
     public DbSet<Movie> Movies => Set<Movie>();
     public DbSet<SubtitlePhrase> SubtitlePhrases => Set<SubtitlePhrase>();
 
+    public DbSet<PhraseWords> PhraseWords => Set<PhraseWords>();
+    public DbSet<Word> Word => Set<Word>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new MovieConfig());
         modelBuilder.ApplyConfiguration(new SubtitleConfig());
+        modelBuilder.ApplyConfiguration(new PhraseWordsConfig());
+        modelBuilder.ApplyConfiguration(new WordConfig());
     }
 }

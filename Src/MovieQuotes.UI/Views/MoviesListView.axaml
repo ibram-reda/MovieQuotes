@@ -8,6 +8,8 @@
              xmlns:models ="using:MovieQuotes.Application.Models"
              x:DataType="vm:MoviesListViewModel"
              >
+  
+  
  
   <UserControl.DataTemplates>
     <DataTemplate DataType="models:MovieInfo" >
@@ -27,7 +29,7 @@
                Text="{Binding BaseFolder}"
                Watermark="Folder contains movies"/>  
       <Button Grid.Column="2" Content="change folder" Command="{Binding ChoseFolderCommand}" />
-      <Button Grid.Column="3" Content="sync" />
+      <Button Grid.Column="3" Content="sync"  Command="{Binding SyncCommand }" />
     </Grid>
 
 
@@ -36,13 +38,16 @@
         
       <Grid   RowDefinitions="auto,auto" >
         <Grid Grid.Row="0" RowDefinitions="auto,auto" IsVisible="{Binding NeedToSync }">
-          <TextBlock Text="Movie Out Of Sync" Classes="title" />
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Movie Out Of Sync" Classes="title" />
+            <TextBlock Text="{Binding OutOfSyncMovies.Count,StringFormat='({0} movies)'}" VerticalAlignment="Center"/>
+          </StackPanel>
           <ListBox Grid.Row="1"
                  ItemsSource="{Binding OutOfSyncMovies}">
 
             <ListBox.ItemTemplate>
               <DataTemplate>
-                <StackPanel Spacing="5" Height="200">
+                <StackPanel Spacing="5" Height="250">
                   <Image Width="100" 
                          DockPanel.Dock="Top" 
                          Source="{Binding CoverUrl,Converter={StaticResource PathToBitmapConverter}}" />
@@ -66,8 +71,21 @@
           </ListBox>
         </Grid>
 
-        <Grid Grid.Row="1" RowDefinitions="auto,auto">
-          <TextBlock Text="Movie In DB" Classes="title" />
+        <Grid Grid.Row="1" RowDefinitions="auto,auto"> 
+           <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Movie In DB" Classes="title" />
+            <TextBlock Text="{Binding DBMovies.Count,StringFormat='({0} movies)'}" VerticalAlignment="Center"/>
+
+             <TextBox Watermark="search name 🔍"
+                      Height="10"
+                      Width="200"
+                      Margin="10 0"
+                      Text="{Binding FilterText}">
+               <TextBox.KeyBindings>
+                 <KeyBinding Gesture="Enter" Command="{Binding GetAllMoviesCommand}"/>
+               </TextBox.KeyBindings>
+             </TextBox>
+           </StackPanel>
 
           <ListBox Grid.Row="1"
                  ItemsSource="{Binding DBMovies}">

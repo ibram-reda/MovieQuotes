@@ -2,6 +2,7 @@
 
 using MediatR;
 using MediatR.Pipeline;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Enums;
 using MovieQuotes.Application.Models;
@@ -9,7 +10,7 @@ using MovieQuotes.Application.Operations.Commands;
 using MovieQuotes.Domain.Exception;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Infrastructure;
-
+using System.Text.RegularExpressions;
 
 public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, OperationResult<Movie>>
 {
@@ -24,29 +25,63 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
         var result = new OperationResult<Movie>();
 
         #region valdition
+        if (string.IsNullOrWhiteSpace(request.IMDBId))
+            result.AddError(ErrorCode.ValidationError, "IMDB ID is Required!");
         if (string.IsNullOrWhiteSpace(request.Title))
-            result.AddError(ErrorCode.ValidationError, "Title is Required");
-        if(string.IsNullOrWhiteSpace(request.VideoLocation))
-            result.AddError(ErrorCode.ValidationError, "VideoLocation is Required");
+            result.AddError(ErrorCode.ValidationError, "Title is Required!");
+        if (string.IsNullOrWhiteSpace(request.VideoLocation))
+            result.AddError(ErrorCode.ValidationError, "VideoLocation is Required!");
         if (!File.Exists(request.VideoLocation))
             result.AddError(ErrorCode.NotFound, "VideoLocation should be a valid path on system");
         if (!string.IsNullOrWhiteSpace(request.CoverUrl))
             if (!File.Exists(request.CoverUrl))
                 result.AddError(ErrorCode.ValidationError, "the providing CoverUrl is not exist on this system");
-        if(result.IsError)
+        if (result.IsError)
             return result;
         #endregion
 
-        var movie = Movie.CreateMovie(request.Title, request.VideoLocation, request.Description,request.IMDBId,request.CoverUrl??"");
+        var movie = Movie.CreateMovie(request.Title, request.VideoLocation, request.Description, request.IMDBId, request.CoverUrl ?? "",request.Year);
 
         await movie.AddSubtitleFromFileAsync(request.SubtitleLocation);
 
         dbContext.Movies.Add(movie);
         await dbContext.SaveChangesAsync();
+         
+        await AddWordsAsync(movie.Subtitles);
 
         result.Payload = movie;
 
         return result;
+    }
+
+    private async Task AddWordsAsync(List<SubtitlePhrase> phrases)
+    {
+        foreach (var phrase in phrases)
+        {
+            if (phrase.PhraseWords.Any()) continue;
+            var words = phrase.Text.Split(' ');
+            int i = 0;
+            foreach (var word in words)
+            {
+                var normalizedWord = Normalize(word);
+                var w = await this.dbContext.Word.FirstOrDefaultAsync(a => a.Text == normalizedWord);
+                if (w is null)
+                {
+                    w = Word.CreateWord(normalizedWord);
+                    this.dbContext.Word.Add(w);
+                    await this.dbContext.SaveChangesAsync();
+                }
+                var pw = PhraseWords.Create(phrase, w, i++);
+                phrase.PhraseWords.Add(pw);
+            }
+            await this.dbContext.SaveChangesAsync();
+        }
+    }
+
+    Regex rgx = new Regex("^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$");
+    private string Normalize(string word)
+    {
+     return rgx.Replace(word, ""); 
     }
 }
 

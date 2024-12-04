@@ -6,19 +6,26 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MovieQuotes.UI.Views.PlaybackView">
-  <Grid RowDefinitions="auto,*,auto" Margin="10">
+  <Grid RowDefinitions="auto,auto,*,auto" Margin="10">
 
     <Grid ColumnDefinitions="*,auto">
-        <TextBox Grid.Column="0"
-                 Text="{Binding SearchText}"
-                 Watermark="search text"
-                 Padding="5"/>
+      <TextBox Grid.Column="0"
+               Text="{Binding SearchText}"
+               Watermark="search text"
+               Padding="5">
+        <TextBox.KeyBindings>
+          <KeyBinding Gesture="Enter" Command="{Binding searchCommand}"/>
+        </TextBox.KeyBindings>
+      </TextBox>
         <Button Grid.Column="1"
                 Command="{Binding searchCommand}"
                 Content="search" />
     </Grid>
 
-    <Grid Grid.Row="1" Margin="0 10 0 10">
+    <StackPanel Grid.Row="1">
+      <TextBlock Text="{Binding SearchCount,StringFormat='Founded {0} Phrases'}"/>
+    </StackPanel>
+    <Grid Grid.Row="2" Margin="0 10 0 10">
       <ListBox  
              Background="Black"
              ItemsSource="{Binding Phrases}"/>
@@ -33,7 +40,7 @@
                  />
     </Grid>
 
-    <StackPanel Grid.Row="2" Orientation="Horizontal">
+    <StackPanel Grid.Row="3" Orientation="Horizontal">
       <Button Content="back to welcom screen"
               Command="{Binding BackToWelcomeScreenCommand}"/>
     </StackPanel>
