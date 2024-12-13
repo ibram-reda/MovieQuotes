@@ -28,7 +28,18 @@
   <Style Selector="StackPanel.navigation" >
     <Setter Property="Orientation" Value="Horizontal"/>
     <Setter Property="Background" Value="#333"/>
-    <Setter Property="Margin" Value="0,0,0,5"/>
+    <Setter Property="Margin" Value="0,0,0,5"/>    
+  </Style>
+
+  <Style Selector="Button.contentbtn">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Margin" Value="0"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Cursor" Value="Hand" />
     
+    <Style Selector="^:pointerover /template/ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>      
+    </Style>
   </Style>
 </Styles>

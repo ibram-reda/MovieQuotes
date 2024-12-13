@@ -22,6 +22,12 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         this.OnPropertyChanged(nameof(CurrentViewModel));
         WindowTitle = $"{Title} : {CurrentViewModel.Title}";
+        CurrentViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == "Title")
+                WindowTitle = $"{Title} : {CurrentViewModel.Title}";
+
+        };
         RenderNavigationBar = CurrentViewModel is not WelcomeScreenViewModel;
     }
 

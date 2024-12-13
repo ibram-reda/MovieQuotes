@@ -11,11 +11,13 @@ public class MovieConfig : IEntityTypeConfiguration<Movie>
         builder.HasKey(x => x.Id); 
 
         builder.HasAlternateKey(a => a.Title);
-
-         
-
+        builder.HasAlternateKey(a => a.NameId);
 
         builder.Property(x => x.Title)
+            .IsRequired()
+            .HasMaxLength(300);
+
+        builder.Property(x => x.NameId)
             .IsRequired()
             .HasMaxLength(300);
 

@@ -3,7 +3,7 @@
              x:Class="MovieQuotes.UI.App"
              xmlns:local="using:MovieQuotes.UI"
              xmlns:converters ="using:MovieQuotes.UI.Converters"             
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
@@ -17,5 +17,6 @@
 
   <Application.Resources>
     <converters:BitmapValueConverter x:Key="PathToBitmapConverter" />
+    <converters:LongToTimeConverter x:Key="LongToTimeConverter" />
   </Application.Resources>
 </Application>

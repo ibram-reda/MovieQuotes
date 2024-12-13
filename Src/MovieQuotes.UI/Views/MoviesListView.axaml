@@ -13,10 +13,14 @@
  
   <UserControl.DataTemplates>
     <DataTemplate DataType="models:MovieInfo" >
-      <StackPanel Spacing="5">
+      <Button Classes="contentbtn" 
+              CommandParameter="{Binding Id}"
+              Command="{Binding $parent[ListBox].((vm:MoviesListViewModel)DataContext).DisplayMovieDetailsCommand}">       
+      <StackPanel Spacing="5" Height="200">
         <Image Width="100"  DockPanel.Dock="Top" Source="{Binding CoverUrl,Converter={StaticResource PathToBitmapConverter}}" />
         <TextBlock Text="{Binding Title}" Width="100" TextWrapping="Wrap"/>
       </StackPanel>
+      </Button>
     </DataTemplate>
   </UserControl.DataTemplates> 
   <Grid RowDefinitions="auto,* ,auto">

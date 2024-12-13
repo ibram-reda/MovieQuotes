@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MovieQuotes.UI.Services;
 using System;
 using System.Collections.ObjectModel;
-
+using System.Threading.Tasks;
 
 public abstract partial class ViewModelBase : ObservableObject
 {
@@ -46,6 +46,10 @@ public abstract partial class ViewModelBase : ObservableObject
     }
     public virtual void Init(object? initValue)
     { 
+    }
+
+    public virtual async Task InitAsync(object? initValue)
+    {
     }
 
     public virtual void ConsumeMessage(object? message)

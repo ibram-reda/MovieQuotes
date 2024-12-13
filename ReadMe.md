@@ -1,24 +1,25 @@
 # Movie Quotes
 in this project i will try to make personal copy of [playphrase.me][1] and see how it could be work.
 
-i will use this copy of application in learning English/German languages (search for idioms or some specific word in movies)
+i will use this copy of application to improve my languages and learning English/German languages (search for idioms or some specific word in movies)
 
+## Screen Shoot from app
+
+![movie list](./Images/01_MovieList.png)
+
+![some movie playing](./Images/04_MovieDetails2.png)
+
+![search for phrase](./Images/05_SearchForPhrase.png)
+
+![add new movie to the database](./Images/02_InsertNewMovieData.png)
 
 ## Main Idea
 in this application there is two main section 
-1. **population section**: we provide a video file (.mp4) along it's subtitle file (.srt) and the application will save them to database this will done through avalonia desktop application 
-   
-2. **Search section**: search for phrase/word in our database and then play it on the screen this will be through the client web application
-
-structure will be look like the following
-
-![image](./Images/MovieQuotes.drawio.svg)
-
-
-
+1. **population section**: we provide a video file (.mp4) along it's subtitle file (.srt) and the application will save them to database.   
+2. **Search section**: search for phrase/word in our database and then play it on the screen.
+3. **watch section**: Watch the movie and save clips that have new terms and revision it latter.
 
 ## Installation
-
 1. we need to setup SqlServer and get a connection string to database similar to the following
    ```
    Server=localhost;Database=MovieQuotesDb;Trusted_Connection=True;TrustServerCertificate=True

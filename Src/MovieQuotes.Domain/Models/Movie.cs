@@ -2,11 +2,13 @@
 
 using MovieQuotes.Domain.Exception;
 using MovieQuotes.Domain.Validators;
+using System.Text.RegularExpressions;
 
 public class Movie
 {
     private Movie() { }
     public int Id { get; private set; }
+    public string NameId { get; set; } = string.Empty;
     public string Title { get;private set; } = string.Empty;
     public string? Description { get; private set; }
     public string LocalPath { get; private set; } = string.Empty;
@@ -30,7 +32,9 @@ public class Movie
     {
         var validator = new MovieValidator();
 
-        var movie = new Movie() {
+        var movie = new Movie()
+        {
+            NameId = TitleToNameId(title),
             Title = title,
             Description = description,
             LocalPath = localPath,
@@ -82,5 +86,11 @@ public class Movie
         using var fileStream = File.OpenRead(subtitleFilePath);
         using var reader = new StreamReader(fileStream);
         await AddSubtitlesFromStreamAsync(reader);
+    }
+
+    private static string TitleToNameId(string title)
+    {
+        var n = new Regex(@"\s+").Replace(title, "-");
+        return new Regex(@"[^a-zA-Z\d-]").Replace(n,"");
     }
 }

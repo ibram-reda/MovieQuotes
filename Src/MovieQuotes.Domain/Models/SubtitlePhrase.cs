@@ -48,7 +48,9 @@ public class SubtitlePhrase
     /// <returns>list of <see cref="SubtitlePhrase"/>.</returns>
     public static List<SubtitlePhrase> GetPhrases(string content)
     { 
-        var matches = SubtitleBlockRegex.Matches(content);
+        var matches = SubtitleBlockRegex.Matches(content.Replace("\n","\r\n"));
+        if (matches.Count == 0)
+            throw new Exception("can not read the subtitle content");
         return matches.Select(m => Parse(m)).ToList();
     }
 

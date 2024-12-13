@@ -6,7 +6,6 @@ using CommunityToolkit.Mvvm.Input;
 using MovieQuotes.Application.Models;
 using MovieQuotes.Application.Operations.Commands;
 using MovieQuotes.Application.Operations.Queries;
-using MovieQuotes.Domain.Models;
 using MovieQuotes.UI.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -33,8 +32,8 @@ public partial class MoviesListViewModel : ViewModelBase
         this.filesService = this.GetService<IFilesService>();
         GetAllMoviesCommand.Execute(this);
         OutOfSyncMovies.CollectionChanged += (_, _) =>
-            this.OnPropertyChanged(nameof(NeedToSync));       
-        
+            this.OnPropertyChanged(nameof(NeedToSync));
+
     }
 
     [RelayCommand]
@@ -53,7 +52,7 @@ public partial class MoviesListViewModel : ViewModelBase
             {
                 var movie = await ExtractMovieInfoAsync(movieBaseFolder);
                 if (!IsMovieInDB(movie))
-                   OutOfSyncMovies.Add(movie);
+                    OutOfSyncMovies.Add(movie);
             }
         }
     }
@@ -62,7 +61,7 @@ public partial class MoviesListViewModel : ViewModelBase
     private void Select(MovieInfo selectedMovie)
     {
         this.NavigationService.NavigateTo<NewMovieViewModel>(selectedMovie);
-        
+
     }
 
     private bool IsMovieInDB(MovieInfo movie)
@@ -71,7 +70,7 @@ public partial class MoviesListViewModel : ViewModelBase
     }
     private static async Task<MovieInfo> ExtractMovieInfoAsync(IStorageFolder movieBaseFolder)
     {
-        MovieInfo movie = new MovieInfo(); 
+        MovieInfo movie = new MovieInfo();
         movie.Title = movieBaseFolder.Name;
         movie.Year = GetYearFromTitle(movie.Title);
         await foreach (var file in movieBaseFolder.GetItemsAsync())
@@ -79,19 +78,19 @@ public partial class MoviesListViewModel : ViewModelBase
             if (file is IStorageFile movieFilePart)
             {
                 var index = movieFilePart.Name.LastIndexOf('.');
-                var extension = movieFilePart.Name.Substring(index); 
+                var extension = movieFilePart.Name.Substring(index);
                 var path = movieFilePart.Path.LocalPath; ;
                 if (extension.EndsWith("srt"))
                     movie.SubtitlePath = path;
-                if(extension.EndsWith("mp4") || extension.EndsWith("mkv"))
+                if (extension.EndsWith("mp4") || extension.EndsWith("mkv"))
                     movie.LocalPath = path;
-                if (extension.EndsWith("jpg")) 
+                if (extension.EndsWith("jpg"))
                     movie.CoverUrl = path;
             }
 
-            if(file is IStorageFolder subFolder && subFolder.Name == "subtitles")
+            if (file is IStorageFolder subFolder && subFolder.Name == "subtitles")
             {
-               await foreach(var subtitleFile in subFolder.GetItemsAsync())
+                await foreach (var subtitleFile in subFolder.GetItemsAsync())
                 {
                     if (subtitleFile is IStorageFile subtitleFilePart && subtitleFilePart.Name.EndsWith("en.srt"))
                         movie.SubtitlePath = subtitleFilePart.Path.LocalPath;
@@ -124,6 +123,12 @@ public partial class MoviesListViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private async Task DisplayMovieDetails(int movieId)
+    {
+        await this.NavigationService.NavigateToAsync<MovieDetailsViewModel>(movieId);
+    }
+
+    [RelayCommand]
     public async Task Sync()
     {
         var cleanDb = new CleanDatabaseCommand();
@@ -139,12 +144,12 @@ public partial class MoviesListViewModel : ViewModelBase
     public override void ConsumeMessage(object? message)
     {
         if (message is null) return;
-        if(message is string s)
+        if (message is string s)
         {
-            var m = OutOfSyncMovies.FirstOrDefault(a=>a.Title == s);
-            if (m is  null)
+            var m = OutOfSyncMovies.FirstOrDefault(a => a.Title == s);
+            if (m is null)
                 return;
-            
+
             OutOfSyncMovies.Remove(m);
             DBMovies.Add(m);
         }
@@ -155,6 +160,6 @@ public partial class MoviesListViewModel : ViewModelBase
     {
         Regex regex = new Regex(@"\(([0-9]{4})\)$");
         var x = regex.Match(title).Groups[1].Value;
-        return int.Parse(x??"0");
+        return int.Parse(x ?? "0");
     }
 }

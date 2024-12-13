@@ -1,0 +1,76 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"  
+             d:DesignHeight="50"
+             x:Class="MovieQuotes.UI.Views.Controls.MediaPlayerControls">
+
+  <UserControl.Styles>
+    <Style Selector="Button.player_control">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Style Selector="^:pointerover /template/ ContentPresenter"> 
+        <Setter Property="InputElement.Cursor" Value="Hand"/>
+        <Setter Property="TextBlock.Foreground" Value="Yellow"/>
+      </Style>
+
+      <Style Selector="^:focus /template/ ContentPresenter">
+        <Setter Property="Background" Value="Blue" />
+        <Setter Property="InputElement.Cursor" Value="Hand"/>
+        <Setter Property="TextBlock.Foreground" Value="Yellow"/>
+      </Style>
+    </Style>
+  </UserControl.Styles>
+   
+  <StackPanel Orientation="Horizontal"
+              VerticalAlignment="Bottom"
+              Spacing="5" >
+    
+    <Button Content="►"
+            Classes="player_control"
+            Click="Play"/>
+    
+    <Button Content="❚❚"
+            Classes="player_control"
+            HotKey="Space"
+            Click="Pause"/>
+
+    <Button Content="◼"
+            Classes="player_control"
+            ToolTip.Tip="Stop"
+            Click="Stop"/>
+
+    <Button Content="↺ 10 sec"
+           Classes="player_control"
+           HotKey="Left"
+           ToolTip.Tip="backword 10 sec"
+           Click="Backword"/>
+
+    <Button Content="↻ 10sec"
+            Classes="player_control"
+            HotKey="Right"
+            Click="Forword"/>
+ 
+    <Button Name="SoundBtn"
+            Content="🔉"
+            Classes="player_control" 
+            Click="ToggleSound"/>
+    
+    <Slider Name="Volume"
+            Maximum="100"
+            Minimum="0"
+            Value="50"
+            Width="100"
+            ValueChanged="Volume_ValueChanged"
+            VerticalAlignment="Center"
+            
+            />
+    
+    
+    
+    
+     
+  </StackPanel>
+</UserControl>

@@ -3,6 +3,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using MovieQuotes.UI.ViewModels;
 using System;
+using System.Threading.Tasks;
 
 public class NavigationService
 {
@@ -29,6 +30,16 @@ public class NavigationService
         CurrentViewModel = App.Current?.Services?.GetRequiredService<T>()!;
         if (initValue is not null) 
             CurrentViewModel.Init(initValue);
+
+    }
+
+    public async Task NavigateToAsync<T>(object? initValue = null) where T : ViewModelBase
+    {
+        _OldViewModel = CurrentViewModel;
+        CurrentViewModel = App.Current?.Services?.GetRequiredService<T>()!;
+        if (initValue is not null)
+            await CurrentViewModel.InitAsync(initValue);
+
     }
 
     public void NavigateTo(ViewModelBase viewModel)
@@ -36,6 +47,7 @@ public class NavigationService
         if(CurrentViewModel == viewModel) return;
         _OldViewModel = CurrentViewModel;
         CurrentViewModel = viewModel;
+
     }
 
     public void GoBack(object? message = null)
@@ -45,5 +57,6 @@ public class NavigationService
 
         _OldViewModel.ConsumeMessage(message);
         CurrentViewModel = _OldViewModel;
+
     }
 }
