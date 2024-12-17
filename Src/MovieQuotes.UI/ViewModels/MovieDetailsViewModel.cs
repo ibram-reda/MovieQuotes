@@ -1,8 +1,10 @@
 ﻿namespace MovieQuotes.UI.ViewModels;
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
 using MovieQuotes.Application.Models;
+using MovieQuotes.Application.Operations.Commands;
 using MovieQuotes.Application.Operations.Queries;
 using System;
 using System.Collections.Generic;
@@ -37,8 +39,8 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     }
 
     private void MainMediaPlayer_TimeChanged(object? sender, MediaPlayerTimeChangedEventArgs e)
-    { 
-        this.SetProperty(ref this.currentTime,e.Time, nameof(CurrentTime));
+    {
+        this.SetProperty(ref this.currentTime, e.Time, nameof(CurrentTime));
         this.UpdateCurrentPhrase();
     }
 
@@ -49,9 +51,13 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     [ObservableProperty] string movieName = "";
     [ObservableProperty] string videoLocation = "";
     [ObservableProperty] long movieLength = 0;
-      
+    [ObservableProperty] private bool viewContent;
     [ObservableProperty] List<Phrase> phrases = [];
     [ObservableProperty] Phrase? currentPhrase;
+    [ObservableProperty] string learningContent = "";
+    [ObservableProperty] string translateContent = "";
+    [ObservableProperty] string contentType = "";
+    public string[] AllowedType { get; } = ["noun", "adjective", "verb", "idiom", "phrasal verb",];
 
     private long currentTime = 0;
 
@@ -63,7 +69,6 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
             MainMediaPlayer.Time = value;
         }
     }
-
 
     public override async Task InitAsync(object? message)
     {
@@ -107,6 +112,51 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
 
     }
 
+    [RelayCommand]
+    async Task OpenPopUp()
+    {
+        if (this.MainMediaPlayer.IsPlaying)
+            this.MainMediaPlayer.Pause();
+        this.ViewContent = true;
+        await Task.Delay(300);
+    }
+
+    [RelayCommand]
+    void ClosePopUp()
+    {
+        if (!this.MainMediaPlayer.IsPlaying)
+            this.MainMediaPlayer.Play();
+        this.ViewContent = false;
+    }
+
+    [RelayCommand]
+    async Task AddToLearningContent()
+    {
+        var command = new AddStudyContentCommand()
+        {
+            PhraseId = this.CurrentPhrase?.Id ?? 0,
+            Content = this.LearningContent,
+            Translation = this.TranslateContent,
+            StudyType = this.ContentType
+        };
+
+        var result = await this.mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            this.TranslateContent = "";
+            this.ViewContent = false;
+            this.LearningContent = "";
+            this.MainMediaPlayer.Play();
+            return;
+        }
+        this.ErrorMessages.Clear();
+        foreach (var err in result.Errors)
+        {
+            this.ErrorMessages.Add(err.Message);
+        }
+
+    }
     ~MovieDetailsViewModel()
     {
         this.Dispose();

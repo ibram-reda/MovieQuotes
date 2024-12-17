@@ -11,21 +11,16 @@ using System.Threading.Tasks;
 
 public abstract partial class ViewModelBase : ObservableObject
 {
-    abstract public string  Title { get; }
+    abstract public string Title { get; }
     private IMediator? _mediator;
     private NavigationService? _navigationService;
     protected IMediator mediator => this._mediator ??= GetService<IMediator>();
     protected NavigationService NavigationService => _navigationService ??= GetService<NavigationService>();
-    protected ViewModelBase()
-    {
-        ErrorMessages = new ObservableCollection<string>();
 
-    }
 
-    [ObservableProperty]
-    private ObservableCollection<string>? _errorMessages;
-    [ObservableProperty] private bool _IsBusy = false;
-     
+    public ObservableCollection<string> ErrorMessages { get; } = [];
+    [ObservableProperty] bool _IsBusy = false;
+
     protected T GetService<T>() where T : class
     {
         return App.Current?.Services?.GetService<T>() ??
@@ -45,7 +40,7 @@ public abstract partial class ViewModelBase : ObservableObject
         this.NavigationService.GoBack();
     }
     public virtual void Init(object? initValue)
-    { 
+    {
     }
 
     public virtual async Task InitAsync(object? initValue)
@@ -53,6 +48,6 @@ public abstract partial class ViewModelBase : ObservableObject
     }
 
     public virtual void ConsumeMessage(object? message)
-    {        
+    {
     }
 }

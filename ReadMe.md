@@ -9,6 +9,8 @@ i will use this copy of application to improve my languages and learning English
 
 ![some movie playing](./Images/04_MovieDetails2.png)
 
+![some movie playing](./Images/04_MovieDetails_AddNewVocabulary.png)
+
 ![search for phrase](./Images/05_SearchForPhrase.png)
 
 ![add new movie to the database](./Images/02_InsertNewMovieData.png)
