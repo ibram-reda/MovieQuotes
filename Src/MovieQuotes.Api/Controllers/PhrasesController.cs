@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MovieQuotes.Api.Contracts;
 using MovieQuotes.Api.Contracts.Responses;
-using MovieQuotes.Application.Operations.Queries;
+using MovieQuotes.Application.Features.MoviePhrases.Queries;
 
 public class PhrasesController : BaseController
 { 

@@ -3,9 +3,9 @@
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MovieQuotes.Application.Models;
+using MovieQuotes.Application.Features.Movies.Models;
+using MovieQuotes.Application.Features.Movies.Queries;
 using MovieQuotes.Application.Operations.Commands;
-using MovieQuotes.Application.Operations.Queries;
 using MovieQuotes.UI.Services;
 using System;
 using System.Collections.ObjectModel;

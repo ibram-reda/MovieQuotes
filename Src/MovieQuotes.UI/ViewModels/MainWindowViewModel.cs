@@ -1,6 +1,5 @@
 ﻿namespace MovieQuotes.UI.ViewModels;
 
-using Avalonia.Controls.Chrome;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MovieQuotes.UI.Services;
@@ -41,6 +40,12 @@ public partial class MainWindowViewModel : ViewModelBase
     private void PlayBack()
     {
         this.NavigationService.NavigateTo<PlaybackViewModel>();
+    }
+
+    [RelayCommand]
+    private void Study()
+    {
+        this.NavigationService.NavigateTo<StudyViewModel>();
     }
 
     [RelayCommand]

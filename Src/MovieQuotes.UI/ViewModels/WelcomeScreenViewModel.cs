@@ -33,4 +33,9 @@ public partial class WelcomeScreenViewModel : ViewModelBase
         this.navigation.NavigateTo<MoviesListViewModel>();
     }
 
+    [RelayCommand]
+    private void Study()
+    {
+        this.navigation.NavigateTo<StudyViewModel>();
+    }
 }

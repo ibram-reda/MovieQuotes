@@ -1,4 +1,4 @@
-﻿namespace MovieQuotes.Application.Operations.Commands;
+﻿namespace MovieQuotes.Application.Features.Movies.Commands;
 
 using MediatR;
 using MovieQuotes.Application.Models;
@@ -6,11 +6,10 @@ using MovieQuotes.Domain.Models;
 
 public class CreateMovieCommand : IRequest<OperationResult<Movie>>
 {
-    public CreateMovieCommand(string title,int year, string videoLocation, string subtitlePath, string? description = null, string? iMDBId = null,string? coverUrl = null)
+    public CreateMovieCommand(string title, int year, string videoLocation, string? description = null, string? iMDBId = null, string? coverUrl = null)
     {
         Title = title;
-        VideoLocation = videoLocation;
-        SubtitleLocation = subtitlePath;
+        VideoLocation = videoLocation; 
         Description = description;
         IMDBId = iMDBId;
         CoverUrl = coverUrl;
@@ -20,7 +19,6 @@ public class CreateMovieCommand : IRequest<OperationResult<Movie>>
     public string? Description { get; }
     public string? IMDBId { get; }
     public string? CoverUrl { get; }
-    public string VideoLocation { get; } = string.Empty;
-    public string SubtitleLocation { get; }
+    public string VideoLocation { get; } = string.Empty; 
     public int Year { get; }
 }

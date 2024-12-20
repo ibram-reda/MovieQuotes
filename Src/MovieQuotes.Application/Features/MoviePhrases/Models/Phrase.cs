@@ -1,4 +1,4 @@
-﻿namespace MovieQuotes.Application.Models;
+﻿namespace MovieQuotes.Application.Features.MoviePhrases.Models;
 
 public class Phrase
 {
@@ -10,7 +10,7 @@ public class Phrase
 
     public string VideoLocation { get; set; } = string.Empty;
 
-    public TimeSpan StartTime {  get; set; }    
+    public TimeSpan StartTime { get; set; }
     public TimeSpan EndTime { get; set; }
 
     public TimeSpan Duration { get; set; }

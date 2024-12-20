@@ -48,10 +48,19 @@ public class SubtitlePhrase
     /// <returns>list of <see cref="SubtitlePhrase"/>.</returns>
     public static List<SubtitlePhrase> GetPhrases(string content)
     { 
-        var matches = SubtitleBlockRegex.Matches(content.Replace("\n","\r\n"));
+        var matches = SubtitleBlockRegex.Matches(content);
         if (matches.Count == 0)
-            throw new Exception("can not read the subtitle content");
-        return matches.Select(m => Parse(m)).ToList();
+        {
+            matches = SubtitleBlockRegex.Matches(content.Replace("\n", "\r\n"));
+            if(matches.Count == 0)
+                throw new Exception("can not read the subtitle content");
+        }
+        var phrases = matches.Select(m => Parse(m)).ToList();
+        if (phrases.GroupBy(m=>m.Sequence).FirstOrDefault(group => group.Count() > 1) is not null)
+        {
+            throw new Exception("Sequence must be unique in all phrases per movie");
+        }
+        return phrases;
     }
 
     private static SubtitlePhrase Parse(Match m)

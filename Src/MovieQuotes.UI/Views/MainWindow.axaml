@@ -30,6 +30,11 @@
               Command="{Binding PlayBackCommand}">
         03. Playback Phrase
       </Button>
+
+      <Button Classes="link"
+              Command="{Binding StudyCommand}">
+        04. Study
+      </Button>
       
     </StackPanel>
 

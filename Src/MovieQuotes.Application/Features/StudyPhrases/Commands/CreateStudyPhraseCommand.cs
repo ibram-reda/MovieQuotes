@@ -1,13 +1,15 @@
-﻿namespace MovieQuotes.Application.Operations.Commands;
+﻿namespace MovieQuotes.Application.Features.StudyPhrases.Commands;
 
 using MediatR;
+using MovieQuotes.Application.Features.StudyPhrases.Models;
 using MovieQuotes.Application.Models;
-using MovieQuotes.Domain.Models;
 
-public class AddStudyContentCommand : IRequest<OperationResult<bool>>
+public class CreateStudyPhraseCommand : IRequest<OperationResult<StudyPhrase>>
 {
+    /// <summary>
+    /// Phrase Id
+    /// </summary>
     public int PhraseId { get; set; }
-    public SubtitlePhrase? Phrase { get; set; }
 
     /// <summary>
     /// can be one of the following
@@ -24,5 +26,4 @@ public class AddStudyContentCommand : IRequest<OperationResult<bool>>
     /// what is the translation of the content part.
     /// </summary>
     public string? Translation { get; set; }
-
 }

@@ -1,4 +1,4 @@
-namespace MovieQuotes.Application.Models;
+namespace MovieQuotes.Application.Features.Movies.Models;
 
 public class MovieInfo
 {

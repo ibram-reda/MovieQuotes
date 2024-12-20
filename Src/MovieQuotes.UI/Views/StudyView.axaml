@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MovieQuotes.UI.ViewModels"
+             xmlns:vlc="using:LibVLCSharp.Avalonia"
+             xmlns:controls="using:MovieQuotes.UI.Views.Controls"
+             x:DataType="vm:StudyViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MovieQuotes.UI.Views.StudyView">
+  <Grid RowDefinitions="auto,*,auto" >
+    <StackPanel Orientation="Horizontal" Spacing="15">
+      <Button Content="sync" Command="{Binding GetPhrasesCommand}" />
+      <ProgressBar Background="Gray"
+                   Foreground="green"
+                   Value="{Binding ReadyPhrase}"
+                   Maximum="{Binding TotalCountOfStudyPhrase}"
+                   Height="20"/>
+
+      <TextBlock Text="{Binding ReadyPhrase}"/>
+      <TextBlock Text="  of  "/>
+      <TextBlock Text="{Binding TotalCountOfStudyPhrase}"/>
+
+      <Button Content="Previous" Command="{Binding PreviousCommand}" />
+      <Button Content="Next" Command="{Binding NextCommand}" />
+    </StackPanel>
+
+    <Grid Grid.Row="1">
+      
+      <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}"/>
+    </Grid>
+    
+    
+  </Grid>
+</UserControl>

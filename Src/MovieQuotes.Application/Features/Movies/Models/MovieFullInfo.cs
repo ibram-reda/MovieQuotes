@@ -1,4 +1,4 @@
-﻿namespace MovieQuotes.Application.Models;
+﻿namespace MovieQuotes.Application.Features.Movies.Models;
 
 public class MovieFullInfo
 {
@@ -11,6 +11,4 @@ public class MovieFullInfo
     public string? SubtitlePath { get; set; } = string.Empty;
     public string? CoverUrl { get; set; } = string.Empty;
     public int? Year { get; set; }
-
-    public List<Phrase> phrases { get; set; } = [];
 }

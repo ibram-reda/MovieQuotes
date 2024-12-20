@@ -3,12 +3,11 @@
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MovieQuotes.Application.Models;
-using MovieQuotes.Application.Operations.Commands; 
+using MovieQuotes.Application.Features.MoviePhrases.Commands;
+using MovieQuotes.Application.Features.Movies.Commands;
+using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.UI.Services;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,7 +15,7 @@ using System.Threading.Tasks;
 internal partial class NewMovieViewModel : ViewModelBase
 {
     private readonly IFilesService filesService;
-    private bool returnToPreviousPageAfterSave = false; 
+    private bool returnToPreviousPageAfterSave = false;
     [ObservableProperty] private string _movieVideoPath = string.Empty;
     [ObservableProperty] private string _movieName = string.Empty;
     [ObservableProperty] private string _movieSubtitlePath = string.Empty;
@@ -41,7 +40,7 @@ internal partial class NewMovieViewModel : ViewModelBase
         {
             var file = await filesService.OpenFileAsync("select subtitleFolder");
             if (file is null) return;
-            MovieSubtitlePath = file.Path.LocalPath;  
+            MovieSubtitlePath = file.Path.LocalPath;
         }
         catch (Exception e)
         {
@@ -57,7 +56,7 @@ internal partial class NewMovieViewModel : ViewModelBase
         {
             var file = await filesService.OpenFileAsync("select Cover Photo", [FilePickerFileTypes.ImageAll]);
             if (file is null) return;
-            CoverURl = file.Path.LocalPath; 
+            CoverURl = file.Path.LocalPath;
         }
         catch (Exception e)
         {
@@ -79,7 +78,7 @@ internal partial class NewMovieViewModel : ViewModelBase
     {
         ErrorMessages?.Clear();
 
-        var command = new CreateMovieCommand(MovieName,Year??0, MovieVideoPath, MovieSubtitlePath, Description, IMDBId, CoverURl);
+        var command = new CreateMovieCommand(MovieName, Year ?? 0, MovieVideoPath, Description, IMDBId, CoverURl);
 
         IsBusy = true;
         var result = await mediator.Send(command);
@@ -92,7 +91,15 @@ internal partial class NewMovieViewModel : ViewModelBase
             return;
         }
 
-        if(returnToPreviousPageAfterSave) 
+        var subTitleCommand = new InsertPhrasesForMovieCommand()
+        {
+            MovieId = result.Payload!.Id,
+            SubtitleLocation = MovieSubtitlePath
+        };
+        IsBusy = true;
+        await this.mediator.Send(subTitleCommand);
+        IsBusy = false;
+        if (returnToPreviousPageAfterSave)
             this.NavigationService.GoBack(MovieName);
 
         ResetProperties();
@@ -100,20 +107,20 @@ internal partial class NewMovieViewModel : ViewModelBase
 
     public override void Init(object? initValue)
     {
-        if (initValue is MovieInfo info) 
+        if (initValue is MovieInfo info)
         {
             this.returnToPreviousPageAfterSave = true;
             MovieVideoPath = info.LocalPath;
-            MovieSubtitlePath = info.SubtitlePath??"";
+            MovieSubtitlePath = info.SubtitlePath ?? "";
             IMDBId = info.IMDBId;
             MovieName = info.Title;
             CoverURl = info.CoverUrl;
             Description = info.Description;
-            Year = info.Year; 
+            Year = info.Year;
         }
     }
     private void ResetProperties()
-    { 
+    {
         MovieVideoPath = string.Empty;
         MovieSubtitlePath = string.Empty;
         IMDBId = string.Empty;

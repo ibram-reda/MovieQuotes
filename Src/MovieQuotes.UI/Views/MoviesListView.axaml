@@ -5,7 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MovieQuotes.UI.Views.MoviesListView"
              xmlns:vm ="using:MovieQuotes.UI.ViewModels"
-             xmlns:models ="using:MovieQuotes.Application.Models"
+             xmlns:models ="using:MovieQuotes.Application.Features.Movies.Models"
              x:DataType="vm:MoviesListViewModel"
              >
   

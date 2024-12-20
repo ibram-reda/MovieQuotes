@@ -1,23 +1,26 @@
-﻿namespace MovieQuotes.Application.Operations.QueryHandlers;
+﻿namespace MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
 
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Enums;
+using MovieQuotes.Application.Features.MoviePhrases.Models;
+using MovieQuotes.Application.Features.MoviePhrases.Queries;
+using MovieQuotes.Application.Features.StudyPhrases;
 using MovieQuotes.Application.Models;
-using MovieQuotes.Application.Operations.Queries;
+using MovieQuotes.Application.Operations;
 using MovieQuotes.Infrastructure;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
- 
+
 public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery, OperationPageResult<Phrase>>
 {
     private readonly MovieQuotesDbContext dbContext;
     private readonly ILogger<SearchForPhraseQueryHandler> logger;
 
-    public SearchForPhraseQueryHandler(MovieQuotesDbContext dbContext,ILogger<SearchForPhraseQueryHandler> logger)
+    public SearchForPhraseQueryHandler(MovieQuotesDbContext dbContext, ILogger<SearchForPhraseQueryHandler> logger)
     {
         this.dbContext = dbContext;
         this.logger = logger;
@@ -25,7 +28,7 @@ public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery,
     public async Task<OperationPageResult<Phrase>> Handle(SearchForPhraseQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationPageResult<Phrase>();
-        
+
         var query = dbContext.SubtitlePhrases
             .Where(a => a.Text.Contains(request.SearchText))
             .Select(a => new Phrase()
@@ -46,7 +49,7 @@ public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery,
 
         if (itemCountToSkip > totalCount)
         {
-            result.AddError(ErrorCode.NotFound, OperationsMessages.PageNotFound, request.PageNumber, totalCount / request.ResultPerPage);
+            result.AddError(ErrorCode.NotFound, StudyPhraseMessages.PageNotFound, request.PageNumber, totalCount / request.ResultPerPage);
             return result;
         }
 

@@ -3,12 +3,11 @@
 using Avalonia.Controls;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using MovieQuotes.Application.Operations.Commands;
+using MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Infrastructure;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using System.Linq;
-using System.Reflection;
 
 public static class ServiceCollectionExtensions
 {
@@ -24,7 +23,7 @@ public static class ServiceCollectionExtensions
         foreach (var type in viewModelsTypes)
         {
             Services.AddTransient(type);
-        } 
+        }
 
         Services.AddLogging();
 

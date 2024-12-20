@@ -1,10 +1,11 @@
-﻿namespace MovieQuotes.Application.Operations.QueryHandlers;
+﻿namespace MovieQuotes.Application.Features.Movies.QueriesHandlers;
 
 using MediatR;
 using MediatR.Pipeline;
 using Microsoft.EntityFrameworkCore;
+using MovieQuotes.Application.Features.Movies.Models;
+using MovieQuotes.Application.Features.Movies.Queries;
 using MovieQuotes.Application.Models;
-using MovieQuotes.Application.Operations.Queries;
 using MovieQuotes.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, Opera
     {
         var result = new OperationPageResult<MovieInfo>();
 
-        var query =   this.dbContext.Movies
+        var query = dbContext.Movies
             .Select(a => new MovieInfo
             {
                 Id = a.Id,
@@ -41,7 +42,7 @@ public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, Opera
             query = query.Where(m => m.Title.Contains(request.SearchText));
 
         var PayLoad = await query.ToListAsync(cancellationToken);
-        
+
         result.Count = PayLoad.Count;
         result.HasNext = false;
         result.Payload = PayLoad;

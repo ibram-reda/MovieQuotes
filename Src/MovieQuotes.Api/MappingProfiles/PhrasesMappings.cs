@@ -2,7 +2,7 @@
 
 using AutoMapper;
 using MovieQuotes.Api.Contracts.Responses;
-using MovieQuotes.Application.Models;
+using MovieQuotes.Application.Features.MoviePhrases.Models;
 
 public class PhrasesMappings : Profile
 {

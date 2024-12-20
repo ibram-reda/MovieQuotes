@@ -3,9 +3,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
-using MovieQuotes.Application.Models;
-using MovieQuotes.Application.Operations.Commands;
-using MovieQuotes.Application.Operations.Queries;
+using MovieQuotes.Application.Features.MoviePhrases.Models;
+using MovieQuotes.Application.Features.MoviePhrases.Queries;
+using MovieQuotes.Application.Features.Movies.Queries;
+using MovieQuotes.Application.Features.StudyPhrases.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,20 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     public MovieDetailsViewModel()
     {
         MainLibVLC = new();
-        MainMediaPlayer = new(MainLibVLC);
+        MainMediaPlayer = new(MainLibVLC)
+        { 
+            EnableHardwareDecoding = true,
+        };
+        MainMediaPlayer.Opening += MainMediaPlayer_Opening;
         MainMediaPlayer.TimeChanged += MainMediaPlayer_TimeChanged;
         MainMediaPlayer.LengthChanged += MainMediaPlayer_LengthChanged;
         MainMediaPlayer.PositionChanged += MainMediaPlayer_PositionChanged;
 
+    }
+
+    private async void MainMediaPlayer_Opening(object? sender, EventArgs e)
+    {
+        await this.LoadSubtitlesAsync();
     }
 
     private void MainMediaPlayer_PositionChanged(object? sender, MediaPlayerPositionChangedEventArgs e)
@@ -57,7 +67,7 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     [ObservableProperty] string learningContent = "";
     [ObservableProperty] string translateContent = "";
     [ObservableProperty] string contentType = "";
-    public string[] AllowedType { get; } = ["noun", "adjective", "verb", "idiom", "phrasal verb",];
+    public string[] AllowedType { get; } = ["noun", "adjective", "verb", "idiom", "phrasal verb", "phrase"];
 
     private long currentTime = 0;
 
@@ -87,14 +97,21 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
 
         this.Id = reuslt.Payload!.Id;
         this.MovieName = reuslt.Payload.Title;
-        this.VideoLocation = reuslt.Payload.LocalPath;
-        this.Phrases = reuslt.Payload.phrases;
-
-
+        this.VideoLocation = reuslt.Payload.LocalPath; 
 
         var uri = new Uri(VideoLocation);
         Media media = new Media(this.MainLibVLC, uri);
         MainMediaPlayer.Media = media;
+    }
+
+    private async Task LoadSubtitlesAsync()
+    {
+        var cmd = new GetAllPhrasesForMovieQuery() { MovieId = this.Id };
+        var result = await this.mediator.Send(cmd);
+        if (result.IsSuccess)
+        {
+            this.Phrases = result.Payload??[];
+        }
     }
 
     public void Dispose()
@@ -132,7 +149,7 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     [RelayCommand]
     async Task AddToLearningContent()
     {
-        var command = new AddStudyContentCommand()
+        var command = new CreateStudyPhraseCommand()
         {
             PhraseId = this.CurrentPhrase?.Id ?? 0,
             Content = this.LearningContent,

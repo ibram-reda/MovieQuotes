@@ -1,16 +1,14 @@
-﻿namespace MovieQuotes.Application.Operations.CommandHandlers;
+﻿namespace MovieQuotes.Application.Features.Movies.CommandsHandlers;
 
 using MediatR;
 using MediatR.Pipeline;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Enums;
+using MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Application.Models;
-using MovieQuotes.Application.Operations.Commands;
 using MovieQuotes.Domain.Exception;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Infrastructure;
-using System.Text.RegularExpressions;
 
 public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, OperationResult<Movie>>
 {
@@ -40,49 +38,16 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
             return result;
         #endregion
 
-        var movie = Movie.CreateMovie(request.Title, request.VideoLocation, request.Description, request.IMDBId, request.CoverUrl ?? "",request.Year);
+        var movie = Movie.CreateMovie(request.Title, request.VideoLocation, request.Description, request.IMDBId, request.CoverUrl ?? "", request.Year);
 
-        await movie.AddSubtitleFromFileAsync(request.SubtitleLocation);
-
-        dbContext.Movies.Add(movie);
+        this.dbContext.Movies.Add(movie);
         await dbContext.SaveChangesAsync();
-         
-        await AddWordsAsync(movie.Subtitles);
 
         result.Payload = movie;
 
         return result;
     }
 
-    private async Task AddWordsAsync(List<SubtitlePhrase> phrases)
-    {
-        foreach (var phrase in phrases)
-        {
-            if (phrase.PhraseWords.Any()) continue;
-            var words = phrase.Text.Split(' ');
-            int i = 0;
-            foreach (var word in words)
-            {
-                var normalizedWord = Normalize(word);
-                var w = await this.dbContext.Word.FirstOrDefaultAsync(a => a.Text == normalizedWord);
-                if (w is null)
-                {
-                    w = Word.CreateWord(normalizedWord);
-                    this.dbContext.Word.Add(w);
-                    await this.dbContext.SaveChangesAsync();
-                }
-                var pw = PhraseWords.Create(phrase, w, i++);
-                phrase.PhraseWords.Add(pw);
-            }
-            await this.dbContext.SaveChangesAsync();
-        }
-    }
-
-    Regex rgx = new Regex("^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$");
-    private string Normalize(string word)
-    {
-     return rgx.Replace(word, ""); 
-    }
 }
 
 public class CreateMovieCommandExceptionHandler : IRequestExceptionHandler<CreateMovieCommand, OperationResult<Movie>, Exception>
@@ -99,7 +64,7 @@ public class CreateMovieCommandExceptionHandler : IRequestExceptionHandler<Creat
             exception,
             $"--- Exception Handler: '{nameof(CreateMovieCommandExceptionHandler)}'"
             );
-        
+
         var result = new OperationResult<Movie>();
 
         switch (exception)
@@ -125,4 +90,3 @@ public class CreateMovieCommandExceptionHandler : IRequestExceptionHandler<Creat
     }
 }
 
- 

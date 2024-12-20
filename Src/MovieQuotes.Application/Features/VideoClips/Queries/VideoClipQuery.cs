@@ -1,13 +1,13 @@
-﻿namespace MovieQuotes.Application.Operations.Queries;
+﻿namespace MovieQuotes.Application.Features.VideoClips.Queries;
 
 using MediatR;
 using MovieQuotes.Application.Models;
 
 public class VideoClipQuery : IRequest<OperationResult<string>>
 {
-    public int PhraseId { get;  }
+    public int PhraseId { get; }
     public string? MovieName { get; }
-    public int Sequence { get; } 
+    public int Sequence { get; }
 
     public bool CanUseId => PhraseId > 0;
 
