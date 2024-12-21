@@ -38,7 +38,7 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
             return result;
         #endregion
 
-        var movie = Movie.CreateMovie(request.Title, request.VideoLocation, request.Description, request.IMDBId, request.CoverUrl ?? "", request.Year);
+        var movie = Movie.CreateMovie(request.BaseFolder, request.Title, request.VideoLocation, request.Description, request.IMDBId, request.CoverUrl ?? "", request.Year);
 
         this.dbContext.Movies.Add(movie);
         await dbContext.SaveChangesAsync();

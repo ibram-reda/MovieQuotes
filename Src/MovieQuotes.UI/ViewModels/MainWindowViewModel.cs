@@ -7,13 +7,13 @@ using MovieQuotes.UI.Services;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty] private bool _RenderNavigationBar = false;
+    [ObservableProperty] private bool _RenderNavigationBar = true;
     [ObservableProperty] private string _WindowTitle = "";
 
     public MainWindowViewModel()
     {
         NavigationService.CurrentViewModelChanged += OnCurrentViewModelChanged;
-        NavigationService.NavigateTo<WelcomeScreenViewModel>();
+        NavigationService.NavigateTo<MoviesListViewModel>();
 
     }
 
@@ -27,7 +27,8 @@ public partial class MainWindowViewModel : ViewModelBase
                 WindowTitle = $"{Title} : {CurrentViewModel.Title}";
 
         };
-        RenderNavigationBar = CurrentViewModel is not WelcomeScreenViewModel;
+
+        this.RenderNavigationBar = true;
     }
 
     [RelayCommand]
@@ -46,6 +47,12 @@ public partial class MainWindowViewModel : ViewModelBase
     private void Study()
     {
         this.NavigationService.NavigateTo<StudyViewModel>();
+    }
+
+    [RelayCommand]
+    private void Subtitle()
+    {
+        this.NavigationService.NavigateTo<SubtitleAddingViewModel>();
     }
 
     [RelayCommand]

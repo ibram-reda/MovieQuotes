@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MovieQuotes.UI.ViewModels"
+             x:DataType="vm:SubtitleAddingViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MovieQuotes.UI.Views.SubtitleAddingView">
+  <StackPanel>
+    <TextBlock Text="Wating" Classes="title" />
+    <ItemsControl ItemsSource="{Binding MovieList}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Title}"/>
+            <ProgressBar Value="50" />
+            <Button Content="load" 
+                    Command="{Binding $parent[ItemsControl].((vm:SubtitleAddingViewModel)DataContext).AddSubtitleCommand}"
+                    CommandParameter="{Binding .}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <Separator />
+    <TextBlock Text="Running" Classes="title" />
+    <ItemsControl ItemsSource="{Binding Running}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Title}"/> 
+          </StackPanel>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+
+    <Separator />
+    <TextBlock Text="Done" Classes="title" />
+    <ItemsControl ItemsSource="{Binding Done}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Title}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </StackPanel>
+</UserControl>

@@ -30,6 +30,7 @@ public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, Opera
             .Select(a => new MovieInfo
             {
                 Id = a.Id,
+                BaseFolderDir = a.BaseFolderDir,
                 IMDBId = a.IMDBId,
                 CoverUrl = a.CoverUrl,
                 Description = a.Description,

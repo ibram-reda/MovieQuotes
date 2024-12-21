@@ -105,10 +105,6 @@
       </ScrollViewer>
     </Border>
     
-    
-    <StackPanel Grid.Row="2" Orientation="Horizontal">
-      <Button Content="back to welcom screen"
-              Command="{Binding BackToWelcomeScreenCommand}"/>
-    </StackPanel>
+     
   </Grid>
 </UserControl>

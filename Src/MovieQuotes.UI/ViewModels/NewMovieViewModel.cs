@@ -8,6 +8,7 @@ using MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.UI.Services;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -77,8 +78,9 @@ internal partial class NewMovieViewModel : ViewModelBase
     private async Task SaveIntoDb(CancellationToken token = default)
     {
         ErrorMessages?.Clear();
+        var baseFolder = Path.GetDirectoryName(MovieVideoPath);
 
-        var command = new CreateMovieCommand(MovieName, Year ?? 0, MovieVideoPath, Description, IMDBId, CoverURl);
+        var command = new CreateMovieCommand(baseFolder ?? "",MovieName, Year ?? 0, MovieVideoPath, Description, IMDBId, CoverURl);
 
         IsBusy = true;
         var result = await mediator.Send(command);
@@ -91,14 +93,6 @@ internal partial class NewMovieViewModel : ViewModelBase
             return;
         }
 
-        var subTitleCommand = new InsertPhrasesForMovieCommand()
-        {
-            MovieId = result.Payload!.Id,
-            SubtitleLocation = MovieSubtitlePath
-        };
-        IsBusy = true;
-        await this.mediator.Send(subTitleCommand);
-        IsBusy = false;
         if (returnToPreviousPageAfterSave)
             this.NavigationService.GoBack(MovieName);
 

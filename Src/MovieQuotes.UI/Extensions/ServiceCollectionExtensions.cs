@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
 
         // add database
         var cs = "Server=localhost;Database=MovieQuotesDb;Trusted_Connection=True;TrustServerCertificate=True";
-        Services.AddDbContext<MovieQuotesDbContext>(op => op.UseSqlServer(cs));
+        Services.AddDbContext<MovieQuotesDbContext>(op => op.UseSqlServer(cs), ServiceLifetime.Transient);
 
         Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
     }

@@ -17,7 +17,6 @@ public abstract partial class ViewModelBase : ObservableObject
     protected IMediator mediator => this._mediator ??= GetService<IMediator>();
     protected NavigationService NavigationService => _navigationService ??= GetService<NavigationService>();
 
-
     public ObservableCollection<string> ErrorMessages { get; } = [];
     [ObservableProperty] bool _IsBusy = false;
 
@@ -25,13 +24,6 @@ public abstract partial class ViewModelBase : ObservableObject
     {
         return App.Current?.Services?.GetService<T>() ??
             throw new ArgumentException("Can not locate Services", nameof(T));
-    }
-
-
-    [RelayCommand]
-    private void BackToWelcomeScreen()
-    {
-        this.NavigationService.NavigateTo<WelcomeScreenViewModel>();
     }
 
     [RelayCommand]

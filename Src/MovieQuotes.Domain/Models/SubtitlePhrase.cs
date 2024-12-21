@@ -29,6 +29,15 @@ public class SubtitlePhrase
     private static string RegexText => @"(?<Order>\d+)\r\n(?<StartTime>(\d\d:){2}\d\d,\d{3}) --> (?<EndTime>(\d\d:){2}\d\d,\d{3})\r\n(?<Sub>(.|[\r\n])+?(?=\r\n\r\n|$))";
     private static Regex SubtitleBlockRegex { get; } = new(RegexText);
 
+    public override string ToString()
+    {
+        return $"""
+            {Sequence}
+            {StartTime} --> {EndTime}
+            {Text}
+            """;
+    }
+
     /// <summary>
     /// Extract Phrases from streamReader contains "srt" formatted content.
     /// </summary>
@@ -56,13 +65,26 @@ public class SubtitlePhrase
                 throw new Exception("can not read the subtitle content");
         }
         var phrases = matches.Select(m => Parse(m)).ToList();
-        if (phrases.GroupBy(m=>m.Sequence).FirstOrDefault(group => group.Count() > 1) is not null)
+
+        if (phrases.GroupBy(m => m.Sequence).Where(group => group.Count() > 1).Any())
         {
-            throw new Exception("Sequence must be unique in all phrases per movie");
+            return ReSequence(phrases);
         }
         return phrases;
     }
 
+    private static List<SubtitlePhrase> ReSequence(List<SubtitlePhrase> list)
+    {
+        return  list.OrderBy(a => a.StartTime)
+            .Select((a, index) => new SubtitlePhrase
+            {
+                Sequence = index,
+                StartTime = a.StartTime,
+                EndTime = a.EndTime,
+                Text = a.Text,
+            })
+            .ToList();
+    }
     private static SubtitlePhrase Parse(Match m)
     {
         var result = new SubtitlePhrase();

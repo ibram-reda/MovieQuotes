@@ -35,6 +35,11 @@
               Command="{Binding StudyCommand}">
         04. Study
       </Button>
+
+      <Button Classes="link"
+              Command="{Binding SubtitleCommand}">
+        05. Subtitle
+      </Button>
       
     </StackPanel>
 

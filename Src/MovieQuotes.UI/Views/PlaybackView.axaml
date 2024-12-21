@@ -39,11 +39,7 @@
                  IsVisible="{Binding !Phrases.Count}"
                  />
     </Grid>
-
-    <StackPanel Grid.Row="3" Orientation="Horizontal">
-      <Button Content="back to welcom screen"
-              Command="{Binding BackToWelcomeScreenCommand}"/>
-    </StackPanel>
+ 
     
   </Grid>
 </UserControl>

@@ -30,7 +30,13 @@ public class MovieValidator: AbstractValidator<Movie>
             .NotEmpty().WithMessage("LocalPath can not be Empty") 
             .MaximumLength(700).WithMessage("LocalPath can only contains 700 char at most")
             .When ( m =>!File.Exists(m.LocalPath)).WithMessage("LocalPath should be file on system!");
-       
+
+        RuleFor(a => a.BaseFolderDir)
+            .NotNull().WithMessage("Base Folder Directory is Required")
+            .NotEmpty().WithMessage("Base Folder Directory can not be Empty")
+            .MaximumLength(700).WithMessage("Base Folder Directory can only contains 700 char at most")
+            .When(m => !Directory.Exists(m.BaseFolderDir)).WithMessage("Base Folder Directory should be valid directory on system!");
+
         RuleFor(a => a.CoverUrl)
             .MaximumLength(700).WithMessage("CoverURL can only contains 700 char at most");
     }

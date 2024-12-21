@@ -24,6 +24,7 @@ public class StudyPhrase
     /// </summary>
     public string? Translation { get; private set; }
 
+    public DateTime AddedDate { get; private set; } = DateTime.Now;
 
     public static StudyPhrase CreateStudyPhrase(int phraseId,
         string? studyType,

@@ -6,8 +6,9 @@ using MovieQuotes.Domain.Models;
 
 public class CreateMovieCommand : IRequest<OperationResult<Movie>>
 {
-    public CreateMovieCommand(string title, int year, string videoLocation, string? description = null, string? iMDBId = null, string? coverUrl = null)
+    public CreateMovieCommand(string baseFolder,string title, int year, string videoLocation, string? description = null, string? iMDBId = null, string? coverUrl = null)
     {
+        BaseFolder = baseFolder;
         Title = title;
         VideoLocation = videoLocation; 
         Description = description;
@@ -15,6 +16,8 @@ public class CreateMovieCommand : IRequest<OperationResult<Movie>>
         CoverUrl = coverUrl;
         Year = year;
     }
+
+    public string BaseFolder { get; set; }
     public string Title { get; } = string.Empty;
     public string? Description { get; }
     public string? IMDBId { get; }
