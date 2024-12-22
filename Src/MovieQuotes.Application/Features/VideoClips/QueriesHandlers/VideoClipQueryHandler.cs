@@ -32,7 +32,10 @@ internal class VideoClipQueryHandler : IRequestHandler<VideoClipQuery, Operation
         var cmd = new CreateVideoClipCommand(phrase.Id,phrase.MovieName,phrase.Sequence,phrase.MoviePath,phrase.StartTime,phrase.Duration);
         var handler = new CreateVideoClipCommandHandler(dbContext);
         var rst = await handler.Handle(cmd, cancellationToken);
-        result.Payload = rst.Payload;
+        if (rst.IsError)
+            result.AddErrorRange(rst.Errors);
+        else
+            result.Payload = rst.Payload;
 
         return result;
     }

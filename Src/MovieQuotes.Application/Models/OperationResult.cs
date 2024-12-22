@@ -12,6 +12,11 @@ public class OperationResult<T>
 
     public IEnumerable<Error> Errors => errors;
 
+    public void AddErrorRange(IEnumerable<Error> errors)
+    {
+        IsError = true;
+        this.errors.AddRange(errors);
+    }
 
     public void AddError(ErrorCode code, string message)
     {

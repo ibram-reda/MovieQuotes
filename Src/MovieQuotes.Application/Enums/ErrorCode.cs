@@ -11,6 +11,9 @@ public enum ErrorCode
     // Infrastructure 2000 - 2099
 
     // Application Errors 3000- 3099
+    TimeOutError = 3001,
+    GenerateVideoClipError= 3003,
+    FFMPEGError = 3007,
 
     // Other Error more than 4000
     UnKnownError = 4001,
