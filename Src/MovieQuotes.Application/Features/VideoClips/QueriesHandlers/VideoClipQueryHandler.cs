@@ -2,12 +2,12 @@
 
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using MovieQuotes.Application.Enums;
+using MovieQuotes.Application.Common.Enums;
+using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.VideoClips.Commands;
 using MovieQuotes.Application.Features.VideoClips.CommandsHandlers;
 using MovieQuotes.Application.Features.VideoClips.Queries;
-using MovieQuotes.Application.Models;
 using MovieQuotes.Infrastructure;
 
 internal class VideoClipQueryHandler : IRequestHandler<VideoClipQuery, OperationResult<string>>

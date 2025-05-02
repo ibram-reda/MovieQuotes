@@ -55,42 +55,21 @@ public class Movie
         exception.ValidationErrors.AddRange(validationResult.Errors.Select(a => a.ErrorMessage));
          
         throw exception;
-    }
+    } 
 
     /// <summary>
     /// Add list of <see cref="SubtitlePhrase"/> to movie.
     /// </summary>
-    /// <param name="stream">stream where phrase come from.</param>
-    /// <returns>async Task that will add phrase to movie.</returns>
-    /// <exception cref="InvalidOperationException">if the movie already has been initialized before</exception>
-    public async Task AddSubtitlesFromStreamAsync(StreamReader stream)
-    {         
-        var phrases = await SubtitlePhrase.GetPhrasesFromStreamAsync(stream);
-
-        AddSubtitlesFromList(phrases);
-    }
-
-    private void AddSubtitlesFromList(List<SubtitlePhrase> subtitlePhrases)
+    /// <param name="subtitlePhrases"></param>
+    /// <exception cref="InvalidOperationException"></exception>
+    public void AddSubtitlesFromList(List<SubtitlePhrase> subtitlePhrases)
     {
         if (Subtitles.Count > 0)
             throw new InvalidOperationException("this movie already has subtitles");
 
-
         Subtitles.AddRange(subtitlePhrases);
     }
-
-
-    public async Task AddSubtitleFromFileAsync(string subtitleFilePath)
-    {
-        if (string.IsNullOrEmpty(subtitleFilePath))
-            throw new ArgumentNullException(nameof(subtitleFilePath),"Subtitle File path is Required");
-        if (!File.Exists(subtitleFilePath))
-            throw new ArgumentException("Subtitle Path is not exist or maybe you don't have a permission to access it.", nameof(subtitleFilePath));
-        using var fileStream = File.OpenRead(subtitleFilePath);
-        using var reader = new StreamReader(fileStream);
-        await AddSubtitlesFromStreamAsync(reader);
-    }
-
+    
     private static string TitleToNameId(string title)
     {
         var n = new Regex(@"\s+").Replace(title, "-");

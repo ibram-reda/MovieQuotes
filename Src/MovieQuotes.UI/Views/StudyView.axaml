@@ -4,30 +4,120 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:MovieQuotes.UI.ViewModels"
              xmlns:vlc="using:LibVLCSharp.Avalonia"
+             xmlns:dialogues="using:MovieQuotes.UI.Views.Dialogues"
              xmlns:controls="using:MovieQuotes.UI.Views.Controls"
              x:DataType="vm:StudyViewModel"
+             Loaded="StudyView_Loaded"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MovieQuotes.UI.Views.StudyView">
-  <Grid RowDefinitions="auto,*,auto" >
+   
+  <Grid RowDefinitions="auto,*,auto" 
+        Focusable="True" >
     <StackPanel Orientation="Horizontal" Spacing="15">
-      <Button Content="sync" Command="{Binding GetPhrasesCommand}" />
-      <ProgressBar Background="Gray"
-                   Foreground="green"
-                   Value="{Binding ReadyPhrase}"
-                   Maximum="{Binding TotalCountOfStudyPhrase}"
-                   Height="20"/>
+     
+      <ComboBox ItemsSource="{Binding Movies}" 
+                Focusable="False"
+                SelectedItem="{Binding SelectedMovie}" 
+                SelectionChanged="ComboBox_SelectionChanged"
+                Width="300" >
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal" >
+              <Image Width="30" Source="{Binding MovieCoverUrl,Converter={StaticResource PathToBitmapConverter}}"/>
+              <TextBlock Text="{Binding MovieName}" 
+                         Width="200"
+                         VerticalAlignment="Center"
+                         TextWrapping="Wrap"/>
+              <TextBlock Text="{Binding StudyCount}"
+                         VerticalAlignment="Center"
+                         Foreground="Yellow"/>
+            </StackPanel>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      
+      <Button Content="sync" 
+              Focusable="False"
+              Command="{Binding GetPhrasesCommand}" />
+      
 
-      <TextBlock Text="{Binding ReadyPhrase}"/>
+      <TextBlock Text="{Binding CurrentPlayingIndex}"/>
       <TextBlock Text="  of  "/>
-      <TextBlock Text="{Binding TotalCountOfStudyPhrase}"/>
+      <TextBlock Text="{Binding Phrases.Count}"/>
 
-      <Button Content="Previous" Command="{Binding PreviousCommand}" />
-      <Button Content="Next" Command="{Binding NextCommand}" />
+      <Button Content="Previous" 
+              HotKey="Left"
+              Focusable="False"
+              Command="{Binding PreviousCommand}" />
+      
+      <Button Content="Replay" 
+              Focusable="False"              
+              HotKey="Space"
+              Command="{Binding ReplayCommand}" />
+      
+      <Button Content="Next" 
+              Focusable="False"              
+              HotKey="Right"
+              Command="{Binding NextCommand}" />
+
+      <Button ToolTip.Tip="Open Containing Folder"
+              Command="{Binding ShowFolderCommand}" >
+        <PathIcon Data="{StaticResource open_containing_folder}" />
+      </Button>
+
+      <Button ToolTip.Tip="Edit Phrase"
+              Command="{Binding EditPhraseCommand}" >
+        <PathIcon Data="{StaticResource  edit_regular}" />
+      </Button>
+      
     </StackPanel>
 
     <Grid Grid.Row="1">
-      
-      <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}"/>
+
+      <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}">
+        <Grid IsVisible="{Binding CurrentPlayingPhrase}" 
+              VerticalAlignment="Stretch"
+              HorizontalAlignment="Stretch"
+              Margin="10">
+          <Grid.Styles>
+            <Style Selector="Control">
+              <Setter Property="Focusable" Value="False"/>
+            </Style>
+          </Grid.Styles>
+          <StackPanel>
+            <StackPanel.Styles>
+              <Style Selector="TextBox">
+                <Setter Property="IsReadOnly" Value="True"/> 
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="FontSize" Value="28"/>
+                <Setter Property="Margin" Value="0 10 0 0"/>
+                <Setter Property="TextWrapping" Value="Wrap"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+              </Style>
+            </StackPanel.Styles>
+
+            <TextBox Text="{Binding CurrentPlayingPhrase.Content}"
+                     Foreground="Orange"/>
+
+            <TextBox Text="{Binding CurrentPlayingPhrase.StudyType}"
+                     Margin="0"/>
+
+            <TextBox Text="{Binding CurrentPlayingPhrase.Translation}"/>
+            
+            <TextBox Text="{Binding CurrentPlayingPhrase.PhraseText}"/>
+          </StackPanel>
+
+          <Panel IsVisible="{Binding ShowEditDialog}" 
+                 Background="#333" 
+                 Width="600"
+                 VerticalAlignment="Center">
+            <ContentPresenter Content="{Binding Dialogue}"/>
+          </Panel>
+        </Grid>
+      </vlc:VideoView>
     </Grid>
     
     

@@ -1,7 +1,7 @@
 ﻿namespace MovieQuotes.Application.Features.MoviePhrases.Commands;
 
 using MediatR;
-using MovieQuotes.Application.Models;
+using MovieQuotes.Application.Common.Models;
 
 public class InsertPhrasesForMovieCommand : IRequest<OperationResult<bool>>
 {

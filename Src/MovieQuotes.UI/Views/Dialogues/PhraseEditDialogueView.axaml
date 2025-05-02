@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="400" 
+             d:DesignHeight="250"
+             x:Class="MovieQuotes.UI.Views.Dialogues.PhraseEditDialogueView">
+
+  <StackPanel  Spacing="5"
+        Margin="10">
+    <TextBlock Text="Edit Phrase" 
+               Classes="title" />
+    <Grid RowDefinitions="auto,auto,auto,auto"
+        ColumnDefinitions="auto,*,auto">
+
+    <TextBlock Grid.Row="0"
+               Grid.Column="0"
+               Text="Text" />
+    <TextBox Grid.Row="0"
+             Grid.Column="1"
+             Grid.ColumnSpan="2" />
+    
+    <TextBlock Grid.Row="1"
+               Grid.Column="0"
+               Text="Start Time" />
+    <TextBox Grid.Row="1"
+             Grid.Column="1" 
+             HorizontalAlignment="Stretch"/>
+    <StackPanel Orientation="Horizontal"
+                Grid.Row="1"
+                Grid.Column="2">
+      <Button >
+        <PathIcon Data="{StaticResource caret_up_regular}"/>
+      </Button>
+      <Button >
+        <PathIcon Data="{StaticResource caret_down_regular}"/>
+      </Button>
+    </StackPanel>
+    
+    <TextBlock Grid.Row="2"
+               Grid.Column="0"
+               Text="End Time" />
+
+    <TextBox Grid.Row="2"
+             Grid.Column="1"
+             HorizontalAlignment="Stretch"/>
+    
+    <StackPanel Orientation="Horizontal"
+                Grid.Row="2"
+                Grid.Column="2">
+      <Button >
+        <PathIcon Data="{StaticResource caret_up_regular}"/>
+      </Button>
+      <Button >
+        <PathIcon Data="{StaticResource caret_down_regular}"/>
+      </Button>
+    </StackPanel>
+    
+    
+    
+  </Grid>
+
+    <StackPanel Orientation="Horizontal"
+                Spacing="10">
+      <Button Content="Save changes"/>
+      <Button Content="Cancel"/>
+    </StackPanel>
+  </StackPanel>
+</UserControl>

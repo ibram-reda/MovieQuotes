@@ -3,7 +3,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MovieQuotes.UI.Services;
-
+using System;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
@@ -29,37 +29,36 @@ public partial class MainWindowViewModel : ViewModelBase
         };
 
         this.RenderNavigationBar = true;
-    }
+    } 
 
     [RelayCommand]
-    private void InsertNewMovie()
+    private void Navigate( string PageName)
     {
-        this.NavigationService.NavigateTo<NewMovieViewModel>();
-    }
+        switch (PageName)
+        {
+            case "InsertNewMovie":
+                this.NavigationService.NavigateTo<NewMovieViewModel>();
+                break;
+            case "PlayBack":
+                this.NavigationService.NavigateTo<PlaybackViewModel>();
+                break;
+            case "Study":
+                this.NavigationService.NavigateTo<StudyViewModel>();
+                break;
+            case "Subtitle":
+                this.NavigationService.NavigateTo<SubtitleAddingViewModel>();
+                break;
+            case "GetMovies":
+                this.NavigationService.NavigateTo<MoviesListViewModel>();
+                break;
+            case "ResyncSubtitle":
+                this.NavigationService.NavigateTo<ResyncSubtitleViewModel>();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    } 
 
-    [RelayCommand]
-    private void PlayBack()
-    {
-        this.NavigationService.NavigateTo<PlaybackViewModel>();
-    }
-
-    [RelayCommand]
-    private void Study()
-    {
-        this.NavigationService.NavigateTo<StudyViewModel>();
-    }
-
-    [RelayCommand]
-    private void Subtitle()
-    {
-        this.NavigationService.NavigateTo<SubtitleAddingViewModel>();
-    }
-
-    [RelayCommand]
-    private void GetMovies()
-    {
-        this.NavigationService.NavigateTo<MoviesListViewModel>();
-    }
     public ViewModelBase CurrentViewModel => NavigationService.CurrentViewModel;
 
 

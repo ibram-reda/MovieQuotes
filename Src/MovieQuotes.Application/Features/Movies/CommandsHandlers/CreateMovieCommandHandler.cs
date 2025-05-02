@@ -3,9 +3,9 @@
 using MediatR;
 using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
-using MovieQuotes.Application.Enums;
+using MovieQuotes.Application.Common.Enums;
+using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Commands;
-using MovieQuotes.Application.Models;
 using MovieQuotes.Domain.Exception;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Infrastructure;

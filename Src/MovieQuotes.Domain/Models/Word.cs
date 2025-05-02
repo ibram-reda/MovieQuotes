@@ -17,4 +17,7 @@ public class Word
             throw new ArgumentException("Word can not contains Spaces!");
         return new Word(text);
     }
+
+    public override string ToString() => Text;
+    
 }

@@ -28,6 +28,7 @@ public class NavigationService
     {
         _OldViewModel = CurrentViewModel;
         CurrentViewModel = App.Current?.Services?.GetRequiredService<T>()!;
+        if (_OldViewModel is IDisposable vm) vm.Dispose();
         if (initValue is not null) 
             CurrentViewModel.Init(initValue);
 
@@ -37,6 +38,7 @@ public class NavigationService
     {
         _OldViewModel = CurrentViewModel;
         CurrentViewModel = App.Current?.Services?.GetRequiredService<T>()!;
+        if (_OldViewModel is IDisposable vm) vm.Dispose();
         if (initValue is not null)
             await CurrentViewModel.InitAsync(initValue);
 
@@ -47,7 +49,7 @@ public class NavigationService
         if(CurrentViewModel == viewModel) return;
         _OldViewModel = CurrentViewModel;
         CurrentViewModel = viewModel;
-
+        if (_OldViewModel is IDisposable vm) vm.Dispose();
     }
 
     public void GoBack(object? message = null)

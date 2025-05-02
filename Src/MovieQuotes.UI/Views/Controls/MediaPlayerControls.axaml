@@ -10,6 +10,7 @@
     <Style Selector="Button.player_control">
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="Foreground" Value="White"/>
+      <Setter Property="Focusable" Value="False"/>
       <Setter Property="HorizontalContentAlignment" Value="Center"/>
       <Style Selector="^:pointerover /template/ ContentPresenter"> 
         <Setter Property="InputElement.Cursor" Value="Hand"/>
@@ -17,7 +18,7 @@
       </Style>
 
       <Style Selector="^:focus /template/ ContentPresenter">
-        <Setter Property="Background" Value="Blue" />
+        <Setter Property="Background" Value="Blue" /> 
         <Setter Property="InputElement.Cursor" Value="Hand"/>
         <Setter Property="TextBlock.Foreground" Value="Yellow"/>
       </Style>
@@ -33,7 +34,7 @@
             Click="Play"/>
     
     <Button Content="❚❚"
-            Classes="player_control"
+            Classes="player_control" 
             HotKey="Space"
             Click="Pause"/>
 
@@ -63,6 +64,7 @@
             Minimum="0"
             Value="50"
             Width="100"
+            Classes="player_control" 
             ValueChanged="Volume_ValueChanged"
             VerticalAlignment="Center"
             

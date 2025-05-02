@@ -3,9 +3,9 @@
 using MediatR;
 using MediatR.Pipeline;
 using Microsoft.EntityFrameworkCore;
+using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.Application.Models;
 using MovieQuotes.Infrastructure;
 using System;
 using System.Collections.Generic;

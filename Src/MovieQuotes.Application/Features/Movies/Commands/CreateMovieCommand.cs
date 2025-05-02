@@ -1,7 +1,7 @@
 ﻿namespace MovieQuotes.Application.Features.Movies.Commands;
 
 using MediatR;
-using MovieQuotes.Application.Models;
+using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Models;
 
 public class CreateMovieCommand : IRequest<OperationResult<Movie>>

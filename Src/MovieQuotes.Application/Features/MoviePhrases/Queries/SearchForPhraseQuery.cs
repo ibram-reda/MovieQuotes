@@ -1,8 +1,8 @@
 ﻿namespace MovieQuotes.Application.Features.MoviePhrases.Queries;
 
 using MediatR;
+using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
-using MovieQuotes.Application.Models;
 
 public class SearchForPhraseQuery : IRequest<OperationPageResult<Phrase>>
 {

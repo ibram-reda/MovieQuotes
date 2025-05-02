@@ -6,25 +6,34 @@
              x:DataType="vm:SubtitleAddingViewModel"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MovieQuotes.UI.Views.SubtitleAddingView">
-  <StackPanel>
-    <TextBlock Text="Wating" Classes="title" />
-    <ItemsControl ItemsSource="{Binding MovieList}">
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding Title}"/>
-            <ProgressBar Value="50" />
-            <Button Content="load" 
-                    Command="{Binding $parent[ItemsControl].((vm:SubtitleAddingViewModel)DataContext).AddSubtitleCommand}"
-                    CommandParameter="{Binding .}"/>
-          </StackPanel>
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+  <Grid ColumnDefinitions="*,5,*,5,*">
+    
+    <Grid RowDefinitions="auto,*" Margin="5 0">
+      <TextBlock Text="Wating" Classes="title" />
+      <ScrollViewer Grid.Row="1">        
+        <ItemsControl ItemsSource="{Binding MovieList}">         
+         <ItemsControl.ItemTemplate>
+           <DataTemplate>
+            <Grid ColumnDefinitions="auto,*,auto">
+              <TextBlock Width="250"  Text="{Binding Title}" TextWrapping="Wrap" MaxWidth="350"/>
+              <ProgressBar Grid.Column="1" Value="100"  />
+              <Button Grid.Column="2"
+                      Content="load"
+                      Command="{Binding $parent[ItemsControl].((vm:SubtitleAddingViewModel)DataContext).AddSubtitleCommand}"
+                      CommandParameter="{Binding .}"/>
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      </ScrollViewer>
+    </Grid>
 
-    <Separator />
-    <TextBlock Text="Running" Classes="title" />
-    <ItemsControl ItemsSource="{Binding Running}">
+    <GridSplitter Background="gray" 
+                  Opacity="0.5"  
+                  Grid.Column="1" />
+    <StackPanel Grid.Column="2">
+      <TextBlock Text="Running" Classes="title" />
+      <ItemsControl ItemsSource="{Binding Running}">
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal">
@@ -33,11 +42,13 @@
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
+    </StackPanel>
 
 
-    <Separator />
-    <TextBlock Text="Done" Classes="title" />
-    <ItemsControl ItemsSource="{Binding Done}">
+    <GridSplitter Grid.Column="3" />
+    <StackPanel Grid.Column="4" > 
+      <TextBlock Text="Done" Classes="title" />
+      <ItemsControl ItemsSource="{Binding Done}">
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal">
@@ -46,5 +57,6 @@
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
-  </StackPanel>
+    </StackPanel>
+  </Grid>
 </UserControl>

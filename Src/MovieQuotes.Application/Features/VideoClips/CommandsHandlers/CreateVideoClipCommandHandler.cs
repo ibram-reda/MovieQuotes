@@ -2,16 +2,17 @@
 
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MovieQuotes.Application.Common.Enums;
+using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.VideoClips.Commands;
-using MovieQuotes.Application.Models;
 using MovieQuotes.Infrastructure;
 using System.Diagnostics;
+using static Constants;
 
 internal class CreateVideoClipCommandHandler : IRequestHandler<CreateVideoClipCommand, OperationResult<string>>
 {
     private readonly MovieQuotesDbContext dbContext;
-    private const string CashPath = @"D:\Cash";
-    private const string CashTemplate = "@Cash";
+    
 
     public CreateVideoClipCommandHandler(MovieQuotesDbContext dbContext)
     {
@@ -52,9 +53,9 @@ internal class CreateVideoClipCommandHandler : IRequestHandler<CreateVideoClipCo
     private async Task<OperationResult<Unit>> GenerateVideoAsync(string moviePath, TimeSpan startTime, TimeSpan duration, string outputLocation, CancellationToken token = default)
     {
         var result = new OperationResult<Unit>();
-        // add 500ms small time tolerance to the phrase
-        var sTime = startTime.Subtract(TimeSpan.FromMilliseconds(250));
-        var dTime = duration.Add(TimeSpan.FromMilliseconds(500)); ;
+        // add 200ms small time tolerance to the phrase
+        var sTime = startTime.Subtract(TimeSpan.FromMilliseconds(100));
+        var dTime = duration.Add(TimeSpan.FromMilliseconds(200)); ;
 
         EnsureDirectoryExist(outputLocation);
         var startInfo = new ProcessStartInfo
@@ -75,10 +76,10 @@ internal class CreateVideoClipCommandHandler : IRequestHandler<CreateVideoClipCo
         if (!process.WaitForExit(60000)) // 1 min timeout
         {
             process.Kill();
-            result.AddError(Enums.ErrorCode.TimeOutError, VideoClipsMessages.GenerateVideoTimeOut);
+            result.AddError(ErrorCode.TimeOutError, VideoClipsMessages.GenerateVideoTimeOut);
         }
         if (error.Contains("Error"))
-            result.AddError(Enums.ErrorCode.FFMPEGError, error);
+            result.AddError(ErrorCode.FFMPEGError, error);
 
         return result;
     }

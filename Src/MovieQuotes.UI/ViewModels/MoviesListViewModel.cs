@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.Application.Operations.Commands;
+using MovieQuotes.Application.Features.SubtitleFiles.Commands;
 using MovieQuotes.UI.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -131,15 +131,7 @@ public partial class MoviesListViewModel : ViewModelBase
     [RelayCommand]
     public async Task Sync()
     {
-        var cleanDb = new CleanDatabaseCommand();
-        IsBusy = true;
-        var result = await this.mediator.Send(cleanDb);
-        IsBusy = false;
-
-        if (!result.IsError)
-        {
-            Console.WriteLine(result.Payload);
-        }
+        
     }
     public override void ConsumeMessage(object? message)
     {
@@ -160,6 +152,9 @@ public partial class MoviesListViewModel : ViewModelBase
     {
         Regex regex = new Regex(@"\(([0-9]{4})\)$");
         var x = regex.Match(title).Groups[1].Value;
-        return int.Parse(x ?? "0");
+        if (int.TryParse(x, out var res))
+            return res;
+
+        throw new ArgumentException($"can not get year form '{title}'", nameof(title));
     }
 }

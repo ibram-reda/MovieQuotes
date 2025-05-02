@@ -1,6 +1,6 @@
-﻿namespace MovieQuotes.Application.Models;
+﻿namespace MovieQuotes.Application.Common.Models;
 
-using MovieQuotes.Application.Enums;
+using MovieQuotes.Application.Common.Enums;
 
 public class OperationResult<T>
 {
@@ -21,7 +21,7 @@ public class OperationResult<T>
     public void AddError(ErrorCode code, string message)
     {
         IsError = true;
-        this.errors.Add(new(code, message));
+        errors.Add(new(code, message));
     }
 
     public void AddError(ErrorCode code, string message, params object[] args)
@@ -32,6 +32,6 @@ public class OperationResult<T>
 
     public void AddUnknownError(string message)
     {
-        this.AddError(ErrorCode.UnKnownError, message);
+        AddError(ErrorCode.UnKnownError, message);
     }
 }

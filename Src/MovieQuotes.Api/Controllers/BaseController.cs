@@ -4,7 +4,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MovieQuotes.Api.Contracts;
-using MovieQuotes.Application.Models;
+using MovieQuotes.Application.Common.Models;
 
 [ApiController]
 [Route("[controller]")]

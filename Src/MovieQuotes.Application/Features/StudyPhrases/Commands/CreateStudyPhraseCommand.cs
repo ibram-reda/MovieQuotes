@@ -1,8 +1,8 @@
 ﻿namespace MovieQuotes.Application.Features.StudyPhrases.Commands;
 
 using MediatR;
+using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
-using MovieQuotes.Application.Models;
 
 public class CreateStudyPhraseCommand : IRequest<OperationResult<StudyPhrase>>
 {

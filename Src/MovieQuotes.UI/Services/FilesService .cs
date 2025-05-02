@@ -3,6 +3,7 @@
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 public class FilesService : IFilesService
@@ -24,12 +25,12 @@ public class FilesService : IFilesService
         return result.Count >= 1 ? result[0] : null;
     }
 
-    public async Task<IStorageFile?> OpenFileAsync(string title = "select file",IReadOnlyList<FilePickerFileType>? type = null)
+    public async Task<IStorageFile?> OpenFileAsync(string title = "select file", IReadOnlyList<FilePickerFileType>? type = null)
     {
         var files = await _target.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
         {
             Title = title,
-            AllowMultiple = false, 
+            AllowMultiple = false,
             FileTypeFilter = type,
         });
 
@@ -43,4 +44,18 @@ public class FilesService : IFilesService
             Title = "Save Text File"
         });
     }
+
+    public bool ExploreFile(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            return false;
+        }
+        //Clean up file path so it can be navigated OK
+        filePath = Path.GetFullPath(filePath);
+        System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", filePath));
+        return true;
+    }
+
+
 }

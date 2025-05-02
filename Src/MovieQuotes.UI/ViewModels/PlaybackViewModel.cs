@@ -2,17 +2,35 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using LibVLCSharp.Shared;
+using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
+using MovieQuotes.Application.Features.VideoClips.Queries;
+using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 
 public partial class PlaybackViewModel : ViewModelBase
 {
+    private LibVLC MainLibVLC { get; }
+    public MediaPlayer MainMediaPlayer { get; }
+    public PlaybackViewModel()
+    {
+        MainLibVLC = new();
+        MainMediaPlayer = new(MainLibVLC)
+        {
+            EnableHardwareDecoding = true,
+        };
+    }
     [ObservableProperty] private string searchText = "";
     [ObservableProperty] private int searchCount = 0;
-    public ObservableCollection<string> Phrases { get; } = new();
+    public ObservableCollection<Phrase> Phrases { get; } = new();
+    public ObservableCollection<Phrase> ReadyToPlay { get; } = new();
+    [ObservableProperty] Phrase? currentPlayingPhrase = null;
+    [ObservableProperty] int currentPlayingIndex = 0;
 
     public override string Title => "Search for phrase";
 
@@ -20,6 +38,9 @@ public partial class PlaybackViewModel : ViewModelBase
     private async Task search(CancellationToken token = default)
     {
         Phrases.Clear();
+        ReadyToPlay.Clear();
+        CurrentPlayingIndex = 0;
+        CurrentPlayingPhrase = null;
         var query = new SearchForPhraseQuery(SearchText)
         {
             ResultPerPage = 1000,
@@ -31,8 +52,58 @@ public partial class PlaybackViewModel : ViewModelBase
         SearchCount = result.Count;
         foreach (var phrase in result?.Payload ?? [])
         {
-            Phrases.Add($"[{phrase.MovieName}] " + phrase!.Text);
+            Phrases.Add(phrase);
+        }
+        
+        foreach (var phrase in result.Payload ?? [])
+        {
+            if (token.IsCancellationRequested) 
+                break; 
+            var vc = new VideoClipQuery(phrase.Id);
+            var r = await this.mediator.Send(vc);
+            if (r.IsSuccess)
+            {
+                phrase.VideoLocation = r.Payload ?? "";
+                Phrases.Remove(phrase);
+                ReadyToPlay.Add(phrase);
+            }
+
         }
     }
 
+    bool HasNext => this.CurrentPlayingIndex+1 <= this.ReadyToPlay.Count;
+    bool HasPrevious => this.CurrentPlayingIndex > 0;
+
+    [RelayCommand]
+    void Previous()
+    {
+        if (HasPrevious)
+        {
+            var phrase = this.ReadyToPlay[--CurrentPlayingIndex];
+            PlayPhrase(phrase);
+        }
+    }
+
+    void PlayPhrase(Phrase phrase)
+    {
+        this.CurrentPlayingPhrase = phrase;
+        var uri = new Uri(phrase.VideoLocation);
+        Media media = new Media(this.MainLibVLC, uri);
+        MainMediaPlayer.Media?.Dispose();
+        var r = MainMediaPlayer.Play(media);
+
+        this.OnPropertyChanged(nameof(HasNext));
+        this.OnPropertyChanged(nameof(HasPrevious));
+    }
+
+    [RelayCommand]
+    void Next()
+    {
+        if (HasNext)
+        {
+            var phrase = ReadyToPlay[CurrentPlayingIndex++];
+            PlayPhrase(phrase);
+        }
+
+    }
 }

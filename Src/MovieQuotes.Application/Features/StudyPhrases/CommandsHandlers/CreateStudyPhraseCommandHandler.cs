@@ -1,9 +1,9 @@
 ﻿namespace MovieQuotes.Application.Features.StudyPhrases.CommandsHandlers;
 
 using MediatR;
+using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Commands;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
-using MovieQuotes.Application.Models;
 using MovieQuotes.Infrastructure;
 using System;
 using System.Threading;

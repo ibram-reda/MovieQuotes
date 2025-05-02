@@ -1,4 +1,4 @@
-﻿namespace MovieQuotes.Application.Enums;
+﻿namespace MovieQuotes.Application.Common.Enums;
 
 
 public enum ErrorCode
@@ -12,7 +12,7 @@ public enum ErrorCode
 
     // Application Errors 3000- 3099
     TimeOutError = 3001,
-    GenerateVideoClipError= 3003,
+    GenerateVideoClipError = 3003,
     FFMPEGError = 3007,
 
     // Other Error more than 4000

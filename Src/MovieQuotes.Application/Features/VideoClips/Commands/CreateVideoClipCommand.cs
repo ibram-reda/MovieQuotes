@@ -1,7 +1,7 @@
 ﻿namespace MovieQuotes.Application.Features.VideoClips.Commands;
 
 using MediatR;
-using MovieQuotes.Application.Models;
+using MovieQuotes.Application.Common.Models;
 
 
 internal class CreateVideoClipCommand : IRequest<OperationResult<string>>

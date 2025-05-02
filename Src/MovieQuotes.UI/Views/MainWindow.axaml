@@ -13,34 +13,45 @@
         Title="{Binding WindowTitle}">
    
   
-  <Grid RowDefinitions="auto,*">
+  <Grid RowDefinitions="auto,*,auto">
 
     <StackPanel Classes="navigation" 
                 IsVisible="{Binding RenderNavigationBar}">
       <Button Classes="link"
-                Command="{Binding InsertNewMovieCommand}">
+                Command="{Binding NavigateCommand}"
+                CommandParameter="InsertNewMovie">
         01. Insert New Moview
       </Button>
       <Button Classes="link"
-              Command="{Binding GetMoviesCommand}">
+              Command="{Binding NavigateCommand}"
+              CommandParameter="GetMovies">
         02. Brows avalible movies
       </Button>
 
-      <Button Classes="link"
-              Command="{Binding PlayBackCommand}">
+      <Button Classes="link" 
+              Command="{Binding NavigateCommand}"
+              CommandParameter="PlayBack">
         03. Playback Phrase
       </Button>
 
-      <Button Classes="link"
-              Command="{Binding StudyCommand}">
+      <Button Classes="link" 
+              Command="{Binding NavigateCommand}"
+              CommandParameter="Study">
         04. Study
       </Button>
 
-      <Button Classes="link"
-              Command="{Binding SubtitleCommand}">
+      <Button Classes="link" 
+              Command="{Binding NavigateCommand}"
+              CommandParameter="Subtitle">
         05. Subtitle
       </Button>
-      
+
+      <Button Classes="link"
+              Command="{Binding NavigateCommand}"
+              CommandParameter="ResyncSubtitle">
+        06. Resync Subtitle
+      </Button>
+
     </StackPanel>
 
     <!--Content-->
@@ -61,5 +72,10 @@
       </Grid>
       
     </Border>
+ 
+    <!--Error Messages-->
+    <ItemsControl Grid.Row="2"
+                  ItemsSource="{Binding CurrentViewModel.ErrorMessages}"
+                  Foreground="Red"/>
   </Grid>
 </Window>

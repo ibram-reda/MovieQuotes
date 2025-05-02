@@ -2,12 +2,13 @@
 
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Queries;
-using MovieQuotes.Application.Models;
 using MovieQuotes.Infrastructure;
 using System.Threading;
 using System.Threading.Tasks;
+using static Constants;
 
 internal class GetAllStudyPhrasesQueryHandler : IRequestHandler<GetAllStudyPhrasesQuery, OperationPageResult<StudyPhrase>>
 {
@@ -22,12 +23,16 @@ internal class GetAllStudyPhrasesQueryHandler : IRequestHandler<GetAllStudyPhras
     {
         var result = new OperationPageResult<StudyPhrase>();
 
-        var qry = this.dbContext.StudyPhrases
-            .Select(a => new StudyPhrase
+        var basequry = this.dbContext.StudyPhrases.AsQueryable();
+
+        if (request.MovieId > 0)
+            basequry = basequry.Where(a => a.Phrase.MovieId == request.MovieId);
+
+        var qry =   basequry.Select(a => new StudyPhrase
             {
                 PhraseId = a.PhraseId,
                 PhraseText = a.Phrase!.Text,
-                VideoLocation = a.Phrase.VideoClipPath!,
+                VideoLocation = a.Phrase.VideoClipPath!.Replace(CashTemplate,CashPath),
                 Content = a.Content,
                 Translation = a.Translation,
                 StudyType = a.StudyType

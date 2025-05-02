@@ -2,8 +2,10 @@
 
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MovieQuotes.Application.Common.Enums;
+using MovieQuotes.Application.Common.Models;
+using MovieQuotes.Application.Common.Services;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
-using MovieQuotes.Application.Models;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Infrastructure;
 using System.Text.RegularExpressions;
@@ -25,18 +27,26 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
 
         #region valdition
         if (request.MovieId <= 0)
-            result.AddError(Enums.ErrorCode.ValidationError, MoviePhrasesMessages.RequiredMovieId);
+            result.AddError(ErrorCode.ValidationError, MoviePhrasesMessages.RequiredMovieId);
         if (!File.Exists(request.SubtitleLocation))
-            result.AddError(Enums.ErrorCode.ValidationError, MoviePhrasesMessages.RequiredValidSubtitleLocation);
+            result.AddError(ErrorCode.ValidationError, MoviePhrasesMessages.RequiredValidSubtitleLocation);
         #endregion
 
         var movie = await this.dbContext.Movies.Include(a=>a.Subtitles).FirstOrDefaultAsync(a => a.Id == request.MovieId);
         if (movie is null)
         {
-            result.AddError(Enums.ErrorCode.NotFound, MoviePhrasesMessages.MovieNotFound, request.MovieId);
+            result.AddError(ErrorCode.NotFound, MoviePhrasesMessages.MovieNotFound, request.MovieId);
             return result;
         }
-        await movie.AddSubtitleFromFileAsync(request.SubtitleLocation);
+        var loadingResult = await SubtitleManager.LoadAsync(request.SubtitleLocation);
+        if (loadingResult.IsError)
+            result.AddErrorRange(loadingResult.Errors);
+
+        loadingResult.Payload?.RemoveMarkupAndDuplicateSpaces();
+        
+        movie.AddSubtitlesFromList(loadingResult.Payload!.ToList());
+
+        if (result.IsError) return result;
 
         await this.dbContext.SaveChangesAsync();
 
@@ -50,10 +60,12 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
         foreach (var phrase in phrases)
         {
             if (phrase.PhraseWords.Any()) continue;
-            var words = phrase.Text.Split(' ');
+            var words = phrase.Text.Split(' ','\n',',','!','.');
             int i = 0;
             foreach (var word in words)
             {
+                if (string.IsNullOrWhiteSpace(word))
+                    continue;
                 var normalizedWord = Normalize(word);
                 var w = await dbContext.Word.FirstOrDefaultAsync(a => a.Text == normalizedWord);
                 if (w is null)

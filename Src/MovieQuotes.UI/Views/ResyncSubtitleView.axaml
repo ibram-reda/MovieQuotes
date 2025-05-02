@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm ="using:MovieQuotes.UI.ViewModels"
+             x:DataType="vm:ResyncSubtitleViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MovieQuotes.UI.Views.ResyncSubtitleView">
+  <Grid RowDefinitions="auto,auto,auto,auto"
+        ColumnDefinitions="auto,*,auto">
+    
+    <Label Content="Path"/>
+    <TextBox Grid.Row="0" Grid.Column="1"
+             Padding="5"
+             Text="{Binding Path}"/>
+    <Button Grid.Row="0" Grid.Column="2" 
+            Content="chose file"/>
+    
+    
+    <Label Grid.Row="1" Grid.Column="0" 
+           Content="output File Name"/>
+    <TextBox Grid.Row="1" Grid.Column="1"
+             Padding="5"
+             Text="{Binding OutFileName}"/>
+    
+    <Label Grid.Row="2" Grid.Column="0" 
+           Content="Time Shift"/>
+    <TextBox Grid.Row="2" Grid.Column="1"
+             Text="{Binding TimeShiftInMS}"/>
+    
+    <Button Grid.Row="3" Grid.Column="2"
+            Content="Resync"
+            Command="{Binding ResyncCommand}"/>
+    
+  </Grid>
+</UserControl>

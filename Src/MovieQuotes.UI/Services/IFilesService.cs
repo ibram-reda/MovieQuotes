@@ -9,4 +9,7 @@ public interface IFilesService
     public Task<IStorageFolder?> OpenFolderAsync(string title = "select folder");
     public Task<IStorageFile?> OpenFileAsync(string title="select file", IReadOnlyList<FilePickerFileType>? type = null);
     public Task<IStorageFile?> SaveFileAsync();
+
+    public bool ExploreFile(string filePath);
+
 }

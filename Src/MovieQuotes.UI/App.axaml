@@ -12,7 +12,8 @@
   
     <Application.Styles>
         <FluentTheme />
-        <StyleInclude  Source="/Assets/MainStyle.axaml" />
+        <StyleInclude Source="/Assets/MainStyle.axaml" />
+        <StyleInclude Source="avares://MovieQuotes.UI/Styles/Icons.axaml"/>
     </Application.Styles>
 
   <Application.Resources>

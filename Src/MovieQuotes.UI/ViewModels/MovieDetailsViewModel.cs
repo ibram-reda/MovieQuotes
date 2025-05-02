@@ -22,7 +22,7 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     {
         MainLibVLC = new();
         MainMediaPlayer = new(MainLibVLC)
-        { 
+        {
             EnableHardwareDecoding = true,
         };
         MainMediaPlayer.Opening += MainMediaPlayer_Opening;
@@ -41,6 +41,7 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     {
         var value = (long)(e.Position * MovieLength);
         this.SetProperty(ref this.currentTime, value, nameof(CurrentTime));
+        this.ResyncCurrentPhrase();
     }
 
     private void MainMediaPlayer_LengthChanged(object? sender, MediaPlayerLengthChangedEventArgs e)
@@ -62,12 +63,15 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     [ObservableProperty] string videoLocation = "";
     [ObservableProperty] long movieLength = 0;
     [ObservableProperty] private bool viewContent;
-    [ObservableProperty] List<Phrase> phrases = [];
+    List<Phrase> enPhrases = [];
+    List<Phrase> arPhrases = [];
+    [ObservableProperty] bool showArabicSubs = true;
     [ObservableProperty] Phrase? currentPhrase;
+    [ObservableProperty] Phrase? currentArPhrase;
     [ObservableProperty] string learningContent = "";
     [ObservableProperty] string translateContent = "";
     [ObservableProperty] string contentType = "";
-    public string[] AllowedType { get; } = ["noun", "adjective", "verb", "idiom", "phrasal verb", "phrase"];
+    public string[] AllowedType { get; } = ["noun", "adjective", "verb", "idiom", "phrasal verb", "phrase", "exclamation", "conjunction", "adverb"];
 
     private long currentTime = 0;
 
@@ -97,7 +101,7 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
 
         this.Id = reuslt.Payload!.Id;
         this.MovieName = reuslt.Payload.Title;
-        this.VideoLocation = reuslt.Payload.LocalPath; 
+        this.VideoLocation = reuslt.Payload.LocalPath;
 
         var uri = new Uri(VideoLocation);
         Media media = new Media(this.MainLibVLC, uri);
@@ -110,25 +114,93 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
         var result = await this.mediator.Send(cmd);
         if (result.IsSuccess)
         {
-            this.Phrases = result.Payload??[];
+            this.enPhrases = result.Payload ?? [];
+        }
+        cmd.Language = Language.ar;
+        result = await this.mediator.Send(cmd);
+        if (result.IsSuccess)
+        {
+            this.arPhrases = result.Payload ?? [];
         }
     }
 
     public void Dispose()
     {
         this.MainMediaPlayer.Stop();
-        this.MainMediaPlayer.Dispose();
-        this.MainLibVLC.Dispose();
+        // this.MainMediaPlayer.Dispose();
     }
+
+    int enIndex = -1;
+    int arIndex = -1;
 
     void UpdateCurrentPhrase()
     {
         var ctime = TimeSpan.FromMilliseconds(CurrentTime);
-        this.CurrentPhrase =
-            this.phrases?.FirstOrDefault(a => a.StartTime <= ctime && ctime <= a.EndTime);
+        if (enIndex + 1 < this.enPhrases.Count)
+        {
+            if (this.CurrentPhrase?.EndTime < ctime)
+                CurrentPhrase = null;
+            var a = this.enPhrases[enIndex + 1];
+            if (a.StartTime <= ctime && ctime <= a.EndTime)
+            {
+                this.CurrentPhrase = a;
+                enIndex++;
+            }
+        }
 
+        if (ShowArabicSubs && arIndex + 1 < this.arPhrases.Count)
+        {
+            if (this.CurrentArPhrase?.EndTime < ctime)
+                CurrentArPhrase = null;
+            var a = this.arPhrases[arIndex + 1];
+            if (a.StartTime <= ctime && ctime <= a.EndTime)
+            {
+                this.CurrentArPhrase = a;
+                arIndex++;
+            }
+        }
     }
 
+    private void ResyncCurrentPhrase()
+    {
+        var ctime = TimeSpan.FromMilliseconds(CurrentTime);
+        var en = GetPhrase(this.enPhrases, ctime);
+        if (en is not null)
+        {
+            this.CurrentPhrase = en.Value.value;
+            this.enIndex = en.Value.index;
+        }
+
+        // early return if Arabic did not need to update.
+        if (!ShowArabicSubs)
+            return;
+
+        var ar = GetPhrase(this.arPhrases, ctime);
+        if (ar is not null)
+        {
+            this.CurrentArPhrase = ar.Value.value;
+            this.arIndex = ar.Value.index;
+        }
+    }
+
+    private static (Phrase value, int index)? GetPhrase(IEnumerable<Phrase> phraseList, TimeSpan currentTime)
+    {
+        var current = phraseList.Select((v, i) => new { v, i })
+            .FirstOrDefault(a => a.v.StartTime <= currentTime && currentTime <= a.v.EndTime);
+
+        if (current is not null)
+        {
+            return (current.v, current.i);
+        }
+
+        current = phraseList.Select((v, i) => new { v, i })
+            .LastOrDefault(a => a.v.StartTime <= currentTime);
+        if (current is null)
+            return null;
+
+        return (null!, current.i);
+    }
+    
     [RelayCommand]
     async Task OpenPopUp()
     {

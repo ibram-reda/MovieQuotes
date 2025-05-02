@@ -2,9 +2,9 @@
 
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.Application.Models;
 using MovieQuotes.Infrastructure;
 
 internal class GetAllMoviesWithoutSubtitlesQueryHandler : IRequestHandler<GetAllMoviesWithoutSubtitlesQuery, OperationPageResult<MovieInfo>>

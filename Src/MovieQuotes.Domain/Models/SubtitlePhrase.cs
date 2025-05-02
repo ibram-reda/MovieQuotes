@@ -19,7 +19,7 @@ public class SubtitlePhrase
     public TimeSpan StartTime { get; private set; }
     public TimeSpan EndTime { get; private set; }
     public string Text { get; private set; } = string.Empty;
-    public string? VideoClipPath { get; private set; }  
+    public string? VideoClipPath { get; private set; }
     public TimeSpan Duration => EndTime - StartTime;
 
     public virtual Movie? Movie { get; private set; }
@@ -33,10 +33,56 @@ public class SubtitlePhrase
     {
         return $"""
             {Sequence}
-            {StartTime} --> {EndTime}
+            {StartTime.ToString(@"hh\:mm\:ss\,fff")} --> {EndTime.ToString(@"hh\:mm\:ss\,fff")}
             {Text}
+
             """;
     }
+    /// <summary>
+    /// Shift time with the same duration.
+    /// </summary>
+    /// <param name="time">shift time.</param>
+    public void AddTimeShift(TimeSpan time)
+    {
+        this.StartTime += time;
+        this.EndTime += time;
+    }
+
+    /// <summary>
+    /// Edit the Text of the phrase.
+    /// </summary>
+    /// <param name="text">the new text.</param>
+    /// <returns>true if text changed and false otherwise.</returns>
+    public bool EditText(string text)
+    {
+        if (this.Text == text) return false;
+        this.Text = text;
+        return true;
+    }
+
+    /// <summary>
+    /// Edit the start and end time of phrase.
+    /// </summary>
+    /// <param name="start">the new start time.</param>
+    /// <param name="end">the new End time.</param>
+    /// <returns>true if time changed or false otherwise.</returns>
+    public bool EditDuration(TimeSpan start, TimeSpan end)
+    {
+        var Edited = false;
+        if (this.StartTime != start)
+        {
+            this.StartTime = start;
+            Edited = true;
+        }
+
+        if (this.EndTime != end)
+        {
+            this.EndTime = end;
+            Edited = true;
+        }
+        return Edited;
+    }
+
 
     /// <summary>
     /// Extract Phrases from streamReader contains "srt" formatted content.
@@ -56,12 +102,12 @@ public class SubtitlePhrase
     /// <param name="content">subtitle.</param>
     /// <returns>list of <see cref="SubtitlePhrase"/>.</returns>
     public static List<SubtitlePhrase> GetPhrases(string content)
-    { 
+    {
         var matches = SubtitleBlockRegex.Matches(content);
         if (matches.Count == 0)
         {
             matches = SubtitleBlockRegex.Matches(content.Replace("\n", "\r\n"));
-            if(matches.Count == 0)
+            if (matches.Count == 0)
                 throw new Exception("can not read the subtitle content");
         }
         var phrases = matches.Select(m => Parse(m)).ToList();
@@ -75,7 +121,7 @@ public class SubtitlePhrase
 
     private static List<SubtitlePhrase> ReSequence(List<SubtitlePhrase> list)
     {
-        return  list.OrderBy(a => a.StartTime)
+        return list.OrderBy(a => a.StartTime)
             .Select((a, index) => new SubtitlePhrase
             {
                 Sequence = index,
@@ -91,17 +137,10 @@ public class SubtitlePhrase
         result.Sequence = int.Parse(m.Groups["Order"].Value);
         result.StartTime = TimeSpan.Parse(m.Groups["StartTime"].Value.Replace(',', '.'));
         result.EndTime = TimeSpan.Parse(m.Groups["EndTime"].Value.Replace(',', '.'));
-        result.Text = NormalizeText( m.Groups["Sub"].Value );
+        result.Text =  m.Groups["Sub"].Value;
         return result;
-    }
+    } 
 
-    public readonly static Regex MarkUpRegex = new Regex("<i>|</i>|<b>|</b>|<u>|</u>|<font color=\".*?\">|</font>|-", RegexOptions.Compiled);
-    public readonly static Regex SpaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
-
-    public static string NormalizeText(string Text)
-    {
-       return SpaceRegex.Replace(MarkUpRegex.Replace(Text, string.Empty), " ").Trim();
-    }
     /// <summary>
     /// parse string to <see cref="SubtitlePhrase"/>.
     /// 

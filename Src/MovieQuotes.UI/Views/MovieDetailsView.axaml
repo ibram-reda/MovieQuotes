@@ -12,12 +12,25 @@
   <Grid RowDefinitions="*,auto,auto"  Background="#333">
 
     <vlc:VideoView Grid.Row="0"
+         Focusable="False"
          MediaPlayer="{Binding MainMediaPlayer}"
          VerticalAlignment="Stretch"
          HorizontalAlignment="Stretch"
          ZIndex="-1">
+      <Grid RowDefinitions="auto,*,auto">
 
-      <Panel VerticalAlignment="Center"
+        <TextBlock Grid.Row="0"
+               Foreground="Orange"
+               HorizontalAlignment="Center"
+               Margin="20"
+               FontSize="24"
+               TextAlignment="Right"
+               FontWeight="Bold"
+               IsVisible="{Binding ShowArabicSubs}"
+               Text="{Binding CurrentArPhrase.Text}"/> 
+        
+      <Panel Grid.Row="1"
+             VerticalAlignment="Center"
              HorizontalAlignment="Center"
              Opacity="0.6"
              Background="Gray"
@@ -34,7 +47,7 @@
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="5"/>
             <Setter Property="MinWidth" Value="150"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/> 
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
           </Style>
           <Style Selector="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -45,7 +58,7 @@
           <Grid ColumnDefinitions="*,auto">
             <TextBlock  Text="New Vocabulary" Classes="title"/>
             <Button Grid.Column="1"
-                    Content="[x]" 
+                    Content="[x]"
                     Classes="link"
                     ToolTip.Tip="Close"
                     Command="{Binding ClosePopUpCommand}"/>
@@ -115,17 +128,21 @@
           </Grid>
         </StackPanel>
 
-        
-        
+
+
       </Panel>
-    </vlc:VideoView>
-    
-    <TextBlock Grid.Row="1"
+      
+      <TextBlock Grid.Row="2"
                Foreground="Orange"
                HorizontalAlignment="Center"
                FontSize="24"
                FontWeight="Bold"
-               Text="{Binding CurrentPhrase.Text}"/>
+               Text="{Binding CurrentPhrase.Text}"/>  
+    </Grid>
+     
+    </vlc:VideoView>
+    
+    
     
 
     <Grid Grid.Row="2"
@@ -142,6 +159,7 @@
       <Button Grid.Row="0"
               Grid.Column="2"
               Content="Add To Study phrases"
+              Focusable="False"
               Command="{Binding OpenPopUpCommand}"/>
       
       <controls:MediaPlayerControls 
