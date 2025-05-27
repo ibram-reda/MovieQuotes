@@ -11,8 +11,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+using static Constants;
 
-internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, OperationResult<Unit>>
+internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, OperationResult<Phrase>>
 {
     private readonly MovieQuotesDbContext dbContext;
 
@@ -20,12 +21,12 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
     {
         this.dbContext = dbContext;
     }
-    public async Task<OperationResult<Unit>> Handle(EditPhraseCommand request, CancellationToken cancellationToken)
+    public async Task<OperationResult<Phrase>> Handle(EditPhraseCommand request, CancellationToken cancellationToken)
     {
-        var result = new OperationResult<Unit>();
+        var result = new OperationResult<Phrase>();
 
         var phrase = await this.dbContext.SubtitlePhrases
-            .FirstOrDefaultAsync(a => a.MovieId == request.MovieId && a.Sequence == request.Sequence);
+            .FirstOrDefaultAsync(a => a.Id == request.PhraseId || (a.MovieId == request.MovieId && a.Sequence == request.Sequence));
 
         if (phrase is null)
         {
@@ -34,7 +35,7 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
         }
 
         var durationEdited = phrase.EditDuration(request.StartTime, request.EndTime);
-        var textEdit = phrase.EditText(request.Text);
+        var textEdit = phrase.EditText(request.PhraseText);
 
         if(textEdit | durationEdited) 
             await this.dbContext.SaveChangesAsync();
@@ -49,6 +50,15 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
                 .ExecuteUpdateAsync(a => a.SetProperty(k => k.VideoClipPath, (string?)null));
         }
 
+        result.Payload = new Phrase
+        {
+            Id = phrase.Id, 
+            Sequence = phrase.Sequence,
+            StartTime = phrase.StartTime,
+            EndTime = phrase.EndTime,
+            Text = phrase.Text,
+            VideoLocation = phrase.VideoClipPath!.Replace(CashTemplate, CashPath),
+        };
 
         return result;
     }

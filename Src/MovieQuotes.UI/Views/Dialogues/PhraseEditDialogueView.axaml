@@ -2,6 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MovieQuotes.UI.ViewModels.Dialogues"
+             xmlns:controls="using:MovieQuotes.UI.Views.Controls"
+             x:DataType="vm:PhraseEditDialogueViewModel"             
              mc:Ignorable="d" d:DesignWidth="400" 
              d:DesignHeight="250"
              x:Class="MovieQuotes.UI.Views.Dialogues.PhraseEditDialogueView">
@@ -18,52 +21,27 @@
                Text="Text" />
     <TextBox Grid.Row="0"
              Grid.Column="1"
-             Grid.ColumnSpan="2" />
+             Grid.ColumnSpan="2"
+             Text="{Binding PhraseText,Mode=TwoWay}"/>
     
-    <TextBlock Grid.Row="1"
-               Grid.Column="0"
-               Text="Start Time" />
-    <TextBox Grid.Row="1"
-             Grid.Column="1" 
-             HorizontalAlignment="Stretch"/>
-    <StackPanel Orientation="Horizontal"
-                Grid.Row="1"
-                Grid.Column="2">
-      <Button >
-        <PathIcon Data="{StaticResource caret_up_regular}"/>
-      </Button>
-      <Button >
-        <PathIcon Data="{StaticResource caret_down_regular}"/>
-      </Button>
-    </StackPanel>
-    
-    <TextBlock Grid.Row="2"
-               Grid.Column="0"
-               Text="End Time" />
+    <controls:TimeSpanControl Grid.Row="1" 
+                      Grid.ColumnSpan="3"
+                      Text="Start Time"
+                      Time="{Binding StartTime,Mode=TwoWay}"/>
 
-    <TextBox Grid.Row="2"
-             Grid.Column="1"
-             HorizontalAlignment="Stretch"/>
-    
-    <StackPanel Orientation="Horizontal"
-                Grid.Row="2"
-                Grid.Column="2">
-      <Button >
-        <PathIcon Data="{StaticResource caret_up_regular}"/>
-      </Button>
-      <Button >
-        <PathIcon Data="{StaticResource caret_down_regular}"/>
-      </Button>
-    </StackPanel>
-    
+
+      <controls:TimeSpanControl Grid.Row="2"
+                        Grid.ColumnSpan="3"
+                        Text="End Time  "
+                        Time="{Binding EndTime,Mode=TwoWay}"/>
     
     
   </Grid>
 
     <StackPanel Orientation="Horizontal"
                 Spacing="10">
-      <Button Content="Save changes"/>
-      <Button Content="Cancel"/>
+      <Button Content="Save changes" Command="{Binding SaveCommand}"/>
+      <Button Content="Cancel" Command="{Binding CancelCommand}"/>
     </StackPanel>
   </StackPanel>
 </UserControl>

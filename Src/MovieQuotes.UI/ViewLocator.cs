@@ -3,11 +3,11 @@ namespace MovieQuotes.UI;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using MovieQuotes.UI.ViewModels;
+using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
 
 public class ViewLocator : IDataTemplate
 {
-
     public Control? Build(object? data)
     {
         if (data is null)
@@ -28,6 +28,6 @@ public class ViewLocator : IDataTemplate
 
     public bool Match(object? data)
     {
-        return data is ViewModelBase;
+        return data is ViewModelBase || data is DialogueViewModelBase;
     }
 }

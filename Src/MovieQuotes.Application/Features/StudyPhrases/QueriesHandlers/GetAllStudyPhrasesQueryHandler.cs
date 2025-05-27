@@ -23,15 +23,18 @@ internal class GetAllStudyPhrasesQueryHandler : IRequestHandler<GetAllStudyPhras
     {
         var result = new OperationPageResult<StudyPhrase>();
 
-        var basequry = this.dbContext.StudyPhrases.AsQueryable();
+        var baseQuery = this.dbContext.StudyPhrases.AsQueryable();
 
         if (request.MovieId > 0)
-            basequry = basequry.Where(a => a.Phrase.MovieId == request.MovieId);
+            baseQuery = baseQuery.Where(a => a.Phrase!.MovieId == request.MovieId);
 
-        var qry =   basequry.Select(a => new StudyPhrase
+        var qry =   baseQuery.Select(a => new StudyPhrase
             {
                 PhraseId = a.PhraseId,
                 PhraseText = a.Phrase!.Text,
+                MovieName = a.Phrase.Movie!.Title,
+                StartTime = a.Phrase.StartTime,
+                EndTime = a.Phrase.EndTime,
                 VideoLocation = a.Phrase.VideoClipPath!.Replace(CashTemplate,CashPath),
                 Content = a.Content,
                 Translation = a.Translation,

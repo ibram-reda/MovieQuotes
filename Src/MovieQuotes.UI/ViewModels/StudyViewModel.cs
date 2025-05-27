@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
+using MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Queries;
 using MovieQuotes.Application.Features.VideoClips.Queries;
@@ -11,7 +12,6 @@ using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 
@@ -70,8 +70,16 @@ public partial class StudyViewModel : ViewModelBase
         PlayPhrase(phrase);
     }
 
+    void PlayPhrase(int index)
+    {
+        this.CurrentPlayingPhrase = null;
+        if (index < 0 || index >= this.Phrases.Count) return;
+        var phrase = this.Phrases[index];
+        PlayPhrase(phrase);
+    }
     void PlayPhrase(StudyPhrase phrase)
     {
+        this.CurrentPlayingIndex = this.Phrases.IndexOf(phrase);
         this.CurrentPlayingPhrase = phrase;
         var uri = new Uri(phrase.VideoLocation);
         Media media = new Media(this.MainLibVLC, uri);
@@ -82,13 +90,45 @@ public partial class StudyViewModel : ViewModelBase
         this.OnPropertyChanged(nameof(HasPrevious));
     }
 
-    [RelayCommand(CanExecute =nameof(IsDialogClosed))]
+    [RelayCommand(CanExecute = nameof(IsDialogClosed))]
     public void EditPhrase()
     {
+        this.Dialogue = new PhraseEditDialogueViewModel(CurrentPlayingPhrase);
+        this.Dialogue.DialogueClosed += async (sender, args) =>
+        {
+            this.IsBusy = true;
+            this.ShowEditDialog = false;
+            if (args.IsClosedSuccessfully && sender is PhraseEditDialogueViewModel newPhrase)
+            {
+                // Update the phrase in the data source
+                var updateCommand = new EditPhraseCommand()
+                {
+                    PhraseId = newPhrase.PhraseId,
+                    PhraseText = newPhrase.PhraseText,
+                    StartTime = newPhrase.StartTime,
+                    EndTime = newPhrase.EndTime
+                };
+
+                var result = await this.mediator.Send(updateCommand);
+
+                if (result.IsError)
+                    this.ErrorMessages.Add("Failed to update phrase: " + result.Errors.First().Message);
+
+                if (result.IsSuccess)
+                {
+                    // reload the phrases to refresh the list.
+                    var index = this.CurrentPlayingIndex;
+                    await this.GetPhrases();
+                    PlayPhrase(index); // Re-play the phrase after update
+                }
+
+            }
+            this.IsBusy = false;
+        };
         this.ShowEditDialog = true;
-        this.Dialogue = new PhraseEditDialogueViewModel();
-        this.Dialogue.DialogueClosed += (_, _) => this.ShowEditDialog = false;
     }
+
+
 
     [RelayCommand]
     async Task Init()
@@ -115,7 +155,6 @@ public partial class StudyViewModel : ViewModelBase
     {
         this.Phrases.Clear();
         this.CurrentPlayingPhrase = null;
-        this.CurrentPlayingIndex = 0;
 
         var qry = new GetAllStudyPhrasesQuery();
         if (SelectedMovie is not null)
@@ -135,8 +174,7 @@ public partial class StudyViewModel : ViewModelBase
                 await GenerateVideoAsync(phrase);
             this.Phrases.Add(phrase);
         }
-
-        this.PlayPhrase(this.Phrases[0]);
+        PlayPhrase(0); // Play the first phrase by default if available
     }
 
     async Task GenerateVideoAsync(StudyPhrase phrase)

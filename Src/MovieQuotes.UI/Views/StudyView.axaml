@@ -13,7 +13,8 @@
    
   <Grid RowDefinitions="auto,*,auto" 
         Focusable="True" >
-    <StackPanel Orientation="Horizontal" Spacing="15">
+    <!--top row control bar-->
+    <StackPanel Orientation="Horizontal" Spacing="15" >
      
       <ComboBox ItemsSource="{Binding Movies}" 
                 Focusable="False"
@@ -39,11 +40,13 @@
       <Button Content="sync" 
               Focusable="False"
               Command="{Binding GetPhrasesCommand}" />
-      
 
-      <TextBlock Text="{Binding CurrentPlayingIndex}"/>
-      <TextBlock Text="  of  "/>
-      <TextBlock Text="{Binding Phrases.Count}"/>
+
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <TextBlock Text="{Binding CurrentPlayingIndex}"/>
+        <TextBlock Text="  of  "/>
+        <TextBlock Text="{Binding Phrases.Count}"/>
+      </StackPanel>
 
       <Button Content="Previous" 
               HotKey="Left"
@@ -73,8 +76,8 @@
     </StackPanel>
 
     <Grid Grid.Row="1">
-
       <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}">
+        <!--overlay on vedio screen-->
         <Grid IsVisible="{Binding CurrentPlayingPhrase}" 
               VerticalAlignment="Stretch"
               HorizontalAlignment="Stretch"
@@ -84,6 +87,7 @@
               <Setter Property="Focusable" Value="False"/>
             </Style>
           </Grid.Styles>
+          <!--phrase content-->
           <StackPanel>
             <StackPanel.Styles>
               <Style Selector="TextBox">
@@ -114,7 +118,7 @@
                  Background="#333" 
                  Width="600"
                  VerticalAlignment="Center">
-            <ContentPresenter Content="{Binding Dialogue}"/>
+            <ContentControl Content="{Binding Dialogue}"/>
           </Panel>
         </Grid>
       </vlc:VideoView>
