@@ -7,6 +7,7 @@ using MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Queries;
 using MovieQuotes.Application.Features.VideoClips.Queries;
+using MovieQuotes.UI.Extensions;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
@@ -77,15 +78,23 @@ public partial class StudyViewModel : ViewModelBase
         var phrase = this.Phrases[index];
         PlayPhrase(phrase);
     }
+
+
+    [RelayCommand]
+    void Shuffle()
+    {
+        this.Phrases.Shuffle();
+        PlayPhrase(0);
+    }
     void PlayPhrase(StudyPhrase phrase)
     {
         this.CurrentPlayingIndex = this.Phrases.IndexOf(phrase);
         this.CurrentPlayingPhrase = phrase;
         var uri = new Uri(phrase.VideoLocation);
-        Media media = new Media(this.MainLibVLC, uri);
-        MainMediaPlayer.Media?.Dispose();
+        Media media = new Media(this.MainLibVLC, uri);        
+        MainMediaPlayer.Media?.Dispose(); 
         var r = MainMediaPlayer.Play(media);
-
+   
         this.OnPropertyChanged(nameof(HasNext));
         this.OnPropertyChanged(nameof(HasPrevious));
     }
@@ -137,6 +146,11 @@ public partial class StudyViewModel : ViewModelBase
         var reslt = await this.mediator.Send(query);
         if (reslt.IsSuccess)
         {
+            this.Movies.Clear();
+            this.Movies.Add(new() {
+                MovieName = "random phrases",
+                StudyCount = reslt.Payload?.Sum(x => x.StudyCount) ?? 0,
+            });
             foreach (var m in reslt.Payload ?? [])
                 Movies.Add(m);
         }

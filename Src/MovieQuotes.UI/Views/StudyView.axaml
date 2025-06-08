@@ -37,9 +37,9 @@
         </ComboBox.ItemTemplate>
       </ComboBox>
       
-      <Button Content="sync" 
+      <Button Content="shuffle" 
               Focusable="False"
-              Command="{Binding GetPhrasesCommand}" />
+              Command="{Binding ShuffleCommand}" />
 
 
       <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
