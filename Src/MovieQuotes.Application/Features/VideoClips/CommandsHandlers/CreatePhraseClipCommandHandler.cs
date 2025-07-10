@@ -9,17 +9,17 @@ using MovieQuotes.Infrastructure;
 using System.Diagnostics;
 using static Constants;
 
-internal class CreateVideoClipCommandHandler : IRequestHandler<CreateVideoClipCommand, OperationResult<string>>
+internal class CreatePhraseClipCommandHandler : IRequestHandler<CreatePhraseClipCommand, OperationResult<string>>
 {
     private readonly MovieQuotesDbContext dbContext;
     
 
-    public CreateVideoClipCommandHandler(MovieQuotesDbContext dbContext)
+    public CreatePhraseClipCommandHandler(MovieQuotesDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
 
-    public async Task<OperationResult<string>> Handle(CreateVideoClipCommand request, CancellationToken cancellationToken)
+    public async Task<OperationResult<string>> Handle(CreatePhraseClipCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<string>();
         string outputFileName = $"{CashTemplate}/{request.MovieName}/{request.Sequence}.MP4";

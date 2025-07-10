@@ -1,0 +1,52 @@
+﻿namespace MovieQuotes.Application.Features.StudyPhrases.CommandsHandlers;
+
+using MediatR;
+using MovieQuotes.Application.Common.Enums;
+using MovieQuotes.Application.Common.Models;
+using MovieQuotes.Application.Features.StudyPhrases.Commands;
+using MovieQuotes.Application.Features.StudyPhrases.Models;
+using MovieQuotes.Infrastructure;
+
+internal class EditStudyContentCommandHandler : IRequestHandler<EditStudyContentCommand, OperationResult<StudyPhrase>>
+{
+    private readonly MovieQuotesDbContext dbContext;
+    public EditStudyContentCommandHandler(MovieQuotesDbContext dbContext)
+    {
+        this.dbContext = dbContext;
+    }
+    public async Task<OperationResult<StudyPhrase>> Handle(EditStudyContentCommand request, CancellationToken cancellationToken)
+    {
+        var result = new OperationResult<StudyPhrase>();
+
+        var studyPhrase = dbContext.StudyPhrases.FirstOrDefault(a => a.Id == request.StudyId);
+
+        if (studyPhrase is null)
+        {
+            result.AddError(ErrorCode.NotFound, StudyPhraseMessages.PhraseNotFound, request.StudyId);
+            return result;
+        }
+
+        studyPhrase.EditContent(request.Content);
+        studyPhrase.EditTranslation(request.Translation);
+        studyPhrase.EditStudyType(request.StudyType);
+
+        var affectedRows = await dbContext.SaveChangesAsync(cancellationToken);
+
+        if (affectedRows <= 0)
+        {
+            result.AddError(ErrorCode.UpdateError, StudyPhraseMessages.FailedToUpdate);
+            return result;
+        }
+
+        result.Payload = new StudyPhrase
+        {
+            StudyId = studyPhrase.Id,
+            PhraseId = studyPhrase.PhraseId,
+            Content = studyPhrase.Content,
+            Translation = studyPhrase.Translation,
+            StudyType = studyPhrase.StudyType,
+        };
+        return result;
+
+    }
+}

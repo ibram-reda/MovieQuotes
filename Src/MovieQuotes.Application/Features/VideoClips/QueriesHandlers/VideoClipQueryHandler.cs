@@ -29,8 +29,8 @@ internal class VideoClipQueryHandler : IRequestHandler<VideoClipQuery, Operation
             return result;
         }
 
-        var cmd = new CreateVideoClipCommand(phrase.Id,phrase.MovieName,phrase.Sequence,phrase.MoviePath,phrase.StartTime,phrase.Duration);
-        var handler = new CreateVideoClipCommandHandler(dbContext);
+        var cmd = new CreatePhraseClipCommand(phrase.Id,phrase.MovieName,phrase.Sequence,phrase.MoviePath,phrase.StartTime,phrase.Duration);
+        var handler = new CreatePhraseClipCommandHandler(dbContext);
         var rst = await handler.Handle(cmd, cancellationToken);
         if (rst.IsError)
             result.AddErrorRange(rst.Errors);

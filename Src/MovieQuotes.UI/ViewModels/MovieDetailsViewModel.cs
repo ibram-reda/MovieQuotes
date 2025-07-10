@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
+using MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.Movies.Queries;
@@ -71,6 +72,7 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     [ObservableProperty] string learningContent = "";
     [ObservableProperty] string translateContent = "";
     [ObservableProperty] string contentType = "";
+    [ObservableProperty] bool canLoadEnSubs = false;
     public string[] AllowedType { get; } = ["noun", "adjective", "verb", "idiom", "phrasal verb", "phrase", "exclamation", "conjunction", "adverb"];
 
     private long currentTime = 0;
@@ -115,6 +117,8 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
         if (result.IsSuccess)
         {
             this.enPhrases = result.Payload ?? [];
+            if (this.enPhrases.Count <= 0)
+                this.CanLoadEnSubs = true;
         }
         cmd.Language = Language.ar;
         result = await this.mediator.Send(cmd);
@@ -122,6 +126,8 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
         {
             this.arPhrases = result.Payload ?? [];
         }
+
+        ResyncCurrentPhrase();
     }
 
     public void Dispose()
@@ -161,6 +167,11 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
         }
     }
 
+    /// <summary>
+    /// Resynchronizes the current phrase based on the current playback time.
+    /// </summary>
+    /// <remarks>This method updates the current phrase and its index for both English and Arabic subtitles, 
+    /// depending on the playback time. If Arabic subtitles are disabled, only the English phrase is updated.</remarks>
     private void ResyncCurrentPhrase()
     {
         var ctime = TimeSpan.FromMilliseconds(CurrentTime);
@@ -200,7 +211,7 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
 
         return (null!, current.i);
     }
-    
+
     [RelayCommand]
     async Task OpenPopUp()
     {
@@ -245,6 +256,33 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
             this.ErrorMessages.Add(err.Message);
         }
 
+    }
+
+    [RelayCommand(AllowConcurrentExecutions =false)]
+    async Task LoadEnPhrases()
+    {
+        if (this.CanLoadEnSubs)
+        {
+            var cmd = new InsertPhrasesForMovieCommand() { MovieId = this.Id };
+            var result = await this.mediator.Send(cmd);
+
+            if (result.IsSuccess)
+            {
+                await LoadSubtitlesAsync();
+            }
+
+            if (result.IsError)
+            {
+                this.ErrorMessages.Clear();
+                foreach (var err in result.Errors)
+                {
+                    this.ErrorMessages.Add(err.Message);
+                }
+            }
+
+            CanLoadEnSubs = false;
+
+        }
     }
     ~MovieDetailsViewModel()
     {

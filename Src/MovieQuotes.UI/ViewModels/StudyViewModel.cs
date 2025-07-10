@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
+using MovieQuotes.Application.Features.StudyPhrases.Commands;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Queries;
 using MovieQuotes.Application.Features.VideoClips.Queries;
@@ -12,6 +13,7 @@ using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -90,7 +92,17 @@ public partial class StudyViewModel : ViewModelBase
     {
         this.CurrentPlayingIndex = this.Phrases.IndexOf(phrase);
         this.CurrentPlayingPhrase = phrase;
-        var uri = new Uri(phrase.VideoLocation);
+        
+        if(!File.Exists(phrase.VideoLocation))
+        {
+            Task.Run(async () => await GenerateVideoAsync(phrase)).Wait(); // try to generate the video if it doesn't exist
+            if (!File.Exists(phrase.VideoLocation))
+            {
+                this.ErrorMessages.Add("Video file not found for phrase: " + phrase.PhraseText);
+                return;
+            }
+        }
+        var uri = new Uri(phrase.VideoLocation);      
         Media media = new Media(this.MainLibVLC, uri);        
         MainMediaPlayer.Media?.Dispose(); 
         var r = MainMediaPlayer.Play(media);
@@ -105,34 +117,67 @@ public partial class StudyViewModel : ViewModelBase
         this.Dialogue = new PhraseEditDialogueViewModel(CurrentPlayingPhrase);
         this.Dialogue.DialogueClosed += async (sender, args) =>
         {
+            this.ShowEditDialog = false; // Close the dialog after handling the event
+            if (!args.IsClosedSuccessfully)
+                return; // User cancelled the dialog
+            if (sender is not PhraseEditDialogueViewModel studyEditDialog)
+                return; // Invalid sender type
+
             this.IsBusy = true;
-            this.ShowEditDialog = false;
-            if (args.IsClosedSuccessfully && sender is PhraseEditDialogueViewModel newPhrase)
+            if (studyEditDialog.RequiredPhraseEdit)
             {
                 // Update the phrase in the data source
                 var updateCommand = new EditPhraseCommand()
                 {
-                    PhraseId = newPhrase.PhraseId,
-                    PhraseText = newPhrase.PhraseText,
-                    StartTime = newPhrase.StartTime,
-                    EndTime = newPhrase.EndTime
+                    PhraseId = studyEditDialog.PhraseId,
+                    PhraseText = studyEditDialog.PhraseText,
+                    StartTime = studyEditDialog.StartTime,
+                    EndTime = studyEditDialog.EndTime
                 };
 
                 var result = await this.mediator.Send(updateCommand);
 
                 if (result.IsError)
-                    this.ErrorMessages.Add("Failed to update phrase: " + result.Errors.First().Message);
-
-                if (result.IsSuccess)
+                    this.ErrorMessages.Add("Failed to update phrase: " + result.Errors.First().Message);  
+            
+                var viewPhrase = this.Phrases.FirstOrDefault(p => p.PhraseId == studyEditDialog.PhraseId);
+                if (viewPhrase is not null && result.Payload is not null)
                 {
-                    // reload the phrases to refresh the list.
-                    var index = this.CurrentPlayingIndex;
-                    await this.GetPhrases();
-                    PlayPhrase(index); // Re-play the phrase after update
+                    viewPhrase.VideoLocation = result.Payload.VideoLocation;
+                    viewPhrase.PhraseText = result.Payload.Text;
+                    viewPhrase.StartTime = result.Payload.StartTime;
+                    viewPhrase.EndTime = result.Payload.EndTime;
                 }
-
             }
+
+            if (studyEditDialog.RequiredContentEdit)
+            {
+                var editContentCommand = new EditStudyContentCommand()
+                {
+                    StudyId = studyEditDialog.StudyId,
+                    Content = studyEditDialog.Content,
+                    Translation = studyEditDialog.Translation,
+                    StudyType = studyEditDialog.StudyType
+                };
+
+                var contentResult = await this.mediator.Send(editContentCommand);
+                if (contentResult.IsError)
+                    this.ErrorMessages.Add("Failed to update content: " + contentResult.Errors.First().Message);
+
+                // Update the current playing phrase with the new content
+                var viewPhrase = this.Phrases.FirstOrDefault(p => p.StudyId == studyEditDialog.StudyId);
+
+                if (viewPhrase != null)
+                {
+                    viewPhrase.Content = studyEditDialog.Content;
+                    viewPhrase.Translation = studyEditDialog.Translation;
+                    viewPhrase.StudyType = studyEditDialog.StudyType;
+                }
+            }
+
             this.IsBusy = false;
+             
+            PlayPhrase(this.CurrentPlayingIndex); // Re-play the phrase after update
         };
         this.ShowEditDialog = true;
     }

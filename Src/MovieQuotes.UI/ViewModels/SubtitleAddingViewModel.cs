@@ -22,28 +22,24 @@ internal partial class SubtitleAddingViewModel : ViewModelBase
     }
 
     [RelayCommand(AllowConcurrentExecutions = true)]
-    async Task AddSubtitle(MovieInfo phrase)
+    async Task AddSubtitle(MovieInfo movie)
     {
-        var baseFolder = Path.GetDirectoryName(phrase.LocalPath);
-        var subtitleFolder = Path.Combine(baseFolder ?? "", "subtitles");
-        var enSubs = Directory.GetFiles(subtitleFolder).FirstOrDefault(f => f.EndsWith("en.srt"));
         var cmd = new InsertPhrasesForMovieCommand()
         {
-            MovieId = phrase.Id,
-            SubtitleLocation = enSubs
+            MovieId = movie.Id,
         };
-        MovieList.Remove(phrase);
-        Running.Add(phrase);
+        MovieList.Remove(movie);
+        Running.Add(movie);
         var result = await this.mediator.Send(cmd);
 
-        Running.Remove(phrase);
+        Running.Remove(movie);
         if (result.IsSuccess)
         {
-            Done.Add(phrase);
+            Done.Add(movie);
         }
         else
         {
-            MovieList.Add(phrase);
+            MovieList.Add(movie);
         }
     }
 

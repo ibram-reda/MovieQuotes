@@ -3,6 +3,7 @@
 public class StudyPhrase
 {
     public int PhraseId { get; set; }
+    public int StudyId { get; set; }
 
     /// <summary>
     /// name of the movie that this phrase is from.

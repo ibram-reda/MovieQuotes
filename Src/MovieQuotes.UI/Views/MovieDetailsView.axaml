@@ -25,6 +25,7 @@
                Margin="20"
                FontSize="24"
                TextAlignment="Right"
+               FlowDirection="RightToLeft"
                FontWeight="Bold"
                IsVisible="{Binding ShowArabicSubs}"
                Text="{Binding CurrentArPhrase.Text}"/> 
@@ -156,11 +157,17 @@
               Maximum="{Binding MovieLength}"
               Value="{Binding CurrentTime}" />
 
-      <Button Grid.Row="0"
-              Grid.Column="2"
-              Content="Add To Study phrases"
+      <StackPanel Grid.Row="0" Spacing="5"
+              Grid.Column="2">
+
+        <Button Content="Add To Study phrases"
               Focusable="False"
               Command="{Binding OpenPopUpCommand}"/>
+        <Button Content="Load en subs" 
+                IsVisible="{Binding CanLoadEnSubs}"
+                Command="{Binding LoadEnPhrasesCommand}"/>
+      </StackPanel>
+      
       
       <controls:MediaPlayerControls 
         Grid.Row="1"

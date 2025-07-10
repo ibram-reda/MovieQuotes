@@ -28,18 +28,19 @@ internal class GetAllStudyPhrasesQueryHandler : IRequestHandler<GetAllStudyPhras
         if (request.MovieId > 0)
             baseQuery = baseQuery.Where(a => a.Phrase!.MovieId == request.MovieId);
 
-        var qry =   baseQuery.Select(a => new StudyPhrase
-            {
-                PhraseId = a.PhraseId,
-                PhraseText = a.Phrase!.Text,
-                MovieName = a.Phrase.Movie!.Title,
-                StartTime = a.Phrase.StartTime,
-                EndTime = a.Phrase.EndTime,
-                VideoLocation = a.Phrase.VideoClipPath!.Replace(CashTemplate,CashPath),
-                Content = a.Content,
-                Translation = a.Translation,
-                StudyType = a.StudyType
-            });
+        var qry = baseQuery.Select(a => new StudyPhrase
+        {
+            StudyId = a.Id,
+            PhraseId = a.PhraseId,
+            PhraseText = a.Phrase!.Text,
+            MovieName = a.Phrase.Movie!.Title,
+            StartTime = a.Phrase.StartTime,
+            EndTime = a.Phrase.EndTime,
+            VideoLocation = a.Phrase.VideoClipPath!.Replace(CashTemplate, CashPath),
+            Content = a.Content,
+            Translation = a.Translation,
+            StudyType = a.StudyType
+        });
 
         var totalCount = await qry.CountAsync();
 

@@ -6,42 +6,101 @@
              xmlns:controls="using:MovieQuotes.UI.Views.Controls"
              x:DataType="vm:PhraseEditDialogueViewModel"             
              mc:Ignorable="d" d:DesignWidth="400" 
-             d:DesignHeight="250"
+             d:DesignHeight="300"
              x:Class="MovieQuotes.UI.Views.Dialogues.PhraseEditDialogueView">
 
-  <StackPanel  Spacing="5"
+  <StackPanel>
+ 
+  <TabControl>
+
+    <TabItem Header="edit phrase" >
+      <StackPanel  Spacing="5"
         Margin="10">
-    <TextBlock Text="Edit Phrase" 
-               Classes="title" />
-    <Grid RowDefinitions="auto,auto,auto,auto"
-        ColumnDefinitions="auto,*,auto">
+        <TextBlock Text="Edit Phrase"
+                   Classes="title" />
+        <Grid RowDefinitions="auto,auto,auto,auto"
+            ColumnDefinitions="auto,*,auto">
 
-    <TextBlock Grid.Row="0"
-               Grid.Column="0"
-               Text="Text" />
-    <TextBox Grid.Row="0"
-             Grid.Column="1"
-             Grid.ColumnSpan="2"
-             Text="{Binding PhraseText,Mode=TwoWay}"/>
+          <TextBlock Grid.Row="0"
+                     Grid.Column="0"
+                     Text="Text" />
+          <TextBox Grid.Row="0"
+                   Grid.Column="1"
+                   Grid.ColumnSpan="2"
+                   Text="{Binding PhraseText,Mode=TwoWay}"/>
+
+          <controls:TimeSpanControl Grid.Row="1"
+                            Grid.ColumnSpan="3"
+                            Text="Start Time"
+                            Time="{Binding StartTime,Mode=TwoWay}"/>
+
+
+          <controls:TimeSpanControl Grid.Row="2"
+                            Grid.ColumnSpan="3"
+                            Text="End Time  "
+                            Time="{Binding EndTime,Mode=TwoWay}"/>
+
+
+        </Grid>
+
+      </StackPanel>
+    </TabItem>
+
+
+    <TabItem Header="Edit Content" >
+
+      <Grid RowDefinitions="auto,auto,auto,auto,auto,auto"
+              ColumnDefinitions="auto,*"
+            Margin="10">
+
+        <TextBlock Grid.Row="0"
+                   Grid.ColumnSpan="2"
+                   Text="Content Edit"
+                   Classes="title"
+                   /> 
+
+        <TextBlock Grid.Row="1"
+                   Grid.Column="0"
+                   Text="Content" />
+        <TextBox Grid.Row="1"
+                 Grid.Column="1"
+                 Text="{Binding Content,Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   Text="Translation" />
+        <TextBox Grid.Row="2"
+                 Grid.Column="1"
+                 AcceptsReturn="True" 
+                 TextWrapping="Wrap"
+                 
+                 Text="{Binding Translation,Mode=TwoWay}"/>
+
+
+        <TextBlock Grid.Row="3"
+                   Grid.Column="0"
+                   Text="Type" />
+        <ComboBox Grid.Row="3"
+                 Grid.Column="1"
+                 SelectedItem="{Binding StudyType}"
+                 ItemsSource="{Binding AllowedType}"/>        
+        
+      </Grid>
+      
+    </TabItem>
     
-    <controls:TimeSpanControl Grid.Row="1" 
-                      Grid.ColumnSpan="3"
-                      Text="Start Time"
-                      Time="{Binding StartTime,Mode=TwoWay}"/>
+  </TabControl>
 
 
-      <controls:TimeSpanControl Grid.Row="2"
-                        Grid.ColumnSpan="3"
-                        Text="End Time  "
-                        Time="{Binding EndTime,Mode=TwoWay}"/>
-    
-    
-  </Grid>
 
+
+    <!-- Action Buttons -->
     <StackPanel Orientation="Horizontal"
-                Spacing="10">
+            Spacing="10" Margin="10">
       <Button Content="Save changes" Command="{Binding SaveCommand}"/>
       <Button Content="Cancel" Command="{Binding CancelCommand}"/>
     </StackPanel>
+
+
   </StackPanel>
 </UserControl>

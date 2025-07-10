@@ -28,22 +28,39 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
         #region valdition
         if (request.MovieId <= 0)
             result.AddError(ErrorCode.ValidationError, MoviePhrasesMessages.RequiredMovieId);
-        if (!File.Exists(request.SubtitleLocation))
-            result.AddError(ErrorCode.ValidationError, MoviePhrasesMessages.RequiredValidSubtitleLocation);
         #endregion
 
-        var movie = await this.dbContext.Movies.Include(a=>a.Subtitles).FirstOrDefaultAsync(a => a.Id == request.MovieId);
+        var movie = await this.dbContext.Movies.Include(a => a.Subtitles).FirstOrDefaultAsync(a => a.Id == request.MovieId);
         if (movie is null)
         {
             result.AddError(ErrorCode.NotFound, MoviePhrasesMessages.MovieNotFound, request.MovieId);
             return result;
         }
+
+        // if subtitle is not provided, try to find it in the movie folder
+        if (string.IsNullOrWhiteSpace(request.SubtitleLocation))
+        {
+            var baseFolder = Path.GetDirectoryName(movie.LocalPath);
+            var subtitleFolder = Path.Combine(baseFolder ?? "", "subtitles");
+            var enSubLocation = Directory.GetFiles(subtitleFolder).FirstOrDefault(f => f.EndsWith("en.srt"));
+            if (!File.Exists(enSubLocation))
+                result.AddError(ErrorCode.NotFound, MoviePhrasesMessages.SubtitleFileNotFound);
+            else
+                request.SubtitleLocation = enSubLocation;
+        }
+
+        if (!File.Exists(request.SubtitleLocation))
+        {
+            result.AddError(ErrorCode.ValidationError, MoviePhrasesMessages.RequiredValidSubtitleLocation);
+            return result;
+        }
+
         var loadingResult = await SubtitleManager.LoadAsync(request.SubtitleLocation);
         if (loadingResult.IsError)
             result.AddErrorRange(loadingResult.Errors);
 
         loadingResult.Payload?.RemoveMarkupAndDuplicateSpaces();
-        
+
         movie.AddSubtitlesFromList(loadingResult.Payload!.ToList());
 
         if (result.IsError) return result;
@@ -60,7 +77,7 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
         foreach (var phrase in phrases)
         {
             if (phrase.PhraseWords.Any()) continue;
-            var words = phrase.Text.Split(' ','\n',',','!','.');
+            var words = phrase.Text.Split(' ', '\n', ',', '!', '.');
             int i = 0;
             foreach (var word in words)
             {

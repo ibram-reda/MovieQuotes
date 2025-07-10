@@ -47,4 +47,25 @@ public class StudyPhrase
     {
         return StudyPhrase.CreateStudyPhrase(phrase.Id, studyType, content, translation);
     }
+
+    public void EditContent(string? content)
+    {
+        if(content == this.Content)
+            return;
+        this.Content = content;
+    }
+
+    public void EditStudyType(string? studyType)
+    {
+        if(studyType == this.StudyType)
+            return;
+        this.StudyType = studyType;
+    }
+
+    public void EditTranslation(string? translation)
+    {
+        if(translation == this.Translation)
+            return;
+        this.Translation = translation;
+    }
 }

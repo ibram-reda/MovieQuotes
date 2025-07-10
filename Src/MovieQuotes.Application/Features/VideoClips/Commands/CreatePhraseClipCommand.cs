@@ -4,9 +4,9 @@ using MediatR;
 using MovieQuotes.Application.Common.Models;
 
 
-internal class CreateVideoClipCommand : IRequest<OperationResult<string>>
+internal class CreatePhraseClipCommand : IRequest<OperationResult<string>>
 {
-    public CreateVideoClipCommand(int phraseId,string movieName, int sequence, string movieLocation, TimeSpan startTime, TimeSpan duration)
+    public CreatePhraseClipCommand(int phraseId,string movieName, int sequence, string movieLocation, TimeSpan startTime, TimeSpan duration)
     {
         PhraseId = phraseId;
         MovieName = movieName;

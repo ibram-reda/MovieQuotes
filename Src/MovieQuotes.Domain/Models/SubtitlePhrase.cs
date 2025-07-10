@@ -83,6 +83,38 @@ public class SubtitlePhrase
         return Edited;
     }
 
+    /// <summary>
+    /// Retrieves the actual path to the video clip associated with <see cref="SubtitlePhrase"/>.
+    /// </summary>
+    /// <remarks>This method replaces occurrences of predefined placeholders in the video clip path with their
+    /// corresponding values. If the <c>VideoClipPath</c> property is null, empty, or contains only whitespace, the
+    /// method returns <see langword="null"/>.</remarks>
+    /// <returns>The video clip actual path, or <see langword="null"/> if the original path is empty
+    /// or consists only of whitespace.</returns>
+    public string? GetVideoClipPath()
+    {
+        if (string.IsNullOrWhiteSpace(this.VideoClipPath))
+            return null;
+        return this.VideoClipPath.Replace(Constants.CashTemplate, Constants.CashPath);
+    }
+
+    /// <summary>
+    /// Deletes the video clip file associated with the current instance and reset the <see cref="VideoClipPath"/> to null.
+    /// </summary>
+    /// <remarks>This method removes the file located at the path specified by <see cref="VideoClipPath"/> and
+    /// resets the property to <see langword="null"/>. If the file does not exist or <see cref="VideoClipPath"/> is null
+    /// or whitespace, the method returns <see langword="false"/>.</remarks>
+    /// <returns><see langword="true"/> if the video clip file was successfully deleted; otherwise, <see langword="false"/>.</returns>
+    public bool DeleteVideoClip()
+    {
+        if (string.IsNullOrWhiteSpace(this.VideoClipPath))
+            return false;
+        var actualPath = this.GetVideoClipPath();
+        if (File.Exists(actualPath))
+            File.Delete(actualPath);
+        this.VideoClipPath = null; // reset the video clip path to force recreation
+        return true;
+    }
 
     /// <summary>
     /// Extract Phrases from streamReader contains "srt" formatted content.
@@ -137,9 +169,9 @@ public class SubtitlePhrase
         result.Sequence = int.Parse(m.Groups["Order"].Value);
         result.StartTime = TimeSpan.Parse(m.Groups["StartTime"].Value.Replace(',', '.'));
         result.EndTime = TimeSpan.Parse(m.Groups["EndTime"].Value.Replace(',', '.'));
-        result.Text =  m.Groups["Sub"].Value;
+        result.Text = m.Groups["Sub"].Value;
         return result;
-    } 
+    }
 
     /// <summary>
     /// parse string to <see cref="SubtitlePhrase"/>.

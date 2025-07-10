@@ -42,12 +42,8 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
         
         if(durationEdited && !string.IsNullOrWhiteSpace(phrase.VideoClipPath))
         {
-            var actualPath = phrase.VideoClipPath.Replace(Constants.CashTemplate, Constants.CashPath);
-            File.Delete(actualPath);
-             
-            await dbContext.SubtitlePhrases
-                .Where(a => a.Id == phrase.Id)
-                .ExecuteUpdateAsync(a => a.SetProperty(k => k.VideoClipPath, (string?)null));
+            phrase.DeleteVideoClip();
+            await this.dbContext.SaveChangesAsync(cancellationToken);
         }
 
         result.Payload = new Phrase
@@ -57,7 +53,7 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
             StartTime = phrase.StartTime,
             EndTime = phrase.EndTime,
             Text = phrase.Text,
-            VideoLocation = phrase.VideoClipPath!.Replace(CashTemplate, CashPath),
+            VideoLocation = phrase.GetVideoClipPath() ?? string.Empty
         };
 
         return result;
