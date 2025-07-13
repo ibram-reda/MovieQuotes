@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieQuotes.Infrastructure;
 
@@ -11,9 +12,11 @@ using MovieQuotes.Infrastructure;
 namespace MovieQuotes.Infrastructure.Migrations
 {
     [DbContext(typeof(MovieQuotesDbContext))]
-    partial class MovieQuotesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250713185603_AddFolderName")]
+    partial class AddFolderName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,12 +80,6 @@ namespace MovieQuotes.Infrastructure.Migrations
                         .HasDefaultValue(0);
 
                     b.HasKey("Id");
-
-                    b.HasAlternateKey("FolderName");
-
-                    b.HasAlternateKey("NameId");
-
-                    b.HasAlternateKey("Title");
 
                     b.ToTable("Movies");
                 });

@@ -33,7 +33,6 @@
                Text="{Binding BaseFolder}"
                Watermark="Folder contains movies"/>  
       <Button Grid.Column="2" Content="change folder" Command="{Binding ChoseFolderCommand}" />
-      <Button Grid.Column="3" Content="sync"  Command="{Binding SyncCommand }" />
     </Grid>
 
 

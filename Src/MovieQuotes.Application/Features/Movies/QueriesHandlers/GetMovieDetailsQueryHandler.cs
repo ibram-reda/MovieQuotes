@@ -3,6 +3,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
+using MovieQuotes.Application.Features.Movies.Mappings;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
 using MovieQuotes.Infrastructure;
@@ -19,17 +20,10 @@ internal class GetMovieDetailsQueryHandler : IRequestHandler<GetMovieDetailsQuer
         var result = new OperationResult<MovieFullInfo>();
 
         var query = dbContext.Movies
-            .Select(a => new MovieFullInfo
-            {
-                Id = a.Id,
-                IMDBId = a.IMDBId,
-                CoverUrl = a.CoverUrl,
-                Description = a.Description,
-                Title = a.Title,
-                LocalPath = a.LocalPath,                
-            });
+            .Where(a => a.Id == request.MovieId)
+            .Select(a => a.ToMovieFullInfo());
 
-        result.Payload = await query.FirstOrDefaultAsync(m => m.Id == request.MovieId);
+        result.Payload = await query.FirstOrDefaultAsync();
 
         return result;
     }

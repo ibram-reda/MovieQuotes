@@ -20,8 +20,7 @@ var cs = builder.Configuration.GetConnectionString("local");
 builder.Services.AddDbContext<MovieQuotesDbContext>(op => op.UseSqlServer(cs));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
-// autom mapper
-builder.Services.AddAutoMapper(typeof(Program), typeof(CreateMovieCommand));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

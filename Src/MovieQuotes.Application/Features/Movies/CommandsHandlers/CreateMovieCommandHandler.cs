@@ -6,11 +6,13 @@ using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Commands;
+using MovieQuotes.Application.Features.Movies.Mappings;
+using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Domain.Exception;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Infrastructure;
 
-public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, OperationResult<Movie>>
+public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, OperationResult<MovieInfo>>
 {
     private readonly MovieQuotesDbContext dbContext;
 
@@ -18,9 +20,9 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
     {
         this.dbContext = dbContext;
     }
-    public async Task<OperationResult<Movie>> Handle(CreateMovieCommand request, CancellationToken cancellationToken)
+    public async Task<OperationResult<MovieInfo>> Handle(CreateMovieCommand request, CancellationToken cancellationToken)
     {
-        var result = new OperationResult<Movie>();
+        var result = new OperationResult<MovieInfo>();
 
         #region valdition
         if (string.IsNullOrWhiteSpace(request.IMDBId))
@@ -38,12 +40,12 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
             return result;
         #endregion
 
-        var movie = Movie.CreateMovie(request.BaseFolder, request.Title, request.VideoLocation, request.Description, request.IMDBId, request.CoverUrl ?? "", request.Year);
+        var movie = Movie.CreateMovie(request.BaseFolder, request.FolderName, request.Title, request.VideoLocation, request.Description, request.IMDBId, request.CoverUrl ?? "", request.Year);
 
         this.dbContext.Movies.Add(movie);
         await dbContext.SaveChangesAsync();
 
-        result.Payload = movie;
+        result.Payload = movie.ToMovieInfo();
 
         return result;
     }

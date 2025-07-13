@@ -48,35 +48,49 @@
           ColumnDefinitions="*,10,200" 
           Margin="10" >
 
+      <!--name, year, imdb,etc-->
       <Border Grid.Column="0"
               BorderThickness="0"
               Padding="10">
 
-        <Grid RowDefinitions="auto,5,auto,5,auto,5,auto"
-              ColumnDefinitions="auto,5,*">
+        <Grid ColumnDefinitions="auto,5,*"
+          RowDefinitions="auto,5,auto,5, auto,5,auto,5,auto" >
 
-          <TextBlock Text="Movie Name:" VerticalAlignment="Center" />
+          <!--Name-->
+          <TextBlock Text="Folder Name:" VerticalAlignment="Center" />
           <TextBox Grid.Column="2"
-                   Text="{Binding MovieName,Mode=TwoWay}"
-                   Watermark="Movie Name i.e 'Forrest Gump (1994)'"
+                   Text="{Binding FolderName,Mode=TwoWay}"
+                   Watermark="folder name i.e 'Forrest Gump (1994)'"
                    Padding="5" />
- 
-          <TextBlock Grid.Row="2" Text="Year:" VerticalAlignment="Center" />
+
+          <!--Display Name-->
+          <TextBlock Grid.Row="2" 
+                     Grid.Column="0"
+                     Text="Display Name:" 
+                     VerticalAlignment="Center" />
           <TextBox Grid.Row="2"
+                   Grid.Column="2"
+                   Text="{Binding DisplayName,Mode=TwoWay}"
+                   Watermark="Display Name i.e 'Forrest Gump'"
+                   Padding="5" />
+
+          
+          <TextBlock Grid.Row="4" Text="Year:" VerticalAlignment="Center" />
+          <TextBox Grid.Row="4"
                    Grid.Column="2"
                    Text="{Binding Year,Mode=TwoWay}"
                    Watermark="year i.e 2024"
                    Padding="5" />
 
-          <TextBlock Grid.Row="4" Text="Imdb Id:" VerticalAlignment="Center" />
-          <TextBox Grid.Row="4"
+          <TextBlock Grid.Row="6" Text="Imdb Id:" VerticalAlignment="Center" />
+          <TextBox Grid.Row="6"
                    Grid.Column="2"
                    Text="{Binding IMDBId,Mode=TwoWay}"
                    Watermark="imdb id i.e 'tt0109830'"
                    Padding="5" />
 
-          <TextBlock Grid.Row="6" Text="Discription:" VerticalAlignment="Center" />
-          <TextBox  Grid.Row="6"
+          <TextBlock Grid.Row="8" Text="Discription:" VerticalAlignment="Center" />
+          <TextBox  Grid.Row="8"
                     Grid.Column="2"
                     Text="{Binding Description,Mode=TwoWay}"
                     TextWrapping="Wrap"
@@ -88,6 +102,7 @@
         </Grid>
       </Border>
 
+      <!--cover photo-->
       <Border Grid.Column="2"
               BorderThickness="1"
               BorderBrush="Yellow"

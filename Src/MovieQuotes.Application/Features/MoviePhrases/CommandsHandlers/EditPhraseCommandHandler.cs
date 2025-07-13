@@ -5,13 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
+using MovieQuotes.Application.Features.MoviePhrases.Mappings;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Infrastructure;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
-
-using static Constants;
 
 internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, OperationResult<Phrase>>
 {
@@ -37,24 +35,16 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
         var durationEdited = phrase.EditDuration(request.StartTime, request.EndTime);
         var textEdit = phrase.EditText(request.PhraseText);
 
-        if(textEdit | durationEdited) 
+        if (textEdit | durationEdited)
             await this.dbContext.SaveChangesAsync();
-        
-        if(durationEdited && !string.IsNullOrWhiteSpace(phrase.VideoClipPath))
+
+        if (durationEdited && !string.IsNullOrWhiteSpace(phrase.VideoClipPath))
         {
             phrase.DeleteVideoClip();
             await this.dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        result.Payload = new Phrase
-        {
-            Id = phrase.Id, 
-            Sequence = phrase.Sequence,
-            StartTime = phrase.StartTime,
-            EndTime = phrase.EndTime,
-            Text = phrase.Text,
-            VideoLocation = phrase.GetVideoClipPath() ?? string.Empty
-        };
+        result.Payload = phrase.ToPhrase();
 
         return result;
     }

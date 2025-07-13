@@ -4,11 +4,11 @@ using MediatR;
 using MediatR.Pipeline;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
+using MovieQuotes.Application.Features.Movies.Mappings;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
 using MovieQuotes.Infrastructure;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,23 +26,14 @@ public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, Opera
     {
         var result = new OperationPageResult<MovieInfo>();
 
-        var query = dbContext.Movies
-            .Select(a => new MovieInfo
-            {
-                Id = a.Id,
-                BaseFolderDir = a.BaseFolderDir,
-                IMDBId = a.IMDBId,
-                CoverUrl = a.CoverUrl,
-                Description = a.Description,
-                Title = a.Title,
-                LocalPath = a.LocalPath,
-            });
-
+        var query = dbContext.Movies.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(request.SearchText))
             query = query.Where(m => m.Title.Contains(request.SearchText));
 
-        var PayLoad = await query.ToListAsync(cancellationToken);
+        var PayLoad = await query
+            .Select(a => a.ToMovieInfo())
+            .ToListAsync(cancellationToken);
 
         result.Count = PayLoad.Count;
         result.HasNext = false;

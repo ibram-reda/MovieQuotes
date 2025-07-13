@@ -3,12 +3,12 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
+using MovieQuotes.Application.Features.StudyPhrases.Mappings;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Queries;
 using MovieQuotes.Infrastructure;
 using System.Threading;
 using System.Threading.Tasks;
-using static Constants;
 
 internal class GetAllStudyPhrasesQueryHandler : IRequestHandler<GetAllStudyPhrasesQuery, OperationPageResult<StudyPhrase>>
 {
@@ -28,19 +28,9 @@ internal class GetAllStudyPhrasesQueryHandler : IRequestHandler<GetAllStudyPhras
         if (request.MovieId > 0)
             baseQuery = baseQuery.Where(a => a.Phrase!.MovieId == request.MovieId);
 
-        var qry = baseQuery.Select(a => new StudyPhrase
-        {
-            StudyId = a.Id,
-            PhraseId = a.PhraseId,
-            PhraseText = a.Phrase!.Text,
-            MovieName = a.Phrase.Movie!.Title,
-            StartTime = a.Phrase.StartTime,
-            EndTime = a.Phrase.EndTime,
-            VideoLocation = a.Phrase.VideoClipPath!.Replace(CashTemplate, CashPath),
-            Content = a.Content,
-            Translation = a.Translation,
-            StudyType = a.StudyType
-        });
+        var qry = baseQuery.Include(a=>a.Phrase)
+                           .Include(a => a.Phrase!.Movie)
+                           .Select(a => a.ToStudyPhrase());
 
         var totalCount = await qry.CountAsync();
 

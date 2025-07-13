@@ -25,9 +25,7 @@ public static class ServiceCollectionExtensions
             Services.AddTransient(type);
         }
 
-        Services.AddLogging();
-
-        Services.AddAutoMapper(typeof(MainWindowViewModel));
+        Services.AddLogging(); 
 
         // add database
         var cs = "Server=localhost;Database=MovieQuotesDb;Trusted_Connection=True;TrustServerCertificate=True";

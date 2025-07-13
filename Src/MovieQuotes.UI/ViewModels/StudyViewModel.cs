@@ -17,7 +17,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-
 public partial class StudyViewModel : ViewModelBase
 {
 
@@ -44,6 +43,7 @@ public partial class StudyViewModel : ViewModelBase
         MainMediaPlayer = new(MainLibVLC)
         {
             EnableHardwareDecoding = true,
+            Volume = 100
         };
         this._filesService = this.GetService<IFilesService>();
     }
@@ -92,8 +92,8 @@ public partial class StudyViewModel : ViewModelBase
     {
         this.CurrentPlayingIndex = this.Phrases.IndexOf(phrase);
         this.CurrentPlayingPhrase = phrase;
-        
-        if(!File.Exists(phrase.VideoLocation))
+
+        if (!File.Exists(phrase.VideoLocation))
         {
             Task.Run(async () => await GenerateVideoAsync(phrase)).Wait(); // try to generate the video if it doesn't exist
             if (!File.Exists(phrase.VideoLocation))
@@ -102,11 +102,11 @@ public partial class StudyViewModel : ViewModelBase
                 return;
             }
         }
-        var uri = new Uri(phrase.VideoLocation);      
-        Media media = new Media(this.MainLibVLC, uri);        
-        MainMediaPlayer.Media?.Dispose(); 
+        var uri = new Uri(phrase.VideoLocation);
+        Media media = new Media(this.MainLibVLC, uri);
+        MainMediaPlayer.Media?.Dispose();
         var r = MainMediaPlayer.Play(media);
-   
+
         this.OnPropertyChanged(nameof(HasNext));
         this.OnPropertyChanged(nameof(HasPrevious));
     }
@@ -138,8 +138,8 @@ public partial class StudyViewModel : ViewModelBase
                 var result = await this.mediator.Send(updateCommand);
 
                 if (result.IsError)
-                    this.ErrorMessages.Add("Failed to update phrase: " + result.Errors.First().Message);  
-            
+                    this.ErrorMessages.Add("Failed to update phrase: " + result.Errors.First().Message);
+
                 var viewPhrase = this.Phrases.FirstOrDefault(p => p.PhraseId == studyEditDialog.PhraseId);
                 if (viewPhrase is not null && result.Payload is not null)
                 {
@@ -176,7 +176,7 @@ public partial class StudyViewModel : ViewModelBase
             }
 
             this.IsBusy = false;
-             
+
             PlayPhrase(this.CurrentPlayingIndex); // Re-play the phrase after update
         };
         this.ShowEditDialog = true;
@@ -192,7 +192,8 @@ public partial class StudyViewModel : ViewModelBase
         if (reslt.IsSuccess)
         {
             this.Movies.Clear();
-            this.Movies.Add(new() {
+            this.Movies.Add(new()
+            {
                 MovieName = "random phrases",
                 StudyCount = reslt.Payload?.Sum(x => x.StudyCount) ?? 0,
             });

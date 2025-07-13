@@ -4,146 +4,89 @@ using MovieQuotes.Domain.Models;
 
 public class SubtitlePhraseTests
 {
-    [Fact]
-    public void ParsTest()
+
+    [Theory]
+    [InlineData("Hello world", "Hello world", "no changes needed")]
+    [InlineData("Hello   world", "Hello world", "should remove extra spaces")]
+    [InlineData("  Hello   world  ", "Hello world", "should remove extra spaces and trim it")]
+    [InlineData("Hello <i>world</i>", "Hello world", "should remove Italic Tag")]
+    [InlineData("Hello <b>world</b>", "Hello world", "should remove Bold Tag")]
+    [InlineData("Hello <u>world</u>", "Hello world", "should remove Underline Tag")]
+    [InlineData("Hello <font color=\"red\">world</font>", "Hello world", "should remove Font Color Tag")]
+    [InlineData("Hello <i>world</i> <b>again</b>", "Hello world again", "should remove multiple markup tags")]
+    [InlineData("Hello <i>world</i> <b>again</b>  <u>and more</u>", "Hello world again and more", "should remove multiple markup tags and extra spaces")]
+    [InlineData("Hello <i>world</i> <b>again</b>  <u>and more</u>   ", "Hello world again and more", "should remove multiple markup tags, extra spaces and trim it")]
+    [InlineData("Hello <i>world</i> <b>again</b>  <u>and more</u>   <font color=\"blue\">with color</font>", "Hello world again and more with color", "should remove multiple markup tags, extra spaces, trim it and keep color tag")]
+    [InlineData("Hello <i>world</i> <b>again</b>  <u>and more</u>   <font color=\"blue\">with color</font>   ", "Hello world again and more with color", "should remove multiple markup tags, extra spaces, trim it and keep color tag")]
+    public void RemoveMarkupAndDuplicateSpaces(string originalText, string assertText, string msg)
     {
-        string strBlock = """
-            2
-            00:00:17,894 --> 00:00:21,189
-            No matter what they say,
-            it's all about money.
-            """;
-
-        string txtContent = """
-            No matter what they say, it's all about money.
-            """;
-        int sequence = 2;
-        TimeSpan startTime = TimeSpan.Parse("00:00:17.894");
-        TimeSpan endTime = TimeSpan.Parse("00:00:21.189");
-
-        var result = SubtitlePhrase.Parse(strBlock);
-
-        Assert.Equal(sequence, result.Sequence);
-        Assert.Equal(startTime, result.StartTime);
-        Assert.Equal(endTime, result.EndTime);
-        Assert.Equal(txtContent, result.Text);
+        var phrase = SubtitlePhrase.CreateSubtitlePhrase(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), originalText);
+        var actualText = phrase.GetTextWithoutMarkupAndDuplicateSpaces();
+        Assert.Equal(assertText, actualText);
     }
 
     [Fact]
-    public void RemoveMarkup_ItalicTags()
+    public void RemoveMarkup_StartingHyphen()
     {
-        string strBlock = """
-            464
-            00:34:24,775 --> 00:34:28,236
-            <i>Edward, I know a lot of nice girls.</i>
-            No, you don't.
-            """;
-
-        string txtContent = """
-            Edward, I know a lot of nice girls. No, you don't.
-            """;
-        int sequence = 464;
-        TimeSpan startTime = TimeSpan.Parse("00:34:24.775");
-        TimeSpan endTime = TimeSpan.Parse("00:34:28.236");
-
-        var result = SubtitlePhrase.Parse(strBlock);
-
-        Assert.Equal(sequence, result.Sequence);
-        Assert.Equal(startTime, result.StartTime);
-        Assert.Equal(endTime, result.EndTime);
-        Assert.Equal(txtContent, result.Text);
+        var originalText = "- Hello world";
+        var assertText = "Hello world";
+        var phrase = SubtitlePhrase.CreateSubtitlePhrase(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), originalText);
+        var actualText = phrase.GetTextWithoutMarkupAndDuplicateSpaces();
+        Assert.Equal(assertText, actualText);
     }
 
+
     [Fact]
-    public void RemoveMarkup_BoldTags()
+    public void RemoveMarkup_KeepsHyphenInBetweenWords()
     {
-        string strBlock = """
-            464
-            00:34:24,775 --> 00:34:28,236
-            Well,<b> you keep saying the future wasn't always this way, right?</b>
-            """;
-
-        string txtContent = """
-            Well, you keep saying the future wasn't always this way, right?
-            """;
-
-        var result = SubtitlePhrase.Parse(strBlock);
-
-        Assert.Equal(txtContent, result.Text);
+        var originalText = "Hello-world";
+        var assertText = "Hello-world";
+        var phrase = SubtitlePhrase.CreateSubtitlePhrase(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), originalText);
+        var actualText = phrase.GetTextWithoutMarkupAndDuplicateSpaces();
+        Assert.Equal(assertText, actualText);
     }
 
-    [Fact]
-    public void RemoveMarkup_UnderlineTags() {
-         string strBlock = """
-            464
-            00:34:24,775 --> 00:34:28,236
-            Well,<u> you keep saying the future wasn't always this way, right?</u>
-            """;
-
-        string txtContent = """
-            Well, you keep saying the future wasn't always this way, right?
-            """;
-
-        var result = SubtitlePhrase.Parse(strBlock);
-
-        Assert.Equal(txtContent, result.Text);
-    }
 
     [Fact]
-    public void RemoveMarkup_FontColorTags()
+    public void GetWords()
     {
-        string strBlock = """
-            464
-            00:34:24,775 --> 00:34:28,236
-            Well,<font color="#FFFFFF"> you keep saying the future wasn't always this way, right?</font>
-            """;
+        var originalText = "Hello world";
+        var expectedWords = new[] { "Hello", "world" };
+        var phrase = SubtitlePhrase.CreateSubtitlePhrase(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), originalText);
+        var actualWords = phrase.GetWords(); 
+        Assert.Equal(expectedWords, actualWords);
 
-        string txtContent = """
-            Well, you keep saying the future wasn't always this way, right?
-            """;
-
-        var result = SubtitlePhrase.Parse(strBlock);
-         
-        Assert.Equal(txtContent, result.Text);
     }
 
     [Fact]
-    public void RemoveMarkup_Hyphen()
+    public void GetWords_WithMarkup()
     {
-        string strBlock = """
-            464
-            00:34:24,775 --> 00:34:28,236
-            - How's it going?
-            - Oh, good.
-            """;
-
-        string txtContent = """
-            How's it going? Oh, good.
-            """;
-
-        var result = SubtitlePhrase.Parse(strBlock);
-
-        Assert.Equal(txtContent, result.Text);
+        var originalText = "Hello <i>world</i>";
+        var expectedWords = new[] { "Hello", "world" };
+        var phrase = SubtitlePhrase.CreateSubtitlePhrase(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), originalText);
+        var actualWords = phrase.GetWords();
+        Assert.Equal(expectedWords, actualWords);
     }
 
     [Fact]
-    public void NormalizeText()
+    public void GetWords_WithMultipleSpaces()
     {
-        string Text = """ 
-                 <b>Hello</b>
-            can
-                 - Oh, good.
-            <i>a
-            </i>  
-
-            """;
-
-        string expected = """
-            Hello can Oh, good. a
-            """;
-
-        var result = SubtitlePhrase.NormalizeText(Text);
-
-        Assert.Equal(expected, result);
+        var originalText = "Hello   world";
+        var expectedWords = new[] { "Hello", "world" };
+        var phrase = SubtitlePhrase.CreateSubtitlePhrase(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), originalText);
+        var actualWords = phrase.GetWords();
+        Assert.Equal(expectedWords, actualWords);
     }
+
+    [Fact]
+    public void GetWords_EmptyText_ReturnsEmptyArray()
+    {
+        var originalText = "";
+        var expectedWords = Array.Empty<string>();
+        var phrase = SubtitlePhrase.CreateSubtitlePhrase(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), originalText);
+        var actualWords = phrase.GetWords();
+        Assert.Equal(expectedWords, actualWords);
+    }
+
+
 }

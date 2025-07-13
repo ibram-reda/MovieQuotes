@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Common.Services;
+using MovieQuotes.Application.Features.MoviePhrases.Mappings;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,27 +32,21 @@ internal class GetAllPhrasesForMovieQueryHandlers : IRequestHandler<GetAllPhrase
         {
             Language.ar => await GetArabicFromDesk(request.MovieId, result),
             Language.en => this.dbContext.SubtitlePhrases
-            .Where(a => a.MovieId == request.MovieId)
+            .Where(a => a.MovieId == request.MovieId),
+            _ => throw new NotSupportedException($"Language {request.Language} is not supported.")
         };
 
-        var load =   src
-            .OrderBy(a=>a.StartTime)
-            .Select(a => new Phrase()
-            {
-                Id = a.Id,
-                Sequence = a.Sequence,
-                Text = a.Text,
-                StartTime = a.StartTime,
-                EndTime = a.EndTime,
-                Duration = a.Duration,
-            });
+        var load = src
+            .OrderBy(a => a.StartTime)
+            .Select(a => a.ToPhrase());
 
         result.Payload = request.Language switch
         {
             Language.ar => load.ToList(),
-            Language.en => await load.ToListAsync()
+            Language.en => await load.ToListAsync(),
+            _ => throw new NotSupportedException($"Language {request.Language} is not supported.")
         };
-           
+
 
         return result;
     }
@@ -63,14 +57,14 @@ internal class GetAllPhrasesForMovieQueryHandlers : IRequestHandler<GetAllPhrase
 
         if (movie is null)
             result.AddError(ErrorCode.NotFound, "Movie not found");
-        var b =  Path.GetDirectoryName(movie.LocalPath);
+        var b = Path.GetDirectoryName(movie.LocalPath);
         var subFolder = Path.Combine(b, "subtitles");
         string? file = null;
         if (!Directory.Exists(subFolder))
             result.AddError(ErrorCode.NotFound, "cannot find the subtitles folder");
         else
             file = Directory.GetFiles(subFolder).FirstOrDefault(f => f.EndsWith("ar.srt"));
-        
+
         if (file is null)
             result.AddError(ErrorCode.NotFound, "can't load Arabic subtitle file maybe not exist or not end with 'ar.srt'");
 

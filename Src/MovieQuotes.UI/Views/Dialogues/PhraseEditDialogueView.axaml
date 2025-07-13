@@ -27,6 +27,7 @@
           <TextBox Grid.Row="0"
                    Grid.Column="1"
                    Grid.ColumnSpan="2"
+                   AcceptsReturn="True"
                    Text="{Binding PhraseText,Mode=TwoWay}"/>
 
           <controls:TimeSpanControl Grid.Row="1"

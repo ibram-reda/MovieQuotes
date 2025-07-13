@@ -43,4 +43,5 @@ public class MovieInfo
     /// movie production year.
     /// </summary>
     public int? Year { get; set; }
+    public string FolderName { get; set; } = string.Empty;
 }

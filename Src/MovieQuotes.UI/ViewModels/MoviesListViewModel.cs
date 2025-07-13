@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.Application.Features.SubtitleFiles.Commands;
 using MovieQuotes.UI.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -66,13 +65,14 @@ public partial class MoviesListViewModel : ViewModelBase
 
     private bool IsMovieInDB(MovieInfo movie)
     {
-        return DBMovies.Any(a => a.Title == movie.Title);
+        return DBMovies.Any(a => a.FolderName == movie.FolderName);
     }
     private static async Task<MovieInfo> ExtractMovieInfoAsync(IStorageFolder movieBaseFolder)
     {
         MovieInfo movie = new MovieInfo();
-        movie.Title = movieBaseFolder.Name;
-        movie.Year = GetYearFromTitle(movie.Title);
+        movie.FolderName = movieBaseFolder.Name;
+        movie.Title = GetTitleFromFolderName(movieBaseFolder.Name);
+        movie.Year = GetYearFromFolderName(movieBaseFolder.Name);
         await foreach (var file in movieBaseFolder.GetItemsAsync())
         {
             if (file is IStorageFile movieFilePart)
@@ -128,33 +128,37 @@ public partial class MoviesListViewModel : ViewModelBase
         await this.NavigationService.NavigateToAsync<MovieDetailsViewModel>(movieId);
     }
 
-    [RelayCommand]
-    public async Task Sync()
-    {
-        
-    }
     public override void ConsumeMessage(object? message)
     {
         if (message is null) return;
-        if (message is string s)
+        if (message is MovieInfo dbMovie)
         {
-            var m = OutOfSyncMovies.FirstOrDefault(a => a.Title == s);
+            var m = OutOfSyncMovies.FirstOrDefault(a => a.FolderName == dbMovie.FolderName);
             if (m is null)
                 return;
 
             OutOfSyncMovies.Remove(m);
-            DBMovies.Add(m);
+            DBMovies.Add(dbMovie);
         }
     }
 
+    private static string GetTitleFromFolderName(string folderName)
+    {
+        var index = folderName.IndexOf('(');
 
-    private static int GetYearFromTitle(string title)
+        if (index < 0)
+            return folderName;
+
+        return folderName[..index].Trim();
+    }
+
+    private static int GetYearFromFolderName(string folderName)
     {
         Regex regex = new Regex(@"\(([0-9]{4})\)$");
-        var x = regex.Match(title).Groups[1].Value;
+        var x = regex.Match(folderName).Groups[1].Value;
         if (int.TryParse(x, out var res))
             return res;
 
-        throw new ArgumentException($"can not get year form '{title}'", nameof(title));
+        throw new ArgumentException($"can not get year form '{folderName}'", nameof(folderName));
     }
 }

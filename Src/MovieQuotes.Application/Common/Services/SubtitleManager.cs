@@ -5,7 +5,6 @@ using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Models;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 internal static class SubtitleManager
 {
@@ -22,7 +21,7 @@ internal static class SubtitleManager
 
         using var stream = new StreamReader(filePath, encoding ?? Encoding.UTF8);
 
-        result.Payload = (await SubtitlePhrase.GetPhrasesFromStreamAsync(stream)).AsQueryable();
+        result.Payload = (await SrtReader.GetPhrasesFromStreamAsync(stream)).AsQueryable();
 
         return result;
     }
@@ -62,15 +61,8 @@ internal static class SubtitleManager
 
     public static void RemoveMarkupAndDuplicateSpaces(this IEnumerable<SubtitlePhrase> subtitles)
     {
-        Regex MarkUpRegex = new Regex("<i>|</i>|<b>|</b>|<u>|</u>|<font color=\".*?\">|</font>", RegexOptions.Compiled);
-        Regex SpaceRegex = new Regex(@"[^\S\n]+", RegexOptions.Compiled);
-
         foreach (var s in subtitles)
-        {
-            var withoutMarkUp = MarkUpRegex.Replace(s.Text, string.Empty);
-            var withoutExtraSpaces = SpaceRegex.Replace(withoutMarkUp, " ").Trim();
-            s.EditText(withoutExtraSpaces);
-        }
+            s.EditText(s.GetTextWithoutMarkupAndDuplicateSpaces());
     }
 
 

@@ -2,11 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-
 
 public class SubtitlePhrase
 {
@@ -26,9 +22,18 @@ public class SubtitlePhrase
 
     public List<PhraseWords> PhraseWords { get; private set; } = [];
 
-    private static string RegexText => @"(?<Order>\d+)\r\n(?<StartTime>(\d\d:){2}\d\d,\d{3}) --> (?<EndTime>(\d\d:){2}\d\d,\d{3})\r\n(?<Sub>(.|[\r\n])+?(?=\r\n\r\n|$))";
-    private static Regex SubtitleBlockRegex { get; } = new(RegexText);
 
+    public static SubtitlePhrase CreateSubtitlePhrase(int sequence, TimeSpan startTime, TimeSpan endTime, string text)
+    {
+        var phrase = new SubtitlePhrase
+        {
+            Sequence = sequence,
+            StartTime = startTime,
+            EndTime = endTime,
+            Text = text
+        };
+        return phrase;
+    }
     public override string ToString()
     {
         return $"""
@@ -116,103 +121,27 @@ public class SubtitlePhrase
         return true;
     }
 
-    /// <summary>
-    /// Extract Phrases from streamReader contains "srt" formatted content.
-    /// </summary>
-    /// <param name="reader">source of Subtitle.</param>
-    /// <param name="token">Cancelation Token</param>
-    /// <returns>Async Task that resolve for list of <see cref="SubtitlePhrase"/></returns>
-    public static async Task<List<SubtitlePhrase>> GetPhrasesFromStreamAsync(StreamReader reader, CancellationToken token = default)
+
+    public string GetTextWithoutMarkupAndDuplicateSpaces()
     {
-        var FileTextContent = await reader.ReadToEndAsync(token);
-        return GetPhrases(FileTextContent);
+        Regex MarkUpRegex = new Regex("<i>|</i>|<b>|</b>|<u>|</u>|<font color=\".*?\">|</font>", RegexOptions.Compiled);
+        Regex SpaceRegex = new Regex(@"[^\S\n]+", RegexOptions.Compiled);
+        var withoutMarkUp = MarkUpRegex.Replace(Text, string.Empty);
+        var withoutExtraSpaces = SpaceRegex.Replace(withoutMarkUp, " ").Trim();
+        return withoutExtraSpaces;
     }
 
-    /// <summary>
-    /// Extract Phrases from "srt" formatted content.
-    /// </summary>
-    /// <param name="content">subtitle.</param>
-    /// <returns>list of <see cref="SubtitlePhrase"/>.</returns>
-    public static List<SubtitlePhrase> GetPhrases(string content)
+    public string[] GetWords()
     {
-        var matches = SubtitleBlockRegex.Matches(content);
-        if (matches.Count == 0)
-        {
-            matches = SubtitleBlockRegex.Matches(content.Replace("\n", "\r\n"));
-            if (matches.Count == 0)
-                throw new Exception("can not read the subtitle content");
-        }
-        var phrases = matches.Select(m => Parse(m)).ToList();
-
-        if (phrases.GroupBy(m => m.Sequence).Where(group => group.Count() > 1).Any())
-        {
-            return ReSequence(phrases);
-        }
-        return phrases;
+        return GetTextWithoutMarkupAndDuplicateSpaces()
+             .Split(new[] { ' ', '\n', ',', '!', '?', '.' }, StringSplitOptions.RemoveEmptyEntries)
+             .Select(w => Normalize(w))
+             .ToArray();
     }
 
-    private static List<SubtitlePhrase> ReSequence(List<SubtitlePhrase> list)
+    Regex NormalizedRgx = new Regex("^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$", RegexOptions.Compiled);
+    private string Normalize(string word)
     {
-        return list.OrderBy(a => a.StartTime)
-            .Select((a, index) => new SubtitlePhrase
-            {
-                Sequence = index,
-                StartTime = a.StartTime,
-                EndTime = a.EndTime,
-                Text = a.Text,
-            })
-            .ToList();
-    }
-    private static SubtitlePhrase Parse(Match m)
-    {
-        var result = new SubtitlePhrase();
-        result.Sequence = int.Parse(m.Groups["Order"].Value);
-        result.StartTime = TimeSpan.Parse(m.Groups["StartTime"].Value.Replace(',', '.'));
-        result.EndTime = TimeSpan.Parse(m.Groups["EndTime"].Value.Replace(',', '.'));
-        result.Text = m.Groups["Sub"].Value;
-        return result;
-    }
-
-    /// <summary>
-    /// parse string to <see cref="SubtitlePhrase"/>.
-    /// 
-    /// string should be on form 
-    /// <code> 
-    /// [sequence Number]
-    /// [hh:mm:ss,ms] --> [hh:mm:ss,ms]
-    /// - [Text]
-    /// </code>
-    /// </summary>
-    /// <param name="s">string</param>
-    /// <param name="provider"></param>
-    /// <returns>instance of <see cref="SubtitlePhrase"/>.</returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    public static SubtitlePhrase Parse(string s, IFormatProvider? provider = null)
-    {
-        if (!SubtitleBlockRegex.IsMatch(s))
-            throw new ArgumentNullException(nameof(s), "Can't Pars the Strig!!");
-
-        var m = SubtitleBlockRegex.Match(s);
-        return Parse(m);
-    }
-
-    /// <summary>
-    /// try parse string to <see cref="SubtitlePhrase"/>
-    /// <br/><br/>
-    /// see also <seealso cref="Parse(string, IFormatProvider?)"/>.
-    /// </summary>
-    /// <param name="s"></param>
-    /// <param name="provider"></param>
-    /// <param name="result"></param>
-    /// <returns>true if successful and false otherwise.</returns>
-    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out SubtitlePhrase result)
-    {
-        if (SubtitleBlockRegex.IsMatch(s ?? ""))
-        {
-            result = Parse(s ?? "");
-            return true;
-        }
-        result = null;
-        return false;
+        return NormalizedRgx.Replace(word, "");
     }
 }

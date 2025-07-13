@@ -4,6 +4,7 @@ using MediatR;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Commands;
+using MovieQuotes.Application.Features.StudyPhrases.Mappings;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
 using MovieQuotes.Infrastructure;
 
@@ -38,14 +39,7 @@ internal class EditStudyContentCommandHandler : IRequestHandler<EditStudyContent
             return result;
         }
 
-        result.Payload = new StudyPhrase
-        {
-            StudyId = studyPhrase.Id,
-            PhraseId = studyPhrase.PhraseId,
-            Content = studyPhrase.Content,
-            Translation = studyPhrase.Translation,
-            StudyType = studyPhrase.StudyType,
-        };
+        result.Payload = studyPhrase.ToStudyPhrase();
         return result;
 
     }

@@ -3,12 +3,12 @@
 using MediatR;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Commands;
+using MovieQuotes.Application.Features.StudyPhrases.Mappings;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
 using MovieQuotes.Infrastructure;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-
 
 internal class CreateStudyPhraseCommandHandler : IRequestHandler<CreateStudyPhraseCommand, OperationResult<StudyPhrase>>
 {
@@ -32,12 +32,7 @@ internal class CreateStudyPhraseCommandHandler : IRequestHandler<CreateStudyPhra
             dbContext.StudyPhrases.Add(dbStudyPhrase);
             var effectedRows = await dbContext.SaveChangesAsync();
 
-            result.Payload = new StudyPhrase
-            {
-                Content = dbStudyPhrase.Content,
-                Translation = dbStudyPhrase.Translation,
-                StudyType = dbStudyPhrase.StudyType,               
-            };
+            result.Payload = dbStudyPhrase.ToStudyPhrase();
 
         }
         catch (Exception exception)

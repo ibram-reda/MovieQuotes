@@ -8,7 +8,6 @@ using MovieQuotes.Application.Common.Services;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Infrastructure;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -77,17 +76,16 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
         foreach (var phrase in phrases)
         {
             if (phrase.PhraseWords.Any()) continue;
-            var words = phrase.Text.Split(' ', '\n', ',', '!', '.');
+            var words = phrase.GetWords();
             int i = 0;
             foreach (var word in words)
             {
                 if (string.IsNullOrWhiteSpace(word))
                     continue;
-                var normalizedWord = Normalize(word);
-                var w = await dbContext.Word.FirstOrDefaultAsync(a => a.Text == normalizedWord);
+                var w = await dbContext.Word.FirstOrDefaultAsync(a => a.Text == word);
                 if (w is null)
                 {
-                    w = Word.CreateWord(normalizedWord);
+                    w = Word.CreateWord(word);
                     dbContext.Word.Add(w);
                     await dbContext.SaveChangesAsync();
                 }
@@ -98,9 +96,5 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
         }
     }
 
-    Regex rgx = new Regex("^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$");
-    private string Normalize(string word)
-    {
-        return rgx.Replace(word, "");
-    }
+
 }

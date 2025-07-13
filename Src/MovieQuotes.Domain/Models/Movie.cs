@@ -9,6 +9,7 @@ public class Movie
     private Movie() { }
     public int Id { get; private set; }
     public string NameId { get; set; } = string.Empty;
+    public string FolderName { get;private set; } = string.Empty;
     public string Title { get;private set; } = string.Empty;
     public string? Description { get; private set; }
 
@@ -30,13 +31,14 @@ public class Movie
     /// <param name="description">movie description.</param>
     /// <returns>instance of <see cref="Movie"/>.</returns>
     /// <exception cref="MovieNotValidException"></exception>
-    public static Movie CreateMovie(string baseFolder,string title,string localPath ,string? description,string? IMDBID,string coverUrl,int year)
+    public static Movie CreateMovie(string baseFolder,string folderName,string title,string localPath ,string? description,string? IMDBID,string coverUrl,int year)
     {
         var validator = new MovieValidator();
 
         var movie = new Movie()
         {
             BaseFolderDir = baseFolder,
+            FolderName = folderName,
             NameId = TitleToNameId(title),
             Title = title,
             Description = description,
