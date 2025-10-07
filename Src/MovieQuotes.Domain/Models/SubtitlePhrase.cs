@@ -124,7 +124,7 @@ public class SubtitlePhrase
 
     public string GetTextWithoutMarkupAndDuplicateSpaces()
     {
-        Regex MarkUpRegex = new Regex("<i>|</i>|<b>|</b>|<u>|</u>|<font color=\".*?\">|</font>", RegexOptions.Compiled);
+        Regex MarkUpRegex = new Regex(@"<i>|</ i>|</i>|<b>|</b>|<u>|</u>|<font ([A-Za-z]+="".*?"")*>|</font>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         Regex SpaceRegex = new Regex(@"[^\S\n]+", RegexOptions.Compiled);
         var withoutMarkUp = MarkUpRegex.Replace(Text, string.Empty);
         var withoutExtraSpaces = SpaceRegex.Replace(withoutMarkUp, " ").Trim();
@@ -133,10 +133,15 @@ public class SubtitlePhrase
 
     public string[] GetWords()
     {
+        // Split the text into words, removing markup and duplicate spaces
+        // and normalizing each word.
+        // keep link as one word
         return GetTextWithoutMarkupAndDuplicateSpaces()
-             .Split(new[] { ' ', '\n', ',', '!', '?', '.' }, StringSplitOptions.RemoveEmptyEntries)
+             .Split(new[] { ' ', '\n', ',', '!', '?', '.', '"', '(', ')', '-', ':', ';' }, StringSplitOptions.RemoveEmptyEntries)
              .Select(w => Normalize(w))
              .ToArray();
+
+
     }
 
     Regex NormalizedRgx = new Regex("^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$", RegexOptions.Compiled);

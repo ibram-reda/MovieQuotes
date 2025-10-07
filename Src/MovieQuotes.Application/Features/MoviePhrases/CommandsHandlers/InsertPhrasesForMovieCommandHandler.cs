@@ -40,7 +40,19 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
         if (string.IsNullOrWhiteSpace(request.SubtitleLocation))
         {
             var baseFolder = Path.GetDirectoryName(movie.LocalPath);
-            var subtitleFolder = Path.Combine(baseFolder ?? "", "subtitles");
+            if (string.IsNullOrEmpty(baseFolder))
+            {
+                result.AddError(ErrorCode.NotFound, MoviePhrasesMessages.MovieBaseFolderNotFound);
+                return result ;
+            }
+            var subtitleFolder = Path.Combine(baseFolder, "subtitles");
+            if (!Directory.Exists(subtitleFolder))
+                subtitleFolder = Path.Combine(baseFolder, "Subs");
+            if (!Directory.Exists(subtitleFolder))
+            {
+                result.AddError(ErrorCode.NotFound, MoviePhrasesMessages.SubtitleFolderNotFound, baseFolder);
+                return result;
+            }
             var enSubLocation = Directory.GetFiles(subtitleFolder).FirstOrDefault(f => f.EndsWith("en.srt"));
             if (!File.Exists(enSubLocation))
                 result.AddError(ErrorCode.NotFound, MoviePhrasesMessages.SubtitleFileNotFound);

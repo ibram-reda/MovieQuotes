@@ -21,4 +21,5 @@ public enum ErrorCode
 
     // Other Error more than 4000
     UnKnownError = 4001,
+    InvalidInput = 4002,
 }

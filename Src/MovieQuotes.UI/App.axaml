@@ -20,6 +20,7 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="/Views/Controls/TimeSpanControl.axaml"/>
+        <ResourceInclude Source="/Views/Controls/RichTextBlock.axaml"/>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
     <converters:BitmapValueConverter x:Key="PathToBitmapConverter" />

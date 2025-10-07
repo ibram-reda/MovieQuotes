@@ -37,6 +37,7 @@
       <TextBlock Text="{Binding CurrentPlayingIndex}"/>
       <TextBlock Text="  of  "/>
       <TextBlock Text="{Binding ReadyToPlay.Count}"/>
+      <TextBlock Text="{Binding SearchCount,StringFormat=' founded:{0}'}" />
 
       <Button Content="Previous" Command="{Binding PreviousCommand}" />
       <Button Content="Next" Command="{Binding NextCommand}" />

@@ -24,7 +24,7 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
         MainLibVLC = new();
         MainMediaPlayer = new(MainLibVLC)
         {
-            EnableHardwareDecoding = true,
+            EnableHardwareDecoding = false,
         };
         MainMediaPlayer.Opening += MainMediaPlayer_Opening;
         MainMediaPlayer.TimeChanged += MainMediaPlayer_TimeChanged;

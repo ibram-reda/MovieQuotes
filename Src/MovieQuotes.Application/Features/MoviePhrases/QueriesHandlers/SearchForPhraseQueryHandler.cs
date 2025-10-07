@@ -28,6 +28,11 @@ public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery,
     {
         var result = new OperationPageResult<Phrase>();
 
+        if (string.IsNullOrWhiteSpace(request.SearchText))
+        {
+            result.AddError(ErrorCode.InvalidInput, MoviePhrasesMessages.SearchTextEmpty);
+            return result;
+        }
 
         var query = dbContext.SubtitlePhrases
             .Where(a => a.Text.Contains(request.SearchText))

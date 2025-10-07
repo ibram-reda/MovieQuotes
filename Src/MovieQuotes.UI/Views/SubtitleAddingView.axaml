@@ -9,7 +9,16 @@
   <Grid ColumnDefinitions="*,5,*,5,*">
     
     <Grid RowDefinitions="auto,*" Margin="5 0">
-      <TextBlock Text="Wating" Classes="title" />
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="Wating" Classes="title" />
+        <TextBlock Text="{Binding MovieList.Count,StringFormat=' ({0} item)'}" VerticalAlignment="Center"/>
+         
+           <Button  Content="Load all" 
+                    Command="{Binding AddSubtitleAllCommand}"  />
+          <Button  Content="Cancel"
+                   Command="{Binding AddSubtitleAllCancelCommand}" />
+         
+      </StackPanel>
       <ScrollViewer Grid.Row="1">        
         <ItemsControl ItemsSource="{Binding MovieList}">         
          <ItemsControl.ItemTemplate>
@@ -33,6 +42,7 @@
                   Grid.Column="1" />
     <StackPanel Grid.Column="2">
       <TextBlock Text="Running" Classes="title" />
+      <TextBlock Text="{Binding Running.Count,StringFormat=' {0} item'}"/>
       <ItemsControl ItemsSource="{Binding Running}">
       <ItemsControl.ItemTemplate>
         <DataTemplate>
@@ -46,17 +56,18 @@
 
 
     <GridSplitter Grid.Column="3" />
-    <StackPanel Grid.Column="4" > 
+    <StackPanel Grid.Column="4" ScrollViewer.VerticalScrollBarVisibility="Auto" > 
       <TextBlock Text="Done" Classes="title" />
-      <ItemsControl ItemsSource="{Binding Done}">
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding Title}"/>
-          </StackPanel>
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+      <ItemsControl ItemsSource="{Binding Done}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="{Binding Movie.Title}"/>
+              <TextBlock Foreground="Green" Text="{Binding Duration.Seconds,StringFormat=' {0} sec'}"/>
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
     </StackPanel>
   </Grid>
 </UserControl>

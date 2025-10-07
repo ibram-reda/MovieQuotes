@@ -9,6 +9,7 @@ using MovieQuotes.Application.Features.VideoClips.Queries;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,17 +38,29 @@ public partial class PlaybackViewModel : ViewModelBase
     [RelayCommand(IncludeCancelCommand = true)]
     private async Task search(CancellationToken token = default)
     {
+        ErrorMessages.Clear();
+        if (string.IsNullOrWhiteSpace(SearchText))
+        {
+            ErrorMessages.Add("Search text cannot be empty.");
+            return;
+        }
         Phrases.Clear();
         ReadyToPlay.Clear();
         CurrentPlayingIndex = 0;
         CurrentPlayingPhrase = null;
         var query = new SearchForPhraseQuery(SearchText)
         {
-            ResultPerPage = 1000,
+            ResultPerPage = 20,
         };
         IsBusy = true;
         var result = await this.mediator.Send(query, token);
         IsBusy = false;
+
+        if (!result.IsSuccess)
+        {
+            ErrorMessages.Add(result.Errors.First().Message ?? "Unknown error occurred");
+            return;
+        }
 
         SearchCount = result.Count;
         foreach (var phrase in result?.Payload ?? [])
