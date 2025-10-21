@@ -172,7 +172,9 @@
       <controls:MediaPlayerControls 
         Grid.Row="1"
         Grid.Column="0"
-        Player="{Binding MainMediaPlayer}" />
+        Player="{Binding MainMediaPlayer}"  
+        NextPhrase="{Binding GoToNextPhraseCommand}"
+        PreviousPhrase="{Binding GoToPreviousPhraseCommand}"/>
 
       <StackPanel Orientation="Horizontal"
                   Grid.Column="2"

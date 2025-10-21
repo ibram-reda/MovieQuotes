@@ -4,12 +4,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
-using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.Movies.Queries;
 using MovieQuotes.Application.Features.StudyPhrases.Commands;
+using MovieQuotes.UI.Features.WatchMovie.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,8 +29,11 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
         MainMediaPlayer.TimeChanged += MainMediaPlayer_TimeChanged;
         MainMediaPlayer.LengthChanged += MainMediaPlayer_LengthChanged;
         MainMediaPlayer.PositionChanged += MainMediaPlayer_PositionChanged;
+        MainMediaPlayer.Forward += (_, _) => this.ResyncCurrentPhrase();
+        MainMediaPlayer.Backward += (_, _) => this.ResyncCurrentPhrase();
 
     }
+         
 
     private async void MainMediaPlayer_Opening(object? sender, EventArgs e)
     {
@@ -53,7 +55,7 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     private void MainMediaPlayer_TimeChanged(object? sender, MediaPlayerTimeChangedEventArgs e)
     {
         this.SetProperty(ref this.currentTime, e.Time, nameof(CurrentTime));
-        this.UpdateCurrentPhrase();
+        this.ResyncCurrentPhrase();
     }
 
     public override string Title => $"Details of {MovieName}";
@@ -64,15 +66,15 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     [ObservableProperty] string videoLocation = "";
     [ObservableProperty] long movieLength = 0;
     [ObservableProperty] private bool viewContent;
-    List<Phrase> enPhrases = [];
-    List<Phrase> arPhrases = [];
     [ObservableProperty] bool showArabicSubs = true;
-    [ObservableProperty] Phrase? currentPhrase;
-    [ObservableProperty] Phrase? currentArPhrase;
     [ObservableProperty] string learningContent = "";
     [ObservableProperty] string translateContent = "";
     [ObservableProperty] string contentType = "";
     [ObservableProperty] bool canLoadEnSubs = false;
+    SubtitleManager? EnSubtitleManager = null;
+    public SubtitleEntry? CurrentPhrase => this.EnSubtitleManager?.CurrentSubtitle;
+    public SubtitleEntry? CurrentArPhrase => this.ArSubtitleManager?.CurrentSubtitle;
+    SubtitleManager? ArSubtitleManager = null;
     public string[] AllowedType { get; } = ["noun", "adjective", "verb", "idiom", "phrasal verb", "phrase", "exclamation", "conjunction", "adverb"];
 
     private long currentTime = 0;
@@ -83,6 +85,7 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
         set
         {
             MainMediaPlayer.Time = value;
+            this.ResyncCurrentPhrase();
         }
     }
 
@@ -116,15 +119,17 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
         var result = await this.mediator.Send(cmd);
         if (result.IsSuccess)
         {
-            this.enPhrases = result.Payload ?? [];
-            if (this.enPhrases.Count <= 0)
-                this.CanLoadEnSubs = true;
+            this.EnSubtitleManager = new(result.Payload?.Select(a => new SubtitleEntry(a.Id, a.StartTime, a.EndTime, a.Text)) ?? []);
+            this.EnSubtitleManager.OnSubtitleChanged += _ =>
+                OnPropertyChanged(nameof(CurrentPhrase));
         }
         cmd.Language = Language.ar;
         result = await this.mediator.Send(cmd);
         if (result.IsSuccess)
         {
-            this.arPhrases = result.Payload ?? [];
+            this.ArSubtitleManager = new(result.Payload?.Select(a => new SubtitleEntry(a.Id, a.StartTime, a.EndTime, a.Text)) ?? []);
+            this.ArSubtitleManager.OnSubtitleChanged += _ =>
+                OnPropertyChanged(nameof(CurrentArPhrase));
         }
 
         ResyncCurrentPhrase();
@@ -136,37 +141,6 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
         // this.MainMediaPlayer.Dispose();
     }
 
-    int enIndex = -1;
-    int arIndex = -1;
-
-    void UpdateCurrentPhrase()
-    {
-        var ctime = TimeSpan.FromMilliseconds(CurrentTime);
-        if (enIndex + 1 < this.enPhrases.Count)
-        {
-            if (this.CurrentPhrase?.EndTime < ctime)
-                CurrentPhrase = null;
-            var a = this.enPhrases[enIndex + 1];
-            if (a.StartTime <= ctime && ctime <= a.EndTime)
-            {
-                this.CurrentPhrase = a;
-                enIndex++;
-            }
-        }
-
-        if (ShowArabicSubs && arIndex + 1 < this.arPhrases.Count)
-        {
-            if (this.CurrentArPhrase?.EndTime < ctime)
-                CurrentArPhrase = null;
-            var a = this.arPhrases[arIndex + 1];
-            if (a.StartTime <= ctime && ctime <= a.EndTime)
-            {
-                this.CurrentArPhrase = a;
-                arIndex++;
-            }
-        }
-    }
-
     /// <summary>
     /// Resynchronizes the current phrase based on the current playback time.
     /// </summary>
@@ -174,42 +148,35 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
     /// depending on the playback time. If Arabic subtitles are disabled, only the English phrase is updated.</remarks>
     private void ResyncCurrentPhrase()
     {
-        var ctime = TimeSpan.FromMilliseconds(CurrentTime);
-        var en = GetPhrase(this.enPhrases, ctime);
-        if (en is not null)
-        {
-            this.CurrentPhrase = en.Value.value;
-            this.enIndex = en.Value.index;
-        }
+        var ctime = TimeSpan.FromMilliseconds(MainMediaPlayer.Time);
+        this.EnSubtitleManager?.Update(ctime);
 
-        // early return if Arabic did not need to update.
-        if (!ShowArabicSubs)
+        if (ShowArabicSubs)
+            this.ArSubtitleManager?.Update(ctime);
+    }
+
+    [RelayCommand]
+    void GoToPreviousPhrase()
+    {
+        if (this.EnSubtitleManager == null)
             return;
-
-        var ar = GetPhrase(this.arPhrases, ctime);
-        if (ar is not null)
+        var prev = this.EnSubtitleManager.GetPreviousPhrase(TimeSpan.FromMilliseconds(MainMediaPlayer.Time));
+        if (prev != null)
         {
-            this.CurrentArPhrase = ar.Value.value;
-            this.arIndex = ar.Value.index;
+            CurrentTime = (long)prev.StartTime.TotalMilliseconds;
         }
     }
 
-    private static (Phrase value, int index)? GetPhrase(IEnumerable<Phrase> phraseList, TimeSpan currentTime)
+    [RelayCommand]
+    void GoToNextPhrase()
     {
-        var current = phraseList.Select((v, i) => new { v, i })
-            .FirstOrDefault(a => a.v.StartTime <= currentTime && currentTime <= a.v.EndTime);
-
-        if (current is not null)
+        if (this.EnSubtitleManager == null)
+            return;
+        var next = this.EnSubtitleManager.GetNextPhrase(TimeSpan.FromMilliseconds(MainMediaPlayer.Time));
+        if (next != null)
         {
-            return (current.v, current.i);
+            CurrentTime = (long)next.StartTime.TotalMilliseconds;
         }
-
-        current = phraseList.Select((v, i) => new { v, i })
-            .LastOrDefault(a => a.v.StartTime <= currentTime);
-        if (current is null)
-            return null;
-
-        return (null!, current.i);
     }
 
     [RelayCommand]
@@ -258,7 +225,7 @@ internal partial class MovieDetailsViewModel : ViewModelBase, IDisposable
 
     }
 
-    [RelayCommand(AllowConcurrentExecutions =false)]
+    [RelayCommand(AllowConcurrentExecutions = false)]
     async Task LoadEnPhrases()
     {
         if (this.CanLoadEnSubs)

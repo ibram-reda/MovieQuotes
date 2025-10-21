@@ -6,6 +6,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Interactivity;
 using LibVLCSharp.Shared;
+using System.Windows.Input;
 
 public partial class MediaPlayerControls : UserControl
 {
@@ -13,6 +14,28 @@ public partial class MediaPlayerControls : UserControl
        AvaloniaProperty.Register<MediaPlayerControls, MediaPlayer>(
            nameof(Player),
            defaultBindingMode: BindingMode.OneWay);
+
+    public static readonly StyledProperty<ICommand> NextPhraseProperty =
+       AvaloniaProperty.Register<MediaPlayerControls, ICommand>(
+           nameof(NextPhrase),
+           defaultBindingMode: BindingMode.TwoWay);
+
+    public static readonly StyledProperty<ICommand> PreviousPhraseProperty =
+       AvaloniaProperty.Register<MediaPlayerControls, ICommand>(
+           nameof(PreviousPhrase),
+           defaultBindingMode: BindingMode.TwoWay);
+
+    public ICommand PreviousPhrase
+    {
+        get => GetValue(PreviousPhraseProperty);
+        set => SetValue(PreviousPhraseProperty, value);
+    }
+
+    public ICommand NextPhrase
+    {
+        get => GetValue(NextPhraseProperty);
+        set => SetValue(NextPhraseProperty, value);
+    }
 
     public MediaPlayer Player
     {
@@ -51,6 +74,18 @@ public partial class MediaPlayerControls : UserControl
     private void Backword(object? sender, RoutedEventArgs e)
     {
         Player.Time -= 10000;
+    }
+
+    private void Next(object? sender, RoutedEventArgs e)
+    {
+        if (NextPhrase.CanExecute(null))
+            NextPhrase.Execute(null);
+    }
+
+    private void Previous(object? sender, RoutedEventArgs e)
+    {
+        if (PreviousPhrase.CanExecute(null))
+            PreviousPhrase.Execute(null);
     }
 
     private void ToggleSound(object? sender, RoutedEventArgs e)

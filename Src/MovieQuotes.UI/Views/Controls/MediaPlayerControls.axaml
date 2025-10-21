@@ -12,6 +12,7 @@
       <Setter Property="Foreground" Value="White"/>
       <Setter Property="Focusable" Value="False"/>
       <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
       <Style Selector="^:pointerover /template/ ContentPresenter"> 
         <Setter Property="InputElement.Cursor" Value="Hand"/>
         <Setter Property="TextBlock.Foreground" Value="Yellow"/>
@@ -42,6 +43,12 @@
             Classes="player_control"
             ToolTip.Tip="Stop"
             Click="Stop"/>
+    
+    <Button Content="&lt;&lt;"
+            Classes="player_control"
+            ToolTip.Tip="Previous Phrase"
+            Click="Previous"
+            HotKey="Ctrl+Left"/>
 
     <Button Content="↺ 10 sec"
            Classes="player_control"
@@ -53,7 +60,13 @@
             Classes="player_control"
             HotKey="Right"
             Click="Forword"/>
- 
+
+    <Button Content="&gt;&gt;"
+           Classes="player_control"
+           ToolTip.Tip="Next Phrase"
+           Click="Next"
+           HotKey="Ctrl+Right"/>
+    
     <Button Name="SoundBtn"
             Content="🔉"
             Classes="player_control" 
