@@ -1,6 +1,7 @@
 ﻿namespace MovieQuotes.Application.Features.StudyPhrases.CommandsHandlers;
 
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Commands;
@@ -19,7 +20,8 @@ internal class EditStudyContentCommandHandler : IRequestHandler<EditStudyContent
     {
         var result = new OperationResult<StudyPhrase>();
 
-        var studyPhrase = dbContext.StudyPhrases.FirstOrDefault(a => a.Id == request.StudyId);
+        var studyPhrase = dbContext.StudyPhrases.Include(a => a.Phrase)
+            .FirstOrDefault(a => a.Id == request.StudyId);
 
         if (studyPhrase is null)
         {
@@ -30,6 +32,10 @@ internal class EditStudyContentCommandHandler : IRequestHandler<EditStudyContent
         studyPhrase.EditContent(request.Content);
         studyPhrase.EditTranslation(request.Translation);
         studyPhrase.EditStudyType(request.StudyType);
+        studyPhrase.EditArContentTranslation(request.ArContentTranslation);
+        studyPhrase.EditArPhraseTranslation(request.ArPhraseTranslation);
+        studyPhrase.EditOrigin(request.Origin);
+        studyPhrase.EditNotes(request.Notes);
 
         var affectedRows = await dbContext.SaveChangesAsync(cancellationToken);
 

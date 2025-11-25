@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MovieQuotes.UI.Features.Movies.BrowseMovies"
+              x:DataType="vm:MovieCardViewModel"
+             Background="{DynamicResource SurfeceBackground}"
+             mc:Ignorable="d"  
+             Width="150"
+             x:Class="MovieQuotes.UI.Features.Movies.BrowseMovies.MovieCardView">
+  <Design.DataContext>
+    <vm:MovieCardViewModel MovieTitle="The Shawshank Redemption kkk kk kk kk kk kk kk "
+                           ReleaseYear="1994"
+                           Tagline="An epic journey of discovery loream epson."
+                           CoverUrl="E:\Movies_and_series\American Movies\Moana (2016)\Cover.jpg"/>
+  </Design.DataContext>
+  <Button Classes="contentbtn"
+          Command="{Binding DisplayMovieDetailsCommand}"  
+          Height="290"
+          ToolTip.Tip="{Binding MovieTitle}">
+  <Grid RowDefinitions="225,*" VerticalAlignment="Top" > 
+    <Image Grid.Row="0"  
+           Width="150"  
+           Source="{Binding CoverUrl,Converter={StaticResource PathToBitmapConverter}}" 
+           Stretch="UniformToFill"/>
+    <StackPanel Grid.Row="1" Margin="0,5,0,0">
+      <TextBlock Text="{Binding MovieTitle}" 
+                 FontWeight="Bold" 
+                 TextWrapping="Wrap" 
+                 FontSize="16"
+                 MaxHeight="40"/>
+      
+      <TextBlock Text="{Binding ReleaseYear, StringFormat='Released: {0}'}" 
+                 FontSize="12" 
+                 Foreground="{DynamicResource AppForeground}"/>
+    </StackPanel>
+   </Grid>
+  </Button>
+</UserControl>

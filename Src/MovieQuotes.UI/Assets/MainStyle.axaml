@@ -1,22 +1,41 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Design.PreviewWith>
-    <Border Padding="20">
+    <Border Padding="20" Background="{DynamicResource AppBackground}">
       <!-- Add Controls for Previewer Here -->
-      <StackPanel>
+      <StackPanel Background="{DynamicResource SurfeceBackground}" >
         <TextBlock Classes="title" >this is title</TextBlock>
         <Button Classes="link" >like button</Button>
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="10">
+          <Button Classes="saveBtn" Content="Save"/>
+          <Button Classes="cancelBtn" Content="Cancel"/>
+        </StackPanel>
       </StackPanel>
     </Border>
   </Design.PreviewWith>
 
-  <!-- Add Styles Here -->
+  <!-- Title -->
   <Style Selector="TextBlock.title">
     <Setter Property="FontSize"  Value="30"/>
     <Setter Property="FontWeight"  Value="Bold"/>
     <Setter Property="Margin"  Value="0,10,0,10"/>
   </Style>
 
+  <!--Butttons-->
+  <Style Selector="Button:pointerover">
+    <Setter Property="Cursor" Value="Hand"/>
+    
+  </Style>
+  <Style Selector="Button.saveBtn">
+    <Setter Property="Background" Value="{DynamicResource OkBtnBackground}"/>
+    <Setter Property="Foreground" Value="{DynamicResource OkBtnForground}"/>    
+  </Style>
+
+  <Style Selector="Button.cancelBtn">
+    <Setter Property="Background" Value="{DynamicResource CancelBtnBackground}"/>
+    <Setter Property="Foreground" Value="{DynamicResource CancelBtnForground}"/>
+  </Style>
+  
   <Style Selector="Button.link">
     <Setter Property="Background"  Value="Transparent"/>
     <Setter Property="Cursor" Value="Hand"/>
@@ -27,7 +46,7 @@
 
   <Style Selector="StackPanel.navigation" >
     <Setter Property="Orientation" Value="Horizontal"/>
-    <Setter Property="Background" Value="#333"/>
+    <Setter Property="Background" Value="{DynamicResource SurfeceBackground}"/>
     <Setter Property="Margin" Value="0,0,0,5"/>    
   </Style>
 

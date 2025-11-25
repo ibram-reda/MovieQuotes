@@ -26,4 +26,26 @@ public class CreateStudyPhraseCommand : IRequest<OperationResult<StudyPhrase>>
     /// what is the translation of the content part.
     /// </summary>
     public string? Translation { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Arabic translation of the content.
+    /// </summary>
+    public string? ArContentTranslation { get; set; }
+
+
+    /// <summary>
+    /// Gets or sets the Arabic translation for the associated Phrase.
+    /// </summary>
+    public string? ArPhraseTranslation { get; set; }
+
+    /// <summary>
+    /// Gets or sets the origin of this content (optional).
+    /// </summary>
+    public string? Origin { get; set; }
+
+    /// <summary>
+    /// Gets or sets additional notes or comments associated with the object.
+    /// </summary>
+    public string? Notes { get; set; }
+
 }

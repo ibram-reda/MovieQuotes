@@ -24,7 +24,7 @@ public class PhrasesController : BaseController
 
 
 
-        var phrases = this.mapper.Map<PagedResponse<PhraseResponse>>(res);
+        var phrases = res;
 
 
         return Ok(phrases);

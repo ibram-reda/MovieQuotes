@@ -4,7 +4,7 @@
         xmlns:models="using:MovieQuotes.UI.Models"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="950" d:DesignHeight="450"
         x:Class="MovieQuotes.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         MinWidth="650"
@@ -52,6 +52,9 @@
         06. Resync Subtitle
       </Button>
 
+        <Button  Content="Clear Error"
+                 Command="{Binding CurrentViewModel.ClearErrorsCommand }"/>
+
     </StackPanel>
 
     <!--Content-->
@@ -62,8 +65,8 @@
     <Border Grid.Row="1" IsVisible="{Binding CurrentViewModel.IsBusy}"  >
       <Grid Background="#30303091" >
         <TextBlock VerticalAlignment="Center" 
-                   Background="#333"
-                   Foreground="#999"
+                   Background="{DynamicResource SurfeceBackground}"
+                   Foreground="{DynamicResource AppForeground}"
                    Padding="5"
                    FontSize="24"
                    HorizontalAlignment="Center"

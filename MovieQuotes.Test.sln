@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11109.219 d18.0-oob
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D25F7962-EC3C-468F-AB4B-DCC956D7F8AE}"
 EndProject
@@ -14,6 +14,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieQuotes.Application.Tests", "Tests\MovieQuotes.Application.Tests\MovieQuotes.Application.Tests.csproj", "{DF6FEF70-3973-4820-B189-408D270EC38C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieQuotes.UI.Tests", "Tests\MovieQuotes.UI.Tests\MovieQuotes.UI.Tests.csproj", "{749BC704-88B6-4C41-88DE-AA7C4D5CD95C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieQuotes.UI", "Src\MovieQuotes.UI\MovieQuotes.UI.csproj", "{838CEF9F-7048-702C-55F8-C495EECEC491}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +41,14 @@ Global
 		{DF6FEF70-3973-4820-B189-408D270EC38C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF6FEF70-3973-4820-B189-408D270EC38C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF6FEF70-3973-4820-B189-408D270EC38C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{749BC704-88B6-4C41-88DE-AA7C4D5CD95C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{749BC704-88B6-4C41-88DE-AA7C4D5CD95C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{749BC704-88B6-4C41-88DE-AA7C4D5CD95C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{749BC704-88B6-4C41-88DE-AA7C4D5CD95C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{838CEF9F-7048-702C-55F8-C495EECEC491}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{838CEF9F-7048-702C-55F8-C495EECEC491}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{838CEF9F-7048-702C-55F8-C495EECEC491}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{838CEF9F-7048-702C-55F8-C495EECEC491}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +58,8 @@ Global
 		{5F248109-DC62-42C1-B095-1B36CDF5A1AF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{86C4B9C6-1922-6E63-1AEA-F7046ABC5AF6} = {D25F7962-EC3C-468F-AB4B-DCC956D7F8AE}
 		{DF6FEF70-3973-4820-B189-408D270EC38C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{749BC704-88B6-4C41-88DE-AA7C4D5CD95C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{838CEF9F-7048-702C-55F8-C495EECEC491} = {D25F7962-EC3C-468F-AB4B-DCC956D7F8AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AE7123D8-665D-42E5-A3D3-189A079290BA}

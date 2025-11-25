@@ -2,6 +2,10 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MediatR;
+using MovieQuotes.UI.Features.Movies.BrowseMovies;
+using MovieQuotes.UI.Features.Movies.CreateMovie;
+using MovieQuotes.UI.Features.StudyVocabs.ReviseVocab;
 using MovieQuotes.UI.Services;
 using System;
 
@@ -10,14 +14,18 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private bool _RenderNavigationBar = true;
     [ObservableProperty] private string _WindowTitle = "";
 
+    [System.Obsolete("For design-time use only")]
     public MainWindowViewModel()
     {
-        NavigationService.CurrentViewModelChanged += OnCurrentViewModelChanged;
-        NavigationService.NavigateTo<MoviesListViewModel>();
-
     }
 
-    private void OnCurrentViewModelChanged(ViewModelBase obj)
+    public MainWindowViewModel(IMediator mediator, NavigationService nav) : base(mediator, nav)
+    {
+        NavigationService.CurrentPageChanged += OnCurrentViewModelChanged;
+        NavigationService.NavigateTo<MoviesListViewModel>();
+    }
+
+    private void OnCurrentViewModelChanged(PageViewModelBase obj)
     {
         this.OnPropertyChanged(nameof(CurrentViewModel));
         WindowTitle = $"{Title} : {CurrentViewModel.Title}";
@@ -29,10 +37,10 @@ public partial class MainWindowViewModel : ViewModelBase
         };
 
         this.RenderNavigationBar = true;
-    } 
+    }
 
     [RelayCommand]
-    private void Navigate( string PageName)
+    private void Navigate(string PageName)
     {
         switch (PageName)
         {
@@ -57,7 +65,7 @@ public partial class MainWindowViewModel : ViewModelBase
             default:
                 throw new ArgumentOutOfRangeException();
         }
-    } 
+    }
 
     public ViewModelBase CurrentViewModel => NavigationService.CurrentViewModel;
 

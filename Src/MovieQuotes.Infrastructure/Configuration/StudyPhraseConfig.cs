@@ -19,6 +19,20 @@ internal class StudyPhraseConfig : IEntityTypeConfiguration<StudyPhrase>
         builder.Property(a => a.StudyType)
             .HasMaxLength(100);
 
+        builder.Property(a => a.ArContentTranslation)
+            .HasMaxLength(120);
+
+        builder.Property(a => a.ArPhraseTranslation)
+            .HasMaxLength(500);
+
         builder.Property(a => a.AddedDate).ValueGeneratedOnAdd();
+
+        builder.Property(a=>a.Notes)
+            .HasMaxLength(500);
+
+        builder.Property(a => a.Origin)
+            .HasMaxLength(100);
+
+
     }
 }

@@ -23,4 +23,20 @@ public class EditStudyContentCommand : IRequest<OperationResult<StudyPhrase>>
     /// what is the translation of the content part.
     /// </summary>
     public string? Translation { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Arabic translation of the content.
+    /// </summary>
+    public string? ArContentTranslation { get; set; }
+
+
+    /// <summary>
+    /// Gets or sets the Arabic translation for the associated Phrase.
+    /// </summary>
+    public string? ArPhraseTranslation { get; set; }
+
+
+    public string? Origin { get; set; }
+    public string? Notes { get; set; }
+
 }

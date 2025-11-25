@@ -16,4 +16,9 @@ public class GetAllMoviesQuery : IRequest<OperationPageResult<MovieInfo>>
         SearchText = searchText;
     }
     public string? SearchText { get; }
+
+    public int ItemsPerPage = 100;
+    public int PageNumber = 1;
+
+
 }

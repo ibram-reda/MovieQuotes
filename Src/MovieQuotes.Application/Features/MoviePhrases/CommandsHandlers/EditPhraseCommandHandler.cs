@@ -28,7 +28,7 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
 
         if (phrase is null)
         {
-            result.AddError(ErrorCode.NotFound, "Phrase not found");
+            result.AddError(ErrorCode.NotFound, MoviePhrasesMessages.PhraseNotFound,request.PhraseId);
             return result;
         }
 

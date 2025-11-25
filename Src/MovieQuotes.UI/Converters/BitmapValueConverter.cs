@@ -30,6 +30,10 @@ public class BitmapValueConverter : IValueConverter
                         return _defaultImage;
                     return new Bitmap(sValue);
 
+                case "http":
+                case "https":
+                    return new Bitmap(sValue);
+
                 default:
                     throw new NotSupportedException();
 

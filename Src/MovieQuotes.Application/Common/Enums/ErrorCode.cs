@@ -16,6 +16,7 @@ public enum ErrorCode
     TimeOutError = 3001,
     GenerateVideoClipError = 3003,
     FFMPEGError = 3007,
+    CanceledOperation = 3010,
 
 
 

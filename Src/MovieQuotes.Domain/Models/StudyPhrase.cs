@@ -20,16 +20,39 @@ public class StudyPhrase
     public string? Content { get; private set; }
 
     /// <summary>
-    /// what is the translation of the content part.
+    /// what is the origin of this content (optional).
+    /// </summary>
+    public string? Origin { get; private set; }
+
+    /// <summary>
+    /// Gets the Arabic translation of the content.
+    /// </summary>
+    public string? ArContentTranslation { get; private set; }
+
+    /// <summary>
+    /// English defintion of the content.
     /// </summary>
     public string? Translation { get; private set; }
 
+    /// <summary>
+    /// Gets the Arabic translation for the associated Phrase
+    /// </summary>
+    public string? ArPhraseTranslation { get; private set; }
+
+    /// <summary>
+    /// Gets the notes associated with this instance.
+    /// </summary>
+    public string? Notes { get; private set; }
     public DateTime AddedDate { get; private set; } = DateTime.Now;
 
     public static StudyPhrase CreateStudyPhrase(int phraseId,
         string? studyType,
         string? content,
-        string? translation)
+        string? translation,
+        string? arContent,
+        string? arPhrase,
+        string? origin,
+        string? Note)
     {
         return new StudyPhrase
         {
@@ -37,15 +60,23 @@ public class StudyPhrase
             StudyType = studyType,
             Content = content,
             Translation = translation,
+            ArContentTranslation = arContent,
+            ArPhraseTranslation = arPhrase,
+            Origin = origin,
+            Notes = Note
         };
     }
 
     public static StudyPhrase CreateStudyPhrase(SubtitlePhrase phrase,
         string? studyType,
         string? content,
-        string? translation)
+        string? translation,
+        string? arContent,
+        string? arPhrase,
+        string? origin,
+        string? note)
     {
-        return StudyPhrase.CreateStudyPhrase(phrase.Id, studyType, content, translation);
+        return StudyPhrase.CreateStudyPhrase(phrase.Id, studyType, content, translation,arContent,arPhrase,origin,note);
     }
 
     public void EditContent(string? content)
@@ -67,5 +98,33 @@ public class StudyPhrase
         if(translation == this.Translation)
             return;
         this.Translation = translation;
+    }
+
+    public void EditArContentTranslation(string? arContent)
+    {
+        if(arContent == this.ArContentTranslation)
+            return;
+        this.ArContentTranslation = arContent;
+    }
+
+    public void EditArPhraseTranslation(string? arPhrase)
+    {
+        if(arPhrase == this.ArPhraseTranslation)
+            return;
+        this.ArPhraseTranslation = arPhrase;
+    }
+
+    public void EditOrigin(string? origin)
+    {
+        if(origin == this.Origin)
+            return;
+        this.Origin = origin;
+    }
+
+    public void EditNotes(string? notes)
+    {
+        if(notes == this.Notes)
+            return;
+        this.Notes = notes;
     }
 }

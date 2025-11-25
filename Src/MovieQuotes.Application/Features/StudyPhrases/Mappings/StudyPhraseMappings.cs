@@ -11,14 +11,18 @@ internal static class StudyPhraseMappings
         {
             StudyId = src.Id,
             PhraseId = src.PhraseId,
-            PhraseText = src.Phrase?.Text ??"",
+            PhraseText = src.Phrase?.Text ?? "",
             MovieName = src.Phrase?.Movie?.Title ?? "",
             StartTime = src.Phrase?.StartTime ?? TimeSpan.Zero,
             EndTime = src.Phrase?.EndTime ?? TimeSpan.Zero,
             VideoLocation = src.Phrase?.GetVideoClipPath() ?? string.Empty,
             Content = src.Content,
             Translation = src.Translation,
-            StudyType = src.StudyType
+            StudyType = src.StudyType,
+            ArContentTranslation = src.ArContentTranslation,
+            PhraseArTranslation = src.ArPhraseTranslation,
+            Origin = src.Origin,
+            Notes = src.Notes
         };
     }
 }

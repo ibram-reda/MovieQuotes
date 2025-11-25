@@ -7,13 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="13.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
+    <PackageReference Include="MediatR" Version="13.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.10" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="Contracts\Requests\" />
+    <Folder Include="MappingProfiles\" />
   </ItemGroup>
 
    

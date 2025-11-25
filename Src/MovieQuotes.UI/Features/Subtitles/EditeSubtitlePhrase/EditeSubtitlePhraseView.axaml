@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MovieQuotes.UI.Features.Subtitles.EditeSubtitlePhrase"
+             xmlns:controls="using:MovieQuotes.UI.Views.Controls"
+             x:DataType="vm:EditeSubtitlePhraseViewModel"
+            
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MovieQuotes.UI.Features.Subtitles.EditeSubtitlePhrase.EditeSubtitlePhraseView"
+             Loaded="UserControl_Loaded">
+  <StackPanel  Spacing="5"
+        Margin="10">
+        <TextBlock Text="Edit Phrase"
+                   Classes="title" />
+        <Grid RowDefinitions="auto,auto,auto,auto"
+            ColumnDefinitions="auto,*,auto">
+
+          <TextBlock Grid.Row="0"
+                     Grid.Column="0"
+                     Text="Text" />
+          <TextBox Grid.Row="0"
+                   Grid.Column="1"
+                   Grid.ColumnSpan="2"
+                   AcceptsReturn="True"
+                   Text="{Binding PhraseText,Mode=TwoWay}"/>
+
+          <controls:TimeSpanControl Grid.Row="1"
+                            Grid.ColumnSpan="3"
+                            Text="Start Time"
+                            Time="{Binding StartTime,Mode=TwoWay}"/>
+
+
+          <controls:TimeSpanControl Grid.Row="2"
+                            Grid.ColumnSpan="3"
+                            Text="End Time  "
+                            Time="{Binding EndTime,Mode=TwoWay}"/>
+
+
+        </Grid>
+
+      <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="10"
+                Margin="10">
+          <Label Content="{Binding Message}" VerticalAlignment="Center"/>
+          <Button Classes="saveBtn" Content="Save changes" Command="{Binding SaveCommand}"/>
+         </StackPanel>
+
+      <!--Error Messages-->
+    <ItemsControl ItemsSource="{Binding ErrorMessages}"
+                  Foreground="Red"/>
+      </StackPanel>
+</UserControl>

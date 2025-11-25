@@ -3,9 +3,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
+using MediatR;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.VideoClips.Queries;
+using MovieQuotes.UI.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -14,17 +16,20 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-public partial class PlaybackViewModel : ViewModelBase
+public partial class PlaybackViewModel : PageViewModelBase
 {
     private LibVLC MainLibVLC { get; }
     public MediaPlayer MainMediaPlayer { get; }
+
+    [System.Obsolete("For design-time use only")]
     public PlaybackViewModel()
+    {    
+    }
+
+    public PlaybackViewModel(IMediator mediator, NavigationService nav) : base(mediator, nav)
     {
         MainLibVLC = new();
-        MainMediaPlayer = new(MainLibVLC)
-        {
-            EnableHardwareDecoding = true,
-        };
+        MainMediaPlayer = new(MainLibVLC);
     }
     [ObservableProperty] private string searchText = "";
     [ObservableProperty] private int searchCount = 0;

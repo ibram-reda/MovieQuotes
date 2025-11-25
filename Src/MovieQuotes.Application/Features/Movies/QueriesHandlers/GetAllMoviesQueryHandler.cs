@@ -29,14 +29,20 @@ public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, Opera
         var query = dbContext.Movies.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(request.SearchText))
-            query = query.Where(m => m.Title.Contains(request.SearchText));
+            query = query.Where(m => m.Title.Contains(request.SearchText) || 
+                                     m.FolderName.Contains(request.SearchText));
+
+
+        query = query.OrderByDescending(m => m.AddedDate);
 
         var PayLoad = await query
             .Select(a => a.ToMovieInfo())
+            .Skip((request.PageNumber - 1) * request.ItemsPerPage)
+            .Take(request.ItemsPerPage)
             .ToListAsync(cancellationToken);
 
-        result.Count = PayLoad.Count;
-        result.HasNext = false;
+        result.Count = await query.CountAsync();
+        result.HasNext = result.Count > PayLoad.Count;
         result.Payload = PayLoad;
         result.CurrentPageNumber = 1;
         result.ItemPerPage = (uint)result.Count;

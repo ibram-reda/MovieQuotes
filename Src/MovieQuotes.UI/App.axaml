@@ -19,6 +19,30 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
+        
+        <ResourceDictionary>
+          <ResourceDictionary.ThemeDictionaries>
+            <ResourceDictionary x:Key='Light'>
+              <SolidColorBrush x:Key='AppBackground'>#eee</SolidColorBrush>
+              <SolidColorBrush x:Key='AppForeground'>Black</SolidColorBrush>
+              <SolidColorBrush x:Key='SurfeceBackground'>#aaa</SolidColorBrush>
+              <SolidColorBrush x:Key='OkBtnBackground'>DarkGreen</SolidColorBrush>
+              <SolidColorBrush x:Key='OkBtnForground'>DarkGreen</SolidColorBrush>
+              <SolidColorBrush x:Key='CancelBtnBackground'>DarkGreen</SolidColorBrush>
+              <SolidColorBrush x:Key='CancelBtnForground'>DarkGreen</SolidColorBrush>
+            </ResourceDictionary>
+            <ResourceDictionary x:Key='Dark'>
+              <SolidColorBrush x:Key='AppBackground'>#222</SolidColorBrush>
+              <SolidColorBrush x:Key='AppForeground'>white</SolidColorBrush>
+              <SolidColorBrush x:Key='SurfeceBackground'>#333</SolidColorBrush>
+              <SolidColorBrush x:Key='OkBtnBackground'>#2a2</SolidColorBrush>
+              <SolidColorBrush x:Key='OkBtnForground'>#efe</SolidColorBrush>
+              <SolidColorBrush x:Key='CancelBtnBackground'>#d33</SolidColorBrush>
+              <SolidColorBrush x:Key='CancelBtnForground'>White</SolidColorBrush>
+            </ResourceDictionary>
+          </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+        
         <ResourceInclude Source="/Views/Controls/TimeSpanControl.axaml"/>
         <ResourceInclude Source="/Views/Controls/RichTextBlock.axaml"/>
       </ResourceDictionary.MergedDictionaries>

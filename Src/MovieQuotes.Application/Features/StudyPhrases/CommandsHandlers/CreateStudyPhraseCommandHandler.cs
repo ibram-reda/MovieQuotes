@@ -1,6 +1,7 @@
 ﻿namespace MovieQuotes.Application.Features.StudyPhrases.CommandsHandlers;
 
 using MediatR;
+using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Commands;
 using MovieQuotes.Application.Features.StudyPhrases.Mappings;
@@ -22,12 +23,26 @@ internal class CreateStudyPhraseCommandHandler : IRequestHandler<CreateStudyPhra
     public async Task<OperationResult<StudyPhrase>> Handle(CreateStudyPhraseCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<StudyPhrase>();
+        
+        if(request is null)
+            result.AddError(ErrorCode.InvalidInput, StudyPhraseMessages.InvalidData);
+   
+        if(request?.PhraseId <= 0)
+            result.AddError(ErrorCode.InvalidInput,  StudyPhraseMessages.RequiredPhraseId);
+
+        if (result.IsError)
+            return result;
+
         try
         {
-            var dbStudyPhrase = Domain.Models.StudyPhrase.CreateStudyPhrase(request.PhraseId,
+            var dbStudyPhrase = Domain.Models.StudyPhrase.CreateStudyPhrase(request!.PhraseId,
                 request.StudyType,
                 request.Content,
-                request.Translation);
+                request.Translation,
+                request.ArContentTranslation,
+                request.ArPhraseTranslation,
+                request.Origin,
+                request.Notes);
 
             dbContext.StudyPhrases.Add(dbStudyPhrase);
             var effectedRows = await dbContext.SaveChangesAsync();
