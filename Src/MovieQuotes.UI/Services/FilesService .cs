@@ -2,8 +2,11 @@
 
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 public class FilesService : IFilesService
@@ -47,15 +50,48 @@ public class FilesService : IFilesService
 
     public bool ExploreFile(string filePath)
     {
-        if (!File.Exists(filePath))
+
+        if (OperatingSystem.IsWindows())
         {
-            return false;
+            if (!File.Exists(filePath))
+            {
+                return false;
+            }
+            //Clean up file path so it can be navigated OK
+            filePath = Path.GetFullPath(filePath);
+            System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", filePath));
         }
-        //Clean up file path so it can be navigated OK
-        filePath = Path.GetFullPath(filePath);
-        System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", filePath));
+        else if (OperatingSystem.IsLinux())
+        {
+            // Linux
+            // Common file managers: nautilus (GNOME), dolphin (KDE), thunar (Xfce), nemo (Cinnamon), caja (MATE)
+            // You can try to use a generic command like 'xdg-open' which usually detects the default file manager.
+
+            string command;
+            if (File.Exists(filePath) || Directory.Exists(filePath))
+            {
+                // If the path exists, try opening it with the default application
+                command = "xdg-open";
+            }
+            else
+            {
+                // Fallback or specific file manager if xdg-open doesn't work well without a valid path
+                command = "nautilus"; // Example, you might need to check which one is installed
+            }
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = command,
+                Arguments = $"\"{filePath}\"",
+                UseShellExecute = true
+            });
+        }
+        else
+        {
+            Console.WriteLine("Unsupported operating system.");
+        }
+
         return true;
+
     }
-
-
 }

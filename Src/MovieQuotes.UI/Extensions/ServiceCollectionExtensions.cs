@@ -28,8 +28,8 @@ public static class ServiceCollectionExtensions
         Services.AddLogging(); 
 
         // add database
-        var cs = "Server=localhost;Database=MovieQuotesDb;Trusted_Connection=True;TrustServerCertificate=True";
-        Services.AddDbContext<MovieQuotesDbContext>(op => op.UseSqlServer(cs), ServiceLifetime.Transient);
+        var cs = "Server=localhost;Database=MovieQuotesDb;uid=root;pwd=root;";
+        Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs), ServiceLifetime.Transient);
 
         Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
     }

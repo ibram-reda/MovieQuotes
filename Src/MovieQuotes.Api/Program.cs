@@ -17,7 +17,7 @@ builder.Services.AddCors(options =>
 });
 
 var cs = builder.Configuration.GetConnectionString("local");
-builder.Services.AddDbContext<MovieQuotesDbContext>(op => op.UseSqlServer(cs));
+builder.Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
 

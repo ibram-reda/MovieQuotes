@@ -79,16 +79,16 @@ internal partial class NewMovieViewModel : PageViewModelBase
         var file = await filesService.OpenFileAsync("Select movie file");
         if (file is null) return;
         MovieVideoPath = file.Path.LocalPath;
-        FolderName = file.Name.Remove(file.Name.LastIndexOf('.'));
+        FolderName = Directory.GetParent(file.Path.LocalPath)?.Name??"";
     }
 
     [RelayCommand(IncludeCancelCommand = true)]
     private async Task SaveIntoDb(CancellationToken token = default)
     {
-        ErrorMessages?.Clear();
-        var baseFolder = Path.GetDirectoryName(MovieVideoPath);
+        ErrorMessages?.Clear(); 
+        var baseFolder = Directory.GetParent(Path.GetDirectoryName(MovieVideoPath)??"")?.FullName;
 
-        var command = new CreateMovieCommand(baseFolder ?? "", FolderName, DisplayName, Year ?? 0, MovieVideoPath, Description, IMDBId, CoverURl);
+        var command = new CreateMovieCommand(baseFolder ??"", FolderName, DisplayName, Year ?? 0, MovieVideoPath, Description, IMDBId, CoverURl);
 
         IsBusy = true;
         var result = await mediator.Send(command);

@@ -23,12 +23,17 @@
         <ItemsControl ItemsSource="{Binding MovieList}">         
          <ItemsControl.ItemTemplate>
            <DataTemplate>
-            <Grid ColumnDefinitions="auto,*,auto">
-              <TextBlock Width="250"  Text="{Binding Title}" TextWrapping="Wrap" MaxWidth="350"/>
+            <Grid ColumnDefinitions="auto,*,auto,auto">
+              <TextBlock Width="200"  Text="{Binding Title}" TextWrapping="Wrap" MaxWidth="350"/>
               <ProgressBar Grid.Column="1" Value="100"  />
               <Button Grid.Column="2"
                       Content="load"
                       Command="{Binding $parent[ItemsControl].((vm:SubtitleAddingViewModel)DataContext).AddSubtitleCommand}"
+                      CommandParameter="{Binding .}"/>
+
+              <Button Grid.Column="3"
+                      Content="open"
+                      Command="{Binding $parent[ItemsControl].((vm:SubtitleAddingViewModel)DataContext).OpenMovieLocationCommand}"
                       CommandParameter="{Binding .}"/>
             </Grid>
           </DataTemplate>

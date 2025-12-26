@@ -4,13 +4,16 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
+using MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -78,22 +81,66 @@ public partial class MoviesListViewModel : PageViewModelBase
         var result = await this.mediator.Send(query);
         return result.Payload;
     }
+
+    [ObservableProperty] int _prograss =0;
+    [RelayCommand]
+    private async Task AutoBendingMoviesInsert()
+    {
+        foreach(var m in OutOfSyncMovies)
+        {
+            var info = m.MovieInfo;
+            var command = new CreateMovieCommand(info.BaseFolderDir, info.FolderName, info.Title, info.Year??0, info.LocalPath, info.Description, info.IMDBId, info.CoverUrl);
+            var result = await mediator.Send(command);
+        
+
+            if (result.IsError)
+            {
+                foreach (var error in result.Errors)
+                    ErrorMessages?.Add(error.Message);
+                continue;
+            }
+
+            Prograss++;
+            this.DBMovies.Add(new(result.Payload!));
+
+        }
+    }
+    record MovieExportDto(string? IMDBId,string? Title ,int? Year ,string? Description);
     private static async Task<MovieInfo> ExtractMovieInfoAsync(IStorageFolder movieBaseFolder)
     {
         MovieInfo movie = new MovieInfo();
+        movie.BaseFolderDir = (await movieBaseFolder.GetParentAsync())?.TryGetLocalPath()??"";
         movie.FolderName = movieBaseFolder.Name;
         movie.Title = GetTitleFromFolderName(movieBaseFolder.Name);
         movie.Year = GetYearFromFolderName(movieBaseFolder.Name);
         await foreach (var file in movieBaseFolder.GetItemsAsync())
         {
+            if (file is IStorageFile info && info.Name =="info.json")
+            {
+                try
+                {                    
+                var p = file.TryGetLocalPath();
+                var infotext = await File.ReadAllTextAsync(p);
+                var minfo = JsonSerializer.Deserialize<MovieExportDto>(infotext);
+                movie.IMDBId = minfo?.IMDBId;
+                movie.Description = minfo?.Description;
+                }
+                finally
+                {
+                    
+                }
+            }
             if (file is IStorageFile movieFilePart)
             {
+
                 var index = movieFilePart.Name.LastIndexOf('.');
-                var extension = movieFilePart.Name.Substring(index);
+                var extension = movieFilePart.Name.Substring(index).ToLower();
                 var path = movieFilePart.Path.LocalPath; ;
                 if (extension.EndsWith("srt"))
                     movie.SubtitlePath = path;
-                if (extension.EndsWith("mp4") || extension.EndsWith("mkv"))
+                if (extension.EndsWith("mp4") || 
+                    extension.EndsWith("mkv") ||
+                    extension.EndsWith("avi"))
                     movie.LocalPath = path;
                 if (extension.EndsWith("jpg"))
                     movie.CoverUrl = path;

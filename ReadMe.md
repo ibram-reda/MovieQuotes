@@ -22,9 +22,10 @@ in this application there is two main section
 3. **watch section**: Watch the movie and save clips that have new terms and revision it latter.
 
 ## Installation
-1. we need to setup SqlServer and get a connection string to database similar to the following
+this application can work on any platform windows,linux,macos, and also can work with any DBMS i provide a [full detailed instruction to run it on Ubunto Linux 24.04](./installation-guide.md) with Mysql as a database
+1. we need to setup a connection string 
    ```
-   Server=localhost;Database=MovieQuotesDb;Trusted_Connection=True;TrustServerCertificate=True
+   Server=localhost;Database=MovieQuotesDb;uid=root;pwd=root;
    ```
 2. update your connection string in AppSetting in [api project][5] and in the [UI Project][4]
 3. open Terminal and install [Entity Framework Core tools][3]  `dotnet tool install --global dotnet-ef`
@@ -32,8 +33,6 @@ in this application there is two main section
    ```
    dotnet ef database update -s ..\MovieQuotes.Api\MovieQuotes.Api.csproj
    ```
-   which will create the database as following
-   ![](./Images/Screenshot-how-to-update-database.png)
 5. Run the desktop application and populate the database
    ```
    dotnet run --project .\Src\MovieQuotes.UI\MovieQuotes.UI.csproj

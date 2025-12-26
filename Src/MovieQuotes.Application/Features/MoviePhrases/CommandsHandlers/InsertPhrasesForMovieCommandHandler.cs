@@ -78,7 +78,7 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
 
         await this.dbContext.SaveChangesAsync();
 
-        await AddWordsAsync(movie.Subtitles);
+        //await AddWordsAsync(movie.Subtitles);
 
         return result;
     }

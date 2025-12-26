@@ -9,6 +9,7 @@ using MovieQuotes.Application.Features.Movies.Queries;
 using MovieQuotes.UI.Services;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,14 +28,25 @@ internal partial class SubtitleAddingViewModel : PageViewModelBase
     public ObservableCollection<MovieInfo> Running { get; } = [];
     public ObservableCollection<MovieInfoLoaded> Done { get; } = [];
 
+    IFilesService _fileService;
+
     [System.Obsolete("For design-time use only")]
     public SubtitleAddingViewModel()
     {
         
     }
-    public SubtitleAddingViewModel(IMediator mediator,NavigationService nav):base(mediator,nav)
+    public SubtitleAddingViewModel(IMediator mediator,NavigationService nav,IFilesService filesService):base(mediator,nav)
     {
+        _fileService = filesService;
         LoadAllCommand.Execute(null);
+    }
+
+    [RelayCommand]
+    async Task OpenMovieLocation(MovieInfo movieInfo)
+    {
+        var path = Path.Combine(movieInfo.BaseFolderDir,movieInfo.FolderName);
+        Console.WriteLine(path);
+        this._fileService.ExploreFile(path);
     }
 
     [RelayCommand(AllowConcurrentExecutions = true)]
@@ -52,19 +64,20 @@ internal partial class SubtitleAddingViewModel : PageViewModelBase
 
 
         Running.Remove(movie);
-        if (result.IsSuccess)
+
+        if(result.IsError)
         {
-            var movieLoaded = new MovieInfoLoaded()
+            foreach(var err in result.Errors)
+               ErrorMessages.Add(err.Message);
+            return;
+        }
+         var movieLoaded = new MovieInfoLoaded()
             {
                 Movie = movie,
                 Duration = stopwatch.Elapsed,
             };
             Done.Add(movieLoaded);
-        }
-        else
-        {
-            MovieList.Add(movie);
-        }
+        
     }
 
     [RelayCommand(AllowConcurrentExecutions = false,IncludeCancelCommand =true)]
