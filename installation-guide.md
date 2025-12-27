@@ -6,7 +6,7 @@ the follwoing line will install mysql in your system
 ```bash
 sudo apt update
 sudo apt upgrade
-sudo apt install mysql
+sudo apt install mysql-server
 ```
 if every thing goes fine then the follwoing line will execute with no error .. if you get command not found then there is some problem in 
 ```
