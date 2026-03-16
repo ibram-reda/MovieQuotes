@@ -218,6 +218,7 @@ public partial class MoviesListViewModel : PageViewModelBase
         if (int.TryParse(x, out var res))
             return res;
 
+        
         throw new ArgumentException($"can not get year form '{folderName}'", nameof(folderName));
     }
 }

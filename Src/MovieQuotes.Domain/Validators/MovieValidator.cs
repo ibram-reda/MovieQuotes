@@ -1,5 +1,6 @@
 ﻿namespace MovieQuotes.Domain.Validators;
 
+using System.Data;
 using FluentValidation;
 using MovieQuotes.Domain.Models;
 
@@ -30,19 +31,21 @@ public class MovieValidator: AbstractValidator<Movie>
         RuleFor(a => a.Description)
             .MaximumLength(700).WithMessage("Description should contains at most 700 characters long");
 
-        RuleFor(a => a.LocalPath)
-            .NotNull().WithMessage("LocalPath is Required")
-            .NotEmpty().WithMessage("LocalPath can not be Empty") 
-            .MaximumLength(400).WithMessage("LocalPath can only contains 400 char at most")
-            .When ( m =>!File.Exists(m.LocalPath)).WithMessage("LocalPath should be file on system!");
-
+        
         RuleFor(a => a.BaseFolderDir)
             .NotNull().WithMessage("Base Folder Directory is Required")
             .NotEmpty().WithMessage("Base Folder Directory can not be Empty")
             .MaximumLength(400).WithMessage("Base Folder Directory can only contains 400 char at most")
             .When(m => !Directory.Exists(m.BaseFolderDir)).WithMessage("Base Folder Directory should be valid directory on system!");
 
-        RuleFor(a => a.CoverUrl)
-            .MaximumLength(200).WithMessage("CoverURL can only contains 200 char at most");
+
+        RuleFor(a=> a.VideoFilePath)
+            .MaximumLength(200).WithMessage("Video File Path can only contains 200 char at most")
+            .When(m => !string.IsNullOrEmpty(m.VideoFilePath) && !File.Exists(Path.Combine(m.BaseFolderDir,m.FolderName, m.VideoFilePath))).WithMessage("Video File Path should be file on system!");
+        
+        RuleFor(a => a.CoverFilePath)
+            .MaximumLength(200).WithMessage("Cover File Path can only contains 200 char at most")
+            .When(m => !string.IsNullOrEmpty(m.CoverFilePath) && !File.Exists(Path.Combine(m.BaseFolderDir,m.FolderName, m.CoverFilePath))).WithMessage("Cover File Path should be file on system!");
+         
     }
 }

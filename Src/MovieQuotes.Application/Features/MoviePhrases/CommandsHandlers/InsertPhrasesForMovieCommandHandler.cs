@@ -39,7 +39,7 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
         // if subtitle is not provided, try to find it in the movie folder
         if (string.IsNullOrWhiteSpace(request.SubtitleLocation))
         {
-            var baseFolder = Path.GetDirectoryName(movie.LocalPath);
+            var baseFolder = Path.Combine(movie.BaseFolderDir, movie.FolderName);
             if (string.IsNullOrEmpty(baseFolder))
             {
                 result.AddError(ErrorCode.NotFound, MoviePhrasesMessages.MovieBaseFolderNotFound);

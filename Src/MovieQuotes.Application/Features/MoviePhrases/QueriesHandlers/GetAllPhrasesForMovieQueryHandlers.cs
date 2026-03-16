@@ -57,7 +57,7 @@ internal class GetAllPhrasesForMovieQueryHandlers : IRequestHandler<GetAllPhrase
 
         if (movie is null)
             result.AddError(ErrorCode.NotFound, "Movie not found");
-        var b = Path.GetDirectoryName(movie.LocalPath);
+        var b = Path.Combine(movie!.BaseFolderDir, movie.FolderName);
         var subFolder = Path.Combine(b, "subtitles");
         string? file = null;
         if (!Directory.Exists(subFolder))

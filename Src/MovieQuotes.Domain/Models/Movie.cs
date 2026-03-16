@@ -9,17 +9,16 @@ public class Movie
     private Movie() { }
     public int Id { get; private set; }
     public string NameId { get; set; } = string.Empty;
-    public string FolderName { get;private set; } = string.Empty;
     public string Title { get;private set; } = string.Empty;
     public string? Description { get; private set; }
-
-    public string BaseFolderDir { get; private set; } = string.Empty;
-    public string LocalPath { get; private set; } = string.Empty;
-    public string? CoverUrl { get; private set; } = string.Empty;
-
     public int Year { get;  set; } = 0;
     public string? IMDBId { get; private set; }
 
+    public string BaseFolderDir { get; private set; } = string.Empty;
+    public string FolderName { get;private set; } = string.Empty;
+    public string VideoFilePath { get; private set; } = string.Empty;
+    public string CoverFilePath { get; private set; } = string.Empty;
+ 
     public DateTime AddedDate { get; private set; }
     public List<SubtitlePhrase> Subtitles { get; } = new();
 
@@ -42,11 +41,11 @@ public class Movie
             NameId = TitleToNameId(title),
             Title = title,
             Description = description,
-            LocalPath = localPath,
             IMDBId = IMDBID,
-            CoverUrl = coverUrl,
             AddedDate = DateTime.Now,
-            Year = year
+            Year = year,
+            VideoFilePath = localPath,
+            CoverFilePath = coverUrl,
         }; 
 
         var validationResult = validator.Validate(movie);

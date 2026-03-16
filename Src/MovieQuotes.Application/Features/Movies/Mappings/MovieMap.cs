@@ -11,10 +11,10 @@ internal static class MovieMap
         MovieInfo result = new MovieInfo();
         result.Id = movie.Id;
         result.Title = movie.Title;
-        result.LocalPath = movie.LocalPath;
+        result.LocalPath = Path.Combine( movie.BaseFolderDir, movie.FolderName, movie.VideoFilePath ?? string.Empty);
         result.IMDBId = movie.IMDBId;
         result.Description = movie.Description;
-        result.CoverUrl = movie.CoverUrl;
+        result.CoverUrl = Path.Combine( movie.BaseFolderDir, movie.FolderName, movie.CoverFilePath ?? string.Empty);
         result.BaseFolderDir = movie.BaseFolderDir;
         result.FolderName = movie.FolderName;
         result.Year = movie.Year;
@@ -26,14 +26,11 @@ internal static class MovieMap
         MovieFullInfo result = new MovieFullInfo();
         result.Id = movie.Id;
         result.Title = movie.Title;
-        result.LocalPath = movie.LocalPath;
+        result.LocalPath = Path.Combine( movie.BaseFolderDir, movie.FolderName, movie.VideoFilePath ?? string.Empty);
         result.IMDBId = movie.IMDBId;
         result.Description = movie.Description;
         result.Year = movie.Year;
-        result.CoverUrl = movie.CoverUrl;
-        //result.BaseFolderDir = movie.BaseFolderDir;
-        //result.FolderName = movie.FolderName;
-        //result.AddedDate = movie.AddedDate;
+        result.CoverUrl = Path.Combine( movie.BaseFolderDir, movie.FolderName, movie.CoverFilePath ?? string.Empty);
         return result;
     }
 }

@@ -71,8 +71,10 @@ cd ./src/MovieQuotes.Infrastructure/
 dotnet ef database update -s ../MovieQuotes.Api/MovieQuotes.Api.csproj
 ```
 
+### 5. Set the Cash Folder location
+in [Domain Constants](./Src/MovieQuotes.Domain/Models/Constants.cs#L5) and [Application Constants](./Src/MovieQuotes.Application/Features/Constants.cs#L5) File change the `CashPath` Constant to a location on your system to generate short video clips on it. 
 
-### 5. run the application
+### 6. run the application
 navigate your terminal to the uI project
 ```bash
 cd ./src/MovieQuotes.UI
@@ -82,7 +84,7 @@ and Build and run the appliation
 dotnet run
 ```
 
-### 6. populate with data and movies
+### 7. populate with data and movies
 download your vedios from internet or from anywhere but we need 3 basic file ber each movie we need Photo called `cover.jpg` we need vedio `<yourmovieName>.mp4` and subtitle file `<yourMovieName>.en.srt` locate your movies in folder structure like the  following - you can have optional more file like `info.json` file that contains IMDBID and description of the movie
 
 ```

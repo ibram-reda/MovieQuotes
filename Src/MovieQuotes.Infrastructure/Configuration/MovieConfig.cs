@@ -30,10 +30,10 @@ public class MovieConfig : IEntityTypeConfiguration<Movie>
         builder.Property(a => a.IMDBId).HasMaxLength(12);
 
         builder.Property(x => x.Description).HasMaxLength(700);
-
-        builder.Property(a => a.LocalPath).HasMaxLength(400);
+ 
         builder.Property(a => a.BaseFolderDir).HasMaxLength(400);
-        builder.Property(a => a.CoverUrl).HasMaxLength(200);
+        builder.Property(a => a.VideoFilePath).HasMaxLength(200);
+        builder.Property(a => a.CoverFilePath).HasMaxLength(200); 
         builder.Property(a => a.AddedDate).ValueGeneratedOnAdd();
         builder.Property(a => a.Year).HasDefaultValue(0);
     }

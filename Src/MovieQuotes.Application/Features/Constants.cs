@@ -2,6 +2,6 @@
 
 public static class Constants
 {
-    public const string CashPath = "/media/bebo/Data/cash";
+    public const string CashPath = "/mnt/Data/cash";
     public const string CashTemplate = "@Cash";
 }

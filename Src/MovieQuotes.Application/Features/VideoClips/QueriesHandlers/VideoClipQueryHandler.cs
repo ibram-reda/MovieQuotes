@@ -48,7 +48,7 @@ internal class VideoClipQueryHandler : IRequestHandler<VideoClipQuery, Operation
                                 Id = a.Id,
                                 Sequence = a.Sequence,
                                 MovieName = a.Movie!.Title,
-                                MoviePath = a.Movie.LocalPath,
+                                MoviePath = Path.Combine( a.Movie.BaseFolderDir, a.Movie.FolderName, a.Movie.VideoFilePath ?? string.Empty),
                                 VideoLocation = a.VideoClipPath!,
                                 Duration = a.Duration,
                                 StartTime = a.StartTime,

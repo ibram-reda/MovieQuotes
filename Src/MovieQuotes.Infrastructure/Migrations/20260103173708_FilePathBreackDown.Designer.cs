@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieQuotes.Infrastructure;
 
@@ -10,9 +11,11 @@ using MovieQuotes.Infrastructure;
 namespace MovieQuotes.Infrastructure.Migrations
 {
     [DbContext(typeof(MovieQuotesDbContext))]
-    partial class MovieQuotesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260103173708_FilePathBreackDown")]
+    partial class FilePathBreackDown
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,7 +38,10 @@ namespace MovieQuotes.Infrastructure.Migrations
                         .HasColumnType("varchar(400)");
 
                     b.Property<string>("CoverFilePath")
-                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("CoverUrl")
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
@@ -52,6 +58,11 @@ namespace MovieQuotes.Infrastructure.Migrations
                         .HasMaxLength(12)
                         .HasColumnType("varchar(12)");
 
+                    b.Property<string>("LocalPath")
+                        .IsRequired()
+                        .HasMaxLength(400)
+                        .HasColumnType("varchar(400)");
+
                     b.Property<string>("NameId")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -63,7 +74,6 @@ namespace MovieQuotes.Infrastructure.Migrations
                         .HasColumnType("varchar(150)");
 
                     b.Property<string>("VideoFilePath")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 

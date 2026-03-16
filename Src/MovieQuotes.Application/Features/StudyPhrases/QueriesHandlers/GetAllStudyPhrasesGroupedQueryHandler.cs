@@ -26,13 +26,15 @@ internal class GetAllStudyPhrasesGroupedQueryHandler : IRequestHandler<GetAllStu
                         {
                             Name = a.Phrase!.Movie!.Title,
                             Id = a.Phrase.MovieId,
-                            Cover = a.Phrase.Movie.CoverUrl,
+                            BaseFolderDir = a.Phrase.Movie.BaseFolderDir,
+                            FolderName = a.Phrase.Movie.FolderName,
+                            Cover = a.Phrase.Movie.CoverFilePath,
                         })
                         .Select(grp => new StudyPhrasesGroupByMovie
                         {
                             MovieName = grp.Key.Name,
                             MovieId = grp.Key.Id,
-                            MovieCoverUrl = grp.Key.Cover,
+                            MovieCoverUrl = Path.Combine(grp.Key.BaseFolderDir, grp.Key.FolderName, grp.Key.Cover),
                             StudyCount = grp.Count()
                         });
 
