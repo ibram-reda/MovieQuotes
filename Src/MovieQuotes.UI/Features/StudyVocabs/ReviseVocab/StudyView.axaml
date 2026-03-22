@@ -124,7 +124,7 @@
                 <Setter Property="Margin" Value="0 10 0 0"/>
                 <Setter Property="TextWrapping" Value="Wrap"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/> 
               </Style>
             </StackPanel.Styles>
 
@@ -136,7 +136,7 @@
                        IsVisible="{Binding CurrentPlayingPhrase.Origin,Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                        Foreground="yellow" />
 
-              <TextBox Text="{Binding CurrentPlayingPhrase.ArContentTranslation}"
+              <TextBox Text="{Binding CurrentPlayingPhrase.ArContentTranslation, Mode=OneWay, StringFormat='&#160;{0}&#160;'}"
                        FlowDirection="RightToLeft" 
                        IsVisible="{Binding ShowCompleteContent}" />
             </StackPanel>
