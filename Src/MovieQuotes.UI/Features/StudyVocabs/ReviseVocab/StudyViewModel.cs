@@ -15,6 +15,7 @@ using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,30 @@ public partial class StudyViewModel : PageViewModelBase
     public bool IsDialogClosed => !ShowEditDialog;
     [ObservableProperty] StudyPhrasesGroupByMovie? selectedMovie;
     [ObservableProperty] DialogueViewModelBase? dialogue;
+
+    [ObservableProperty] bool _ShowCompleteContent = false;
+
+    /// <summary>
+    /// | Score | Meaning           |
+    /// | ----- | ----------------- |
+    /// | 0     | complete blackout |
+    /// | 1     | wrong             |
+    /// | 2     | almost remembered |
+    /// | 3     | correct but hard  |
+    /// | 4     | correct           |
+    /// | 5     | very easy         |
+    /// </summary>
+    [ObservableProperty] int _Quality = 0;
+
+    public List<string> QualityStrings {get;} = [
+        "complete blackout",
+        "wrong",
+        "almost remembered",
+        "correct but hard",
+        "correct",
+        "very easy"
+    ];
+
 
     [ObservableProperty] int currentPlayingIndex;
     public ObservableCollection<StudyPhrase> Phrases { get; } = new();
@@ -61,8 +86,15 @@ public partial class StudyViewModel : PageViewModelBase
     void Next()
     {
         if (!HasNext) return;
+        ShowCompleteContent = false;
         var phrase = Phrases[++CurrentPlayingIndex];
         PlayPhrase(phrase);
+    }
+
+    [RelayCommand]
+    void CompleteContent()
+    {
+        ShowCompleteContent = true;
     }
 
     [RelayCommand]
@@ -91,9 +123,15 @@ public partial class StudyViewModel : PageViewModelBase
 
 
     [RelayCommand]
-    void Shuffle()
+    void OrderByReviewDate()
     {
-        this.Phrases.Shuffle();
+        this.Phrases.Sort((a, b) =>
+        {
+            if (a.NextReviewDate == null && b.NextReviewDate == null) return 0;
+            if (a.NextReviewDate == null) return 1;
+            if (b.NextReviewDate == null) return -1;
+            return DateTime.Compare(a.NextReviewDate, b.NextReviewDate);
+        });
         PlayPhrase(0);
     }
     void PlayPhrase(StudyPhrase phrase)
@@ -157,6 +195,26 @@ public partial class StudyViewModel : PageViewModelBase
         this.ShowEditDialog = true;
     }
 
+    [RelayCommand]
+    async Task AddReview()
+    {
+        var command = new ReviewStudyPhraseCommand(this.CurrentPlayingPhrase!.StudyId, this.Quality);
+        var result = await this.mediator.Send(command);
+        if (result.IsError)
+        {
+            this.ErrorMessages.Add("Failed to add review: " + result.Errors.First().Message);
+            return;
+        }
+        // Update the NextReviewDate of the current phrase in the UI
+        var updatedPhrase = this.Phrases.FirstOrDefault(p => p.StudyId == this.CurrentPlayingPhrase!.StudyId);
+        if (updatedPhrase != null)        {
+            updatedPhrase.NextReviewDate = result.Payload;
+            var index = this.Phrases.IndexOf(updatedPhrase);
+            this.Phrases.Remove(updatedPhrase);
+            this.Phrases.Insert(index, updatedPhrase);
+            PlayPhrase(index);
+        }
+    }
 
 
     [RelayCommand]

@@ -20,6 +20,8 @@ public class StudyPhrase
     /// </summary>
     public TimeSpan EndTime { get; set; } = TimeSpan.Zero;
 
+    public DateTime NextReviewDate { get; set; } = DateTime.Now;
+
     /// <summary>
     /// the transcript of the phrase.
     /// </summary>

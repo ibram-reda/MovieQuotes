@@ -45,7 +45,11 @@ internal class CreateStudyPhraseCommandHandler : IRequestHandler<CreateStudyPhra
                 request.Notes);
 
             dbContext.StudyPhrases.Add(dbStudyPhrase);
-            var effectedRows = await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
+
+            var progress = Domain.Models.StudyPhraseProgress.Create(dbStudyPhrase.Id);
+            dbContext.StudyPhraseProgress.Add(progress);
+            await dbContext.SaveChangesAsync();
 
             result.Payload = dbStudyPhrase.ToStudyPhrase();
 

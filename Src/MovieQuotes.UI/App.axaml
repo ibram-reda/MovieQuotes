@@ -49,5 +49,6 @@
     </ResourceDictionary>
     <converters:BitmapValueConverter x:Key="PathToBitmapConverter" />
     <converters:LongToTimeConverter x:Key="LongToTimeConverter" />
+    <converters:IsDateInThePastConverter x:Key="IsDateInThePastConverter" />
   </Application.Resources>
 </Application>

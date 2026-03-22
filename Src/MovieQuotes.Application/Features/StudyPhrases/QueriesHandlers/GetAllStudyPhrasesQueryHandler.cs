@@ -27,9 +27,14 @@ internal class GetAllStudyPhrasesQueryHandler : IRequestHandler<GetAllStudyPhras
 
         if (request.MovieId > 0)
             baseQuery = baseQuery.Where(a => a.Phrase!.MovieId == request.MovieId);
+        ;
 
-        var qry = baseQuery.Include(a=>a.Phrase)
+        if (request.OnlyDuePhrases)
+            baseQuery = baseQuery.Where(a => a.Progress!.NextReviewDate <= DateTime.Now);
+
+        var qry = baseQuery.Include(a => a.Phrase)
                            .Include(a => a.Phrase!.Movie)
+                           .Include(a => a.Progress)
                            .Select(a => a.ToStudyPhrase());
 
         var totalCount = await qry.CountAsync();

@@ -6,26 +6,31 @@
              xmlns:vlc="using:LibVLCSharp.Avalonia"
              xmlns:dialogues="using:MovieQuotes.UI.Views.Dialogues"
              xmlns:controls="using:MovieQuotes.UI.Views.Controls"
-             x:DataType="vm:StudyViewModel" 
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:converters ="using:MovieQuotes.UI.Converters"
+             x:DataType="vm:StudyViewModel"
+             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="450"
              x:Class="MovieQuotes.UI.Features.StudyVocabs.ReviseVocab.StudyView"
              Loaded="StudyView_Loaded">
-   
-  <Grid RowDefinitions="auto,*,auto" 
+
+  <UserControl.Resources>
+    <converters:IsDateInThePastConverter x:Key="IsDateInThePastConverter" />
+  </UserControl.Resources>
+
+  <Grid RowDefinitions="auto,*,auto"
         Focusable="True" >
     <!--top row control bar-->
     <StackPanel Orientation="Horizontal" Spacing="15" >
-     
-      <ComboBox ItemsSource="{Binding Movies}" 
+
+      <ComboBox ItemsSource="{Binding Movies}"
                 Focusable="False"
-                SelectedItem="{Binding SelectedMovie}" 
+                SelectedItem="{Binding SelectedMovie}"
                 SelectionChanged="ComboBox_SelectionChanged"
                 Width="300" >
         <ComboBox.ItemTemplate>
           <DataTemplate>
             <StackPanel Orientation="Horizontal" >
               <Image Width="30" Source="{Binding MovieCoverUrl,Converter={StaticResource PathToBitmapConverter}}"/>
-              <TextBlock Text="{Binding MovieName}" 
+              <TextBlock Text="{Binding MovieName}"
                          Width="200"
                          VerticalAlignment="Center"
                          TextWrapping="Wrap"/>
@@ -36,10 +41,10 @@
           </DataTemplate>
         </ComboBox.ItemTemplate>
       </ComboBox>
-      
-      <Button Content="shuffle" 
+
+      <Button Content="Order by Review Date"
               Focusable="False"
-              Command="{Binding ShuffleCommand}" />
+              Command="{Binding OrderByReviewDateCommand}" />
 
 
       <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -48,20 +53,34 @@
         <TextBlock Text="{Binding Phrases.Count}"/>
       </StackPanel>
 
-      <Button Content="Previous" 
+      <Button Content="Previous"
               HotKey="Left"
               Focusable="False"
               Command="{Binding PreviousCommand}" />
-      
-      <Button Content="Replay" 
-              Focusable="False"              
+
+      <Button Content="Replay"
+              Focusable="False"
               HotKey="Space"
               Command="{Binding ReplayCommand}" />
-      
-      <Button Content="Next" 
-              Focusable="False"              
+
+      <Button Content="Next"
+              Focusable="False"
               HotKey="Right"
               Command="{Binding NextCommand}" />
+
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                  IsVisible="{Binding CurrentPlayingPhrase.NextReviewDate, Converter={StaticResource IsDateInThePastConverter}}" >
+
+        <ComboBox ItemsSource="{Binding QualityStrings}"
+                  SelectedIndex="{Binding Quality, Mode=TwoWay}"
+                  Width="150" />
+
+        <Button Content="Add Review"
+                Command="{Binding AddReviewCommand}" />
+      </StackPanel>
+
+      <Button Content="Complete Content"
+              Command="{Binding CompleteContentCommand}" />
 
       <Button ToolTip.Tip="Open Containing Folder"
               Command="{Binding ShowFolderCommand}" >
@@ -72,7 +91,7 @@
               Command="{Binding EditPhraseCommand}" >
         <PathIcon Data="{StaticResource  edit_regular}" />
       </Button>
-      
+
       <Button ToolTip.Tip="Export Phrases"
               Command="{Binding ExportCommand}" >
         <PathIcon Data="{StaticResource  export_regular}" />
@@ -83,7 +102,7 @@
     <Grid Grid.Row="1">
       <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}">
         <!--overlay on vedio screen-->
-        <Grid IsVisible="{Binding CurrentPlayingPhrase}" 
+        <Grid IsVisible="{Binding CurrentPlayingPhrase}"
               VerticalAlignment="Stretch"
               HorizontalAlignment="Stretch"
               Margin="10">
@@ -96,7 +115,7 @@
           <StackPanel>
             <StackPanel.Styles>
               <Style Selector="TextBox">
-                <Setter Property="IsReadOnly" Value="True"/> 
+                <Setter Property="IsReadOnly" Value="True"/>
                 <Setter Property="BorderBrush" Value="Transparent"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="Background" Value="Transparent"/>
@@ -110,44 +129,49 @@
             </StackPanel.Styles>
 
             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
-                <TextBox Text="{Binding CurrentPlayingPhrase.Content}"
-                          Foreground="Orange"/>
+              <TextBox Text="{Binding CurrentPlayingPhrase.Content}"
+                       Foreground="Orange"/>
 
-                <TextBox Text="{Binding CurrentPlayingPhrase.Origin, Mode=OneWay, StringFormat='-({0})'}" 
-                         IsVisible="{Binding CurrentPlayingPhrase.Origin,Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                         Foreground="yellow" />
+              <TextBox Text="{Binding CurrentPlayingPhrase.Origin, Mode=OneWay, StringFormat='-({0})'}"
+                       IsVisible="{Binding CurrentPlayingPhrase.Origin,Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                       Foreground="yellow" />
 
-                <TextBox Text="{Binding CurrentPlayingPhrase.ArContentTranslation}" 
-                           FlowDirection="RightToLeft"  />
+              <TextBox Text="{Binding CurrentPlayingPhrase.ArContentTranslation}"
+                       FlowDirection="RightToLeft" 
+                       IsVisible="{Binding ShowCompleteContent}" />
             </StackPanel>
-            
+
             <TextBox Text="{Binding CurrentPlayingPhrase.StudyType}"
                      Margin="0"/>
 
-            <TextBox Text="{Binding CurrentPlayingPhrase.Translation}"/>
-            
+            <TextBox Text="{Binding CurrentPlayingPhrase.Translation}"
+                      IsVisible="{Binding ShowCompleteContent}"/>
+
             <TextBox Text="{Binding CurrentPlayingPhrase.PhraseText}"
                      Foreground="red"/>
-            <TextBox Text="{Binding CurrentPlayingPhrase.PhraseArTranslation}"/>
-          
+            <TextBox Text="{Binding CurrentPlayingPhrase.PhraseArTranslation}"
+                     FlowDirection="RightToLeft" 
+                     IsVisible="{Binding ShowCompleteContent}" />
+
             <TextBox Text="{Binding CurrentPlayingPhrase.Notes}"
-                     Foreground="#a5d"/>
-          
+                     Foreground="#a5d"
+                     IsVisible="{Binding ShowCompleteContent}"/>
+
           </StackPanel>
 
-          <Panel IsVisible="{Binding ShowEditDialog}" 
-                 Background="#333" 
+          <Panel IsVisible="{Binding ShowEditDialog}"
+                 Background="#333"
                  Width="700"
                  VerticalAlignment="Center">
             <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                           VerticalScrollBarVisibility="Disabled" >
-                 <ContentControl Content="{Binding Dialogue}"/>
+              <ContentControl Content="{Binding Dialogue}"/>
             </ScrollViewer>
           </Panel>
         </Grid>
       </vlc:VideoView>
     </Grid>
-    
-    
+
+
   </Grid>
 </UserControl>

@@ -7,7 +7,7 @@ using MovieQuotes.Infrastructure.Configuration;
 public class MovieQuotesDbContext : DbContext
 {
     public MovieQuotesDbContext()
-    {        
+    {
     }
 
     public MovieQuotesDbContext(DbContextOptions options) : base(options)
@@ -23,6 +23,8 @@ public class MovieQuotesDbContext : DbContext
 
     public DbSet<StudyPhrase> StudyPhrases => Set<StudyPhrase>();
 
+    public DbSet<StudyPhraseProgress> StudyPhraseProgress  => Set<StudyPhraseProgress>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new MovieConfig());
@@ -30,5 +32,17 @@ public class MovieQuotesDbContext : DbContext
         modelBuilder.ApplyConfiguration(new PhraseWordsConfig());
         modelBuilder.ApplyConfiguration(new WordConfig());
         modelBuilder.ApplyConfiguration(new StudyPhraseConfig());
+
+        modelBuilder.Entity<StudyPhraseProgress>()
+            .HasOne(p => p.StudyPhrase)
+            .WithOne(s => s.Progress)
+            .HasForeignKey<StudyPhraseProgress>(p => p.StudyPhraseId);
+
+        modelBuilder.Entity<StudyPhraseProgress>()
+            .Property(p => p.EaseFactor)
+            .HasDefaultValue(2.5);
+
+        modelBuilder.Entity<StudyPhraseProgress>().HasKey(p => p.Id);
+
     }
 }

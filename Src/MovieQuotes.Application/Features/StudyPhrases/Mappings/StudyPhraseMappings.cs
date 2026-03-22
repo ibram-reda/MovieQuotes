@@ -22,7 +22,8 @@ internal static class StudyPhraseMappings
             ArContentTranslation = src.ArContentTranslation,
             PhraseArTranslation = src.ArPhraseTranslation,
             Origin = src.Origin,
-            Notes = src.Notes
-        };
+            Notes = src.Notes,
+            NextReviewDate = src.Progress?.NextReviewDate ?? DateTime.Now,
+            };
     }
 }

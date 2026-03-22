@@ -44,6 +44,7 @@ public class StudyPhrase
     /// </summary>
     public string? Notes { get; private set; }
     public DateTime AddedDate { get; private set; } = DateTime.Now;
+    public StudyPhraseProgress? Progress { get; private set; }
 
     public static StudyPhrase CreateStudyPhrase(int phraseId,
         string? studyType,

@@ -5,7 +5,19 @@ namespace MovieQuotes.UI.Extensions;
 
 public static class ShuffleExtension
 {
-    public static void Shuffle<T>(this IList<T> list)
+    public static IList<T> Sort<T>(this IList<T> c, Comparison<T> comparison) where T : class
+    {
+        List<T> sortableList = new(c);
+        sortableList.Sort(comparison);
+        for (int i = 0; i < sortableList.Count; i++)
+        {
+            T d = sortableList[i];
+            if (c[i] != d)
+                c[i] = d;
+        }
+        return c;
+    }
+    public static IList<T> Shuffle<T>(this IList<T> list)
     {
         Random rng = new Random();
         int n = list.Count;
@@ -17,5 +29,6 @@ public static class ShuffleExtension
             list[k] = list[n];
             list[n] = value;
         }
+        return list;
     }
 }
