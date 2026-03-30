@@ -4,8 +4,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using MovieQuotes.Application.Common.Models;
 using MovieQuotes.UI.Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -56,5 +58,12 @@ public abstract partial class ViewModelBase : ObservableObject
 
     public virtual void ConsumeMessage(object? message)
     {
+    }
+
+    public void HandleErrors(IEnumerable<Error> errors)
+    {
+        this.ErrorMessages.Clear();
+        foreach(var err in errors)
+            this.ErrorMessages.Add(err.Message);
     }
 }

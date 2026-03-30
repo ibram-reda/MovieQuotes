@@ -216,6 +216,24 @@ public partial class StudyViewModel : PageViewModelBase
         }
     }
 
+    [RelayCommand]
+    async Task Delete()
+    {
+        var cmd = new DeleteStudyContentCommand(CurrentPlayingPhrase?.StudyId??0);
+
+       var result =  await this.mediator.Send(cmd);
+        if (result.IsError)
+        {
+            this.HandleErrors(result.Errors);
+            return;
+        }
+
+        // remove the content from the playing list
+        var p =this.Phrases.FirstOrDefault(a=>a.StudyId == result.Payload);
+        this.Phrases.Remove(p);
+        PlayPhrase(CurrentPlayingIndex);
+        
+    }
 
     [RelayCommand]
     async Task Init()

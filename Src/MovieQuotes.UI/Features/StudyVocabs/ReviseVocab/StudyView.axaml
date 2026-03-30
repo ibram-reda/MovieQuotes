@@ -8,7 +8,7 @@
              xmlns:controls="using:MovieQuotes.UI.Views.Controls"
              xmlns:converters ="using:MovieQuotes.UI.Converters"
              x:DataType="vm:StudyViewModel"
-             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1480" d:DesignHeight="450"
              x:Class="MovieQuotes.UI.Features.StudyVocabs.ReviseVocab.StudyView"
              Loaded="StudyView_Loaded">
 
@@ -95,6 +95,11 @@
       <Button ToolTip.Tip="Export Phrases"
               Command="{Binding ExportCommand}" >
         <PathIcon Data="{StaticResource  export_regular}" />
+      </Button>
+
+      <Button Classes="cancelBtn" ToolTip.Tip="Delete"
+              Command="{Binding DeleteCommand}">
+              <PathIcon Data="{StaticResource  delete_forever_regular}"/>  
       </Button>
 
     </StackPanel>
