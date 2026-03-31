@@ -24,6 +24,11 @@ using System.Threading.Tasks;
 public partial class StudyViewModel : PageViewModelBase
 {
 
+    [NotifyCanExecuteChangedFor(nameof(AddReviewCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ReplayCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ShowFolderCommand))]
+    [NotifyCanExecuteChangedFor(nameof(EditPhraseCommand))]
     [ObservableProperty] StudyPhrase? currentPlayingPhrase;
     [NotifyCanExecuteChangedFor(nameof(EditPhraseCommand))]
     [ObservableProperty] bool showEditDialog = false;
@@ -32,20 +37,14 @@ public partial class StudyViewModel : PageViewModelBase
     [ObservableProperty] DialogueViewModelBase? dialogue;
 
     [ObservableProperty] bool _ShowCompleteContent = false;
+    [ObservableProperty] bool _ShowPhraseContent = false;
 
-    /// <summary>
-    /// | Score | Meaning           |
-    /// | ----- | ----------------- |
-    /// | 0     | complete blackout |
-    /// | 1     | wrong             |
-    /// | 2     | almost remembered |
-    /// | 3     | correct but hard  |
-    /// | 4     | correct           |
-    /// | 5     | very easy         |
-    /// </summary>
+
     [ObservableProperty] int _Quality = 0;
 
-    public List<string> QualityStrings {get;} = [
+    public int DuePhrasesCount => this.Phrases.Count(p => p.NextReviewDate <= DateTime.Now);
+
+    public List<string> QualityStrings { get; } = [
         "complete blackout",
         "wrong",
         "almost remembered",
@@ -55,6 +54,8 @@ public partial class StudyViewModel : PageViewModelBase
     ];
 
 
+    [NotifyCanExecuteChangedFor(nameof(NextCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PreviousCommand))]
     [ObservableProperty] int currentPlayingIndex;
     public ObservableCollection<StudyPhrase> Phrases { get; } = new();
     public ObservableCollection<StudyPhrasesGroupByMovie> Movies { get; } = [];
@@ -79,22 +80,36 @@ public partial class StudyViewModel : PageViewModelBase
             Volume = 100
         };
         this._filesService = filesService;
+        this.Phrases.CollectionChanged += (s, e) =>
+        {
+            NextCommand.NotifyCanExecuteChanged();
+            PreviousCommand.NotifyCanExecuteChanged();
+        };
+
     }
 
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(NextCanExecute))]
     void Next()
     {
-        if (!HasNext) return;
+        if (!NextCanExecute()) return;
+        this.MainMediaPlayer.Stop();
+        SetCurrentPhraseIndex(++CurrentPlayingIndex);
         ShowCompleteContent = false;
-        var phrase = Phrases[++CurrentPlayingIndex];
-        PlayPhrase(phrase);
+        ShowPhraseContent = false;
     }
 
     [RelayCommand]
     void CompleteContent()
     {
+        // If the phrase content is not shown yet, show it first. Otherwise, show the complete content and play the phrase.
+        if (ShowPhraseContent == false)
+        {
+            ShowPhraseContent = true;
+            return;
+        }
         ShowCompleteContent = true;
+        MainMediaPlayer.Play();
     }
 
     [RelayCommand]
@@ -102,23 +117,27 @@ public partial class StudyViewModel : PageViewModelBase
         this._filesService.ExploreFile(CurrentPlayingPhrase?.VideoLocation ?? "");
 
 
-    bool HasNext => this.CurrentPlayingIndex < this.Phrases.Count - 1;
-    bool HasPrevious => this.CurrentPlayingIndex > 0;
+    public bool NextCanExecute() => this.CurrentPlayingIndex < this.Phrases.Count - 1;
+    public bool PreviousCanExecute() => this.CurrentPlayingIndex > 0;
 
-    [RelayCommand]
+    public bool HasPlayingPhrase => CurrentPlayingPhrase != null ;
+
+    [RelayCommand(CanExecute = nameof(PreviousCanExecute))]
     void Previous()
     {
-        if (!HasPrevious) return;
-        var phrase = this.Phrases[--CurrentPlayingIndex];
-        PlayPhrase(phrase);
+        if (!PreviousCanExecute()) return;
+        this.MainMediaPlayer.Stop();
+        SetCurrentPhraseIndex(--CurrentPlayingIndex);
+        ShowCompleteContent = false;
+        ShowPhraseContent = false;
     }
 
-    void PlayPhrase(int index)
+    void SetCurrentPhraseIndex(int index)
     {
         this.CurrentPlayingPhrase = null;
         if (index < 0 || index >= this.Phrases.Count) return;
         var phrase = this.Phrases[index];
-        PlayPhrase(phrase);
+        SetCurrentPhrase(phrase);
     }
 
 
@@ -132,9 +151,11 @@ public partial class StudyViewModel : PageViewModelBase
             if (b.NextReviewDate == null) return -1;
             return DateTime.Compare(a.NextReviewDate, b.NextReviewDate);
         });
-        PlayPhrase(0);
+        this.SetCurrentPhraseIndex(0);
+        ShowCompleteContent = false;
+        ShowPhraseContent = false;
     }
-    void PlayPhrase(StudyPhrase phrase)
+    void SetCurrentPhrase(StudyPhrase phrase)
     {
         this.CurrentPlayingIndex = this.Phrases.IndexOf(phrase);
         this.CurrentPlayingPhrase = phrase;
@@ -151,10 +172,7 @@ public partial class StudyViewModel : PageViewModelBase
         var uri = new Uri(phrase.VideoLocation);
         Media media = new Media(this.MainLibVLC, uri);
         MainMediaPlayer.Media?.Dispose();
-        var r = MainMediaPlayer.Play(media);
-
-        this.OnPropertyChanged(nameof(HasNext));
-        this.OnPropertyChanged(nameof(HasPrevious));
+        MainMediaPlayer.Media = media;
     }
 
     [RelayCommand]
@@ -169,16 +187,16 @@ public partial class StudyViewModel : PageViewModelBase
             if (sender is not PhraseEditDialogueViewModel studyEditDialog)
                 return; // Invalid sender type
 
-            if(args.Pram is StudyPhrase UpdatedStudyPhrase)
+            if (args.Pram is StudyPhrase UpdatedStudyPhrase)
             {
                 var oldPhrase = this.Phrases.FirstOrDefault(x => x.StudyId == UpdatedStudyPhrase.StudyId);
                 if (oldPhrase is not null)
                 {
                     var index = this.Phrases.IndexOf(oldPhrase);
-                    this.Phrases[index] = UpdatedStudyPhrase;                    
+                    this.Phrases[index] = UpdatedStudyPhrase;
                 }
-            }    
-            if(args.Pram is Phrase newPhrase)
+            }
+            if (args.Pram is Phrase newPhrase)
             {
                 var oldPhrase = this.Phrases.FirstOrDefault(x => x.PhraseId == newPhrase.Id);
                 oldPhrase!.PhraseText = newPhrase.Text;
@@ -187,15 +205,18 @@ public partial class StudyViewModel : PageViewModelBase
                 var index = this.Phrases.IndexOf(oldPhrase);
                 Phrases.Remove(oldPhrase);
                 Phrases.Insert(index, oldPhrase);
-                PlayPhrase(index);
+                SetCurrentPhraseIndex(index);
             }
 
-            PlayPhrase(this.CurrentPlayingIndex); // Re-play the phrase after update
+            SetCurrentPhraseIndex(this.CurrentPlayingIndex);
+            MainMediaPlayer.Play(); // Re-play the phrase after update
         };
         this.ShowEditDialog = true;
     }
 
-    [RelayCommand]
+    bool AddReviewCanExecute() => CurrentPlayingPhrase != null && CurrentPlayingPhrase.NextReviewDate <= DateTime.Now;
+
+    [RelayCommand(CanExecute = nameof(AddReviewCanExecute))]
     async Task AddReview()
     {
         var command = new ReviewStudyPhraseCommand(this.CurrentPlayingPhrase!.StudyId, this.Quality);
@@ -207,21 +228,21 @@ public partial class StudyViewModel : PageViewModelBase
         }
         // Update the NextReviewDate of the current phrase in the UI
         var updatedPhrase = this.Phrases.FirstOrDefault(p => p.StudyId == this.CurrentPlayingPhrase!.StudyId);
-        if (updatedPhrase != null)        {
+        if (updatedPhrase != null)
+        {
             updatedPhrase.NextReviewDate = result.Payload;
-            var index = this.Phrases.IndexOf(updatedPhrase);
-            this.Phrases.Remove(updatedPhrase);
-            this.Phrases.Insert(index, updatedPhrase);
-            PlayPhrase(index);
+            // Refresh the current phrase to update the UI If you will play the same phrase again
         }
+        Next();
+        OnPropertyChanged(nameof(DuePhrasesCount));
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HasPlayingPhrase))]
     async Task Delete()
     {
-        var cmd = new DeleteStudyContentCommand(CurrentPlayingPhrase?.StudyId??0);
+        var cmd = new DeleteStudyContentCommand(CurrentPlayingPhrase?.StudyId ?? 0);
 
-       var result =  await this.mediator.Send(cmd);
+        var result = await this.mediator.Send(cmd);
         if (result.IsError)
         {
             this.HandleErrors(result.Errors);
@@ -229,10 +250,10 @@ public partial class StudyViewModel : PageViewModelBase
         }
 
         // remove the content from the playing list
-        var p =this.Phrases.FirstOrDefault(a=>a.StudyId == result.Payload);
+        var p = this.Phrases.FirstOrDefault(a => a.StudyId == result.Payload);
         this.Phrases.Remove(p);
-        PlayPhrase(CurrentPlayingIndex);
-        
+        SetCurrentPhraseIndex(CurrentPlayingIndex);
+
     }
 
     [RelayCommand]
@@ -248,13 +269,13 @@ public partial class StudyViewModel : PageViewModelBase
                 MovieName = "random phrases",
                 StudyCount = reslt.Payload?.Sum(x => x.StudyCount) ?? 0,
             });
-            foreach (var m in (reslt.Payload ?? []).OrderByDescending(a=>a.StudyCount)  )
+            foreach (var m in (reslt.Payload ?? []).OrderByDescending(a => a.StudyCount))
                 Movies.Add(m);
         }
 
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HasPlayingPhrase))]
     void Replay()
     {
         this.MainMediaPlayer.Stop();
@@ -262,19 +283,45 @@ public partial class StudyViewModel : PageViewModelBase
     }
 
     [RelayCommand]
+    void SetQuality(object parm)
+    {
+        if (parm is not string str || !int.TryParse(str, out int quality))
+            return;
+        if (quality < 0 || quality > 5)
+            return;
+        this.Quality = quality;
+    }
+
+    [RelayCommand]
+    void Escape()
+    {
+        if (ShowEditDialog)
+            ShowEditDialog = false;
+        if (ShowPhraseContent)
+            ShowPhraseContent = false;
+        if (ShowCompleteContent)
+            ShowCompleteContent = false;
+        if (MainMediaPlayer.IsPlaying)
+            this.MainMediaPlayer.Stop();
+    }
+
+    [RelayCommand]
     void Export()
-    { 
+    {
+
         var vm = new ExportStudiesViewModel(this.Phrases.ToList());
         vm.OnSelectionChanged += (study) =>
         {
             var index = this.Phrases.IndexOf(study);
-            PlayPhrase(index);
+            SetCurrentPhraseIndex(index);
+            MainMediaPlayer.Play();
         };
         this.Dialogue = vm;
         vm.DialogueClosed += (sender, args) =>
         {
             this.ShowEditDialog = false;
         };
+        this.ShowPhraseContent = true; // need to show phrase content to make the export dialoge display the phrase text, can be refactored later to make it more elegant
         this.ShowEditDialog = true;
     }
 
@@ -302,7 +349,9 @@ public partial class StudyViewModel : PageViewModelBase
                 await GenerateVideoAsync(phrase);
             this.Phrases.Add(phrase);
         }
-        PlayPhrase(0); // Play the first phrase by default if available
+        this.SetCurrentPhraseIndex(0);
+        ShowCompleteContent = false;
+        ShowPhraseContent = false;
     }
 
     async Task GenerateVideoAsync(StudyPhrase phrase)

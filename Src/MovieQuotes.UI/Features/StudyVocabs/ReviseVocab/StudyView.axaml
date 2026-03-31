@@ -16,6 +16,16 @@
     <converters:IsDateInThePastConverter x:Key="IsDateInThePastConverter" />
   </UserControl.Resources>
 
+  <UserControl.KeyBindings>
+    <KeyBinding Gesture="Escape" Command="{Binding EscapeCommand}" />
+    <KeyBinding Gesture="NumPad0" Command="{Binding SetQualityCommand}" CommandParameter="0" />
+    <KeyBinding Gesture="NumPad1" Command="{Binding SetQualityCommand}" CommandParameter="1" />
+    <KeyBinding Gesture="NumPad2" Command="{Binding SetQualityCommand}" CommandParameter="2" />
+    <KeyBinding Gesture="NumPad3" Command="{Binding SetQualityCommand}" CommandParameter="3" />
+    <KeyBinding Gesture="NumPad4" Command="{Binding SetQualityCommand}" CommandParameter="4" />
+    <KeyBinding Gesture="NumPad5" Command="{Binding SetQualityCommand}" CommandParameter="5" />
+  </UserControl.KeyBindings>
+
   <Grid RowDefinitions="auto,*,auto"
         Focusable="True" >
     <!--top row control bar-->
@@ -46,12 +56,15 @@
               Focusable="False"
               Command="{Binding OrderByReviewDateCommand}" />
 
-
       <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
         <TextBlock Text="{Binding CurrentPlayingIndex}"/>
         <TextBlock Text="  of  "/>
         <TextBlock Text="{Binding Phrases.Count}"/>
       </StackPanel>
+
+      <TextBlock Text="{Binding DuePhrasesCount, StringFormat='Due Phrases: {0}'}"
+                 VerticalAlignment="Center"
+                 Foreground="Green"/>
 
       <Button Content="Previous"
               HotKey="Left"
@@ -73,13 +86,15 @@
 
         <ComboBox ItemsSource="{Binding QualityStrings}"
                   SelectedIndex="{Binding Quality, Mode=TwoWay}"
-                  Width="150" />
+                  Width="190" />
 
         <Button Content="Add Review"
-                Command="{Binding AddReviewCommand}" />
+                Command="{Binding AddReviewCommand}"
+                HotKey="Enter" />
       </StackPanel>
 
       <Button Content="Complete Content"
+              HotKey="Up"
               Command="{Binding CompleteContentCommand}" />
 
       <Button ToolTip.Tip="Open Containing Folder"
@@ -105,7 +120,23 @@
     </StackPanel>
 
     <Grid Grid.Row="1">
-      <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}">
+      <Grid.Styles>
+        <Style Selector="TextBox">
+                <Setter Property="IsReadOnly" Value="True"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="FontSize" Value="45"/>
+                <Setter Property="Margin" Value="0 10 0 0"/>
+                <Setter Property="TextWrapping" Value="Wrap"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/> 
+        </Style>
+      </Grid.Styles>
+      <TextBox Text="{Binding CurrentPlayingPhrase.Content}"
+                       Foreground="Orange"/>
+      <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}" IsVisible="{Binding ShowPhraseContent}">
         <!--overlay on vedio screen-->
         <Grid IsVisible="{Binding CurrentPlayingPhrase}"
               VerticalAlignment="Stretch"
