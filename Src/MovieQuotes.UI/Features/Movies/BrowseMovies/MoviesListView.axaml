@@ -79,7 +79,7 @@
                 
             <ListBox.ItemsPanel>
                   <ItemsPanelTemplate>
-                    <WrapPanel />
+                    <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Center"/>
                   </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
            </ListBox>

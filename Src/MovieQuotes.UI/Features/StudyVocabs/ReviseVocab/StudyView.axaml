@@ -114,28 +114,15 @@
 
       <Button Classes="cancelBtn" ToolTip.Tip="Delete"
               Command="{Binding DeleteCommand}">
-              <PathIcon Data="{StaticResource  delete_forever_regular}"/>  
-      </Button>
+        <PathIcon Data="{StaticResource  delete_forever_regular}"/>
+    </Button>
 
     </StackPanel>
 
     <Grid Grid.Row="1">
-      <Grid.Styles>
-        <Style Selector="TextBox">
-                <Setter Property="IsReadOnly" Value="True"/>
-                <Setter Property="BorderBrush" Value="Transparent"/>
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="Focusable" Value="False"/>
-                <Setter Property="FontSize" Value="45"/>
-                <Setter Property="Margin" Value="0 10 0 0"/>
-                <Setter Property="TextWrapping" Value="Wrap"/>
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="VerticalAlignment" Value="Center"/> 
-        </Style>
-      </Grid.Styles>
-      <TextBox Text="{Binding CurrentPlayingPhrase.Content}"
-                       Foreground="Orange"/>
+
+      <TextBlock Classes="info-text" FontSize="45" Text="{Binding CurrentPlayingPhrase.Content}"
+                 Foreground="Orange"/>
       <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}" IsVisible="{Binding ShowPhraseContent}">
         <!--overlay on vedio screen-->
         <Grid IsVisible="{Binding CurrentPlayingPhrase}"
@@ -149,49 +136,45 @@
           </Grid.Styles>
           <!--phrase content-->
           <StackPanel>
-            <StackPanel.Styles>
-              <Style Selector="TextBox">
-                <Setter Property="IsReadOnly" Value="True"/>
-                <Setter Property="BorderBrush" Value="Transparent"/>
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="Focusable" Value="False"/>
-                <Setter Property="FontSize" Value="28"/>
-                <Setter Property="Margin" Value="0 10 0 0"/>
-                <Setter Property="TextWrapping" Value="Wrap"/>
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="VerticalAlignment" Value="Center"/> 
-              </Style>
-            </StackPanel.Styles>
 
-            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
-              <TextBox Text="{Binding CurrentPlayingPhrase.Content}"
+          <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+            <TextBlock Text="{Binding CurrentPlayingPhrase.Content}"
+                       Classes="info-text copyable"
+                       PointerPressed="TextBlock_PointerPressed"
                        Foreground="Orange"/>
 
-              <TextBox Text="{Binding CurrentPlayingPhrase.Origin, Mode=OneWay, StringFormat='-({0})'}"
+            <TextBlock Text="{Binding CurrentPlayingPhrase.Origin, Mode=OneWay, StringFormat='-({0})'}"
+                       Classes="info-text"
                        IsVisible="{Binding CurrentPlayingPhrase.Origin,Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                        Foreground="yellow" />
 
-              <TextBox Text="{Binding CurrentPlayingPhrase.ArContentTranslation, Mode=OneWay, StringFormat='&#160;{0}&#160;'}"
-                       FlowDirection="RightToLeft" 
+            <TextBlock Text="{Binding CurrentPlayingPhrase.ArContentTranslation, Mode=OneWay, StringFormat='&#160;{0}&#160;'}"
+                       FlowDirection="RightToLeft"
+                       Classes="info-text"
                        IsVisible="{Binding ShowCompleteContent}" />
-            </StackPanel>
+          </StackPanel>
 
-            <TextBox Text="{Binding CurrentPlayingPhrase.StudyType}"
-                     Margin="0"/>
+            <TextBlock Text="{Binding CurrentPlayingPhrase.StudyType}"
+                       Classes="info-text"
+                       Margin="0"/>
 
-            <TextBox Text="{Binding CurrentPlayingPhrase.Translation}"
-                      IsVisible="{Binding ShowCompleteContent}"/>
+            <TextBlock Text="{Binding CurrentPlayingPhrase.Translation}"
+                       Classes="info-text"
+                       IsVisible="{Binding ShowCompleteContent}"/>
 
-            <TextBox Text="{Binding CurrentPlayingPhrase.PhraseText}"
-                     Foreground="red"/>
-            <TextBox Text="{Binding CurrentPlayingPhrase.PhraseArTranslation}"
-                     FlowDirection="RightToLeft" 
-                     IsVisible="{Binding ShowCompleteContent}" />
+            <TextBlock Text="{Binding CurrentPlayingPhrase.PhraseText}"
+                       Classes="info-text copyable"
+                       PointerPressed="TextBlock_PointerPressed"
+                       Foreground="red"/>
+            <TextBlock Text="{Binding CurrentPlayingPhrase.PhraseArTranslation}"
+                       FlowDirection="RightToLeft"
+                       Classes="info-text"
+                       IsVisible="{Binding ShowCompleteContent}" />
 
-            <TextBox Text="{Binding CurrentPlayingPhrase.Notes}"
-                     Foreground="#a5d"
-                     IsVisible="{Binding ShowCompleteContent}"/>
+            <TextBlock Text="{Binding CurrentPlayingPhrase.Notes}"
+                       Classes="info-text"
+                       Foreground="#a5d"
+                       IsVisible="{Binding ShowCompleteContent}"/>
 
           </StackPanel>
 

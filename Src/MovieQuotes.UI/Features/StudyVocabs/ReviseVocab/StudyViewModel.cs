@@ -84,6 +84,7 @@ public partial class StudyViewModel : PageViewModelBase
         {
             NextCommand.NotifyCanExecuteChanged();
             PreviousCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(DuePhrasesCount));
         };
 
     }

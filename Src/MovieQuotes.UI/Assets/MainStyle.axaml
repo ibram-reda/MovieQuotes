@@ -21,34 +21,51 @@
     <Setter Property="Margin"  Value="0,10,0,10"/>
   </Style>
 
+  <Style Selector="TextBlock.info-text">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="FontSize" Value="28"/>
+    <Setter Property="Margin" Value="0 10 0 0"/>
+    <Setter Property="TextWrapping" Value="Wrap"/>
+    <Setter Property="HorizontalAlignment" Value="Center"/>
+    <Setter Property="VerticalAlignment" Value="Center"/>
+</Style>
+
+  <Style Selector="TextBlock.copyable" >
+    <Setter Property="Cursor" Value="Hand"/>
+    <Style Selector="^:pointerover" >
+      <Setter Property="Background" Value="LightBlue"/>
+    </Style>
+  </Style>
+
   <!--Butttons-->
   <Style Selector="Button:pointerover">
     <Setter Property="Cursor" Value="Hand"/>
-    
+
   </Style>
   <Style Selector="Button.saveBtn">
     <Setter Property="Background" Value="{DynamicResource OkBtnBackground}"/>
-    <Setter Property="Foreground" Value="{DynamicResource OkBtnForground}"/>    
-  </Style>
+    <Setter Property="Foreground" Value="{DynamicResource OkBtnForground}"/>
+</Style>
 
   <Style Selector="Button.cancelBtn">
     <Setter Property="Background" Value="{DynamicResource CancelBtnBackground}"/>
     <Setter Property="Foreground" Value="{DynamicResource CancelBtnForground}"/>
   </Style>
-  
+
   <Style Selector="Button.link">
     <Setter Property="Background"  Value="Transparent"/>
     <Setter Property="Cursor" Value="Hand"/>
     <Style Selector="^:pointerover /template/ContentPresenter">
-      <Setter Property="Background" Value="gray"/>      
-    </Style>
+      <Setter Property="Background" Value="gray"/>
+  </Style>
   </Style>
 
   <Style Selector="StackPanel.navigation" >
     <Setter Property="Orientation" Value="Horizontal"/>
     <Setter Property="Background" Value="{DynamicResource SurfeceBackground}"/>
-    <Setter Property="Margin" Value="0,0,0,5"/>    
-  </Style>
+    <Setter Property="Margin" Value="0,0,0,5"/>
+</Style>
 
   <Style Selector="Button.contentbtn">
     <Setter Property="Background" Value="Transparent"/>
@@ -56,9 +73,9 @@
     <Setter Property="Padding" Value="0"/>
     <Setter Property="BorderThickness" Value="0"/>
     <Setter Property="Cursor" Value="Hand" />
-    
+
     <Style Selector="^:pointerover /template/ContentPresenter">
-      <Setter Property="Background" Value="Transparent"/>      
-    </Style>
+      <Setter Property="Background" Value="Transparent"/>
+  </Style>
   </Style>
 </Styles>
