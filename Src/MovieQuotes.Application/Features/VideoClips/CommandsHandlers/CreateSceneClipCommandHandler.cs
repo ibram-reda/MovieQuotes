@@ -3,7 +3,7 @@
 using MediatR;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.VideoClips.Commands;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +15,12 @@ using System.Threading.Tasks;
 internal class CreateSceneClipCommandHandler : IRequestHandler<CreateSceneClipCommand, OperationResult<string>>
 {
 
-    private readonly MovieQuotesDbContext dbContext;
+    private readonly IMovieQUnitOfWork unitOfWork;
 
 
-    public CreateSceneClipCommandHandler(MovieQuotesDbContext dbContext)
+    public CreateSceneClipCommandHandler(IMovieQUnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
     }
     public Task<OperationResult<string>> Handle(CreateSceneClipCommand request, CancellationToken cancellationToken)
     {

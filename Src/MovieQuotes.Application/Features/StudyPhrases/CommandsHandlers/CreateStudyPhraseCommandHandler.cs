@@ -6,18 +6,18 @@ using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Commands;
 using MovieQuotes.Application.Features.StudyPhrases.Mappings;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 internal class CreateStudyPhraseCommandHandler : IRequestHandler<CreateStudyPhraseCommand, OperationResult<StudyPhrase>>
 {
-    private readonly MovieQuotesDbContext dbContext;
+    private readonly IMovieQUnitOfWork unitOfWork;
 
-    public CreateStudyPhraseCommandHandler(MovieQuotesDbContext dbContext)
+    public CreateStudyPhraseCommandHandler(IMovieQUnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task<OperationResult<StudyPhrase>> Handle(CreateStudyPhraseCommand request, CancellationToken cancellationToken)
@@ -44,12 +44,12 @@ internal class CreateStudyPhraseCommandHandler : IRequestHandler<CreateStudyPhra
                 request.Origin,
                 request.Notes);
 
-            dbContext.StudyPhrases.Add(dbStudyPhrase);
-            await dbContext.SaveChangesAsync();
+            await unitOfWork.StudyPhrases.AddAsync(dbStudyPhrase);
+            await unitOfWork.SaveAsync();
 
             var progress = Domain.Models.StudyPhraseProgress.Create(dbStudyPhrase.Id);
-            dbContext.StudyPhraseProgress.Add(progress);
-            await dbContext.SaveChangesAsync();
+            await unitOfWork.StudyPhraseProgress.AddAsync(progress);
+            await unitOfWork.SaveAsync();
 
             result.Payload = dbStudyPhrase.ToStudyPhrase();
 

@@ -6,7 +6,7 @@ using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Commands;
 using MovieQuotes.Application.Features.StudyPhrases.Mappings;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,11 +14,11 @@ using Microsoft.EntityFrameworkCore;
 
 internal class DeleteStudyContentCommandHandler : IRequestHandler<DeleteStudyContentCommand, OperationResult<int>>
 {
-    private readonly MovieQuotesDbContext dbContext;
+    private readonly IMovieQUnitOfWork unitOfWork;
 
-    public DeleteStudyContentCommandHandler(MovieQuotesDbContext dbContext)
+    public DeleteStudyContentCommandHandler(IMovieQUnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task<OperationResult<int>> Handle(DeleteStudyContentCommand request, CancellationToken cancellationToken)
@@ -36,7 +36,7 @@ internal class DeleteStudyContentCommandHandler : IRequestHandler<DeleteStudyCon
 
         try
         {
-            var dbStudyPhrase = await dbContext.StudyPhrases.FirstOrDefaultAsync(s=>s.Id == request.StudyContentId);
+            var dbStudyPhrase = await unitOfWork.StudyPhrases.GetByIdAsync(request.StudyContentId);
 
             if (!string.IsNullOrEmpty(dbStudyPhrase.Content))
             {
@@ -44,8 +44,8 @@ internal class DeleteStudyContentCommandHandler : IRequestHandler<DeleteStudyCon
                 return result;
             }
 
-            dbContext.StudyPhrases.Remove(dbStudyPhrase);
-            await dbContext.SaveChangesAsync();             
+            await unitOfWork.StudyPhrases.DeleteAsync(dbStudyPhrase.Id);
+            await unitOfWork.SaveAsync();             
 
             result.Payload = dbStudyPhrase.Id;
 

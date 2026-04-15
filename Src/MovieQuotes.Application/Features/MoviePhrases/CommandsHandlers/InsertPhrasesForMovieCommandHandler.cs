@@ -6,18 +6,18 @@ using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Common.Services;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
+using MovieQuotes.Domain.Interfaces;
 using MovieQuotes.Domain.Models;
-using MovieQuotes.Infrastructure;
 using System.Threading;
 using System.Threading.Tasks;
 
 internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhrasesForMovieCommand, OperationResult<bool>>
 {
-    private readonly MovieQuotesDbContext dbContext;
+    private readonly IMovieQUnitOfWork unitOfWork;
 
-    public InsertPhrasesForMovieCommandHandler(MovieQuotesDbContext dbContext)
+    public InsertPhrasesForMovieCommandHandler(IMovieQUnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task<OperationResult<bool>> Handle(InsertPhrasesForMovieCommand request, CancellationToken cancellationToken)
@@ -29,7 +29,7 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
             result.AddError(ErrorCode.ValidationError, MoviePhrasesMessages.RequiredMovieId);
         #endregion
 
-        var movie = await this.dbContext.Movies.Include(a => a.Subtitles).FirstOrDefaultAsync(a => a.Id == request.MovieId);
+        var movie = await unitOfWork.Movies.Query.Include(a => a.Subtitles).FirstOrDefaultAsync(a => a.Id == request.MovieId);
         if (movie is null)
         {
             result.AddError(ErrorCode.NotFound, MoviePhrasesMessages.MovieNotFound, request.MovieId);
@@ -76,7 +76,7 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
 
         if (result.IsError) return result;
 
-        await this.dbContext.SaveChangesAsync();
+        await this.unitOfWork.SaveAsync();
 
         //await AddWordsAsync(movie.Subtitles);
 
@@ -94,17 +94,17 @@ internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhras
             {
                 if (string.IsNullOrWhiteSpace(word))
                     continue;
-                var w = await dbContext.Word.FirstOrDefaultAsync(a => a.Text == word);
+                var w = await unitOfWork.Words.Query.FirstOrDefaultAsync(a => a.Text == word);
                 if (w is null)
                 {
                     w = Word.CreateWord(word);
-                    dbContext.Word.Add(w);
-                    await dbContext.SaveChangesAsync();
+                    await unitOfWork.Words.AddAsync(w);
+                    await unitOfWork.SaveAsync();
                 }
                 var pw = PhraseWords.Create(phrase, w, i++);
                 phrase.PhraseWords.Add(pw);
             }
-            await dbContext.SaveChangesAsync();
+            await unitOfWork.SaveAsync();
         }
     }
 

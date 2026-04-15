@@ -7,7 +7,7 @@ using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Mappings;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 using System;
 using System.Linq;
 using System.Threading;
@@ -16,17 +16,17 @@ using System.Threading.Tasks;
 
 public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, OperationPageResult<MovieInfo>>
 {
-    private readonly MovieQuotesDbContext dbContext;
+    private readonly IMovieQUnitOfWork unitOfWork;
 
-    public GetAllMoviesQueryHandler(MovieQuotesDbContext dbContext)
+    public GetAllMoviesQueryHandler(IMovieQUnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
     }
     public async Task<OperationPageResult<MovieInfo>> Handle(GetAllMoviesQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationPageResult<MovieInfo>();
 
-        var query = dbContext.Movies.AsQueryable();
+        var query = unitOfWork.Movies.Query;
 
         if (!string.IsNullOrWhiteSpace(request.SearchText))
             query = query.Where(m => m.Title.Contains(request.SearchText) || 

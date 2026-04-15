@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Infrastructure;
+using MovieQuotes.Infrastructure.Data;
+using MovieQuotes.Domain.Interfaces;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using System.Linq;
@@ -24,6 +26,8 @@ public static class ServiceCollectionExtensions
         {
             Services.AddTransient(type);
         }
+
+        Services.AddScoped<IMovieQUnitOfWork, MovieQUnitOfWork>();
 
         Services.AddLogging(); 
 

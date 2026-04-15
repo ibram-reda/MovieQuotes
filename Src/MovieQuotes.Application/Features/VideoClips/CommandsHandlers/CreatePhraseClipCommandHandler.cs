@@ -5,18 +5,18 @@ using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.VideoClips.Commands;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 using System.Diagnostics;
 using static Constants;
 
 internal class CreatePhraseClipCommandHandler : IRequestHandler<CreatePhraseClipCommand, OperationResult<string>>
 {
-    private readonly MovieQuotesDbContext dbContext;
+    private readonly IMovieQUnitOfWork unitOfWork;
     
 
-    public CreatePhraseClipCommandHandler(MovieQuotesDbContext dbContext)
+    public CreatePhraseClipCommandHandler(IMovieQUnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task<OperationResult<string>> Handle(CreatePhraseClipCommand request, CancellationToken cancellationToken)
@@ -86,7 +86,7 @@ internal class CreatePhraseClipCommandHandler : IRequestHandler<CreatePhraseClip
     private async Task SaveInDataBase(int phraseId, string phraseClipLocation)
     {
         // save result in database for the next time
-        await dbContext.SubtitlePhrases
+        await unitOfWork.SubtitlePhrases.Query
             .Where(a => a.Id == phraseId)
             .ExecuteUpdateAsync(a => a.SetProperty(k => k.VideoClipPath, phraseClipLocation));
     }

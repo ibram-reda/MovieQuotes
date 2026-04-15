@@ -1,6 +1,6 @@
 ﻿namespace MovieQuotes.UI.Tests.FeatureTests.WatchMovie;
 
-using MovieQuotes.UI.Features.WatchMovie.Models;
+using MovieQuotes.UI.Features.Movies.WatchMovie;
 
 
 public class SubtitleManagerTests

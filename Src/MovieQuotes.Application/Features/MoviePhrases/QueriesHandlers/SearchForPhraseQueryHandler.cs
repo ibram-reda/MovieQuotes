@@ -9,19 +9,19 @@ using MovieQuotes.Application.Features.MoviePhrases.Mappings;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.StudyPhrases;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery, OperationPageResult<Phrase>>
 {
-    private readonly MovieQuotesDbContext dbContext;
+    private readonly IMovieQUnitOfWork unitOfWork;
     private readonly ILogger<SearchForPhraseQueryHandler> logger;
 
-    public SearchForPhraseQueryHandler(MovieQuotesDbContext dbContext, ILogger<SearchForPhraseQueryHandler> logger)
+    public SearchForPhraseQueryHandler(IMovieQUnitOfWork unitOfWork, ILogger<SearchForPhraseQueryHandler> logger)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
         this.logger = logger;
     }
     public async Task<OperationPageResult<Phrase>> Handle(SearchForPhraseQuery request, CancellationToken cancellationToken)
@@ -34,7 +34,7 @@ public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery,
             return result;
         }
 
-        var query = dbContext.SubtitlePhrases
+        var query = unitOfWork.SubtitlePhrases.Query
             .Where(a => a.Text.Contains(request.SearchText))
             .Include(a => a.Movie)
             .Select(a => a.ToPhrase());

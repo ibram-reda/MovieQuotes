@@ -10,16 +10,16 @@ using MovieQuotes.Application.Features.Movies.Mappings;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Domain.Exception;
 using MovieQuotes.Domain.Models;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 
 public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, OperationResult<MovieInfo>>
 {
-    private readonly MovieQuotesDbContext dbContext;
+    private readonly IMovieQUnitOfWork movieQUnitOfWork;
 
-    public CreateMovieCommandHandler(MovieQuotesDbContext dbContext)
+    public CreateMovieCommandHandler(IMovieQUnitOfWork movieQUnitOfWork)
     {
-        this.dbContext = dbContext;
-    }
+        this.movieQUnitOfWork = movieQUnitOfWork;
+    } 
     public async Task<OperationResult<MovieInfo>> Handle(CreateMovieCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<MovieInfo>();
@@ -42,8 +42,8 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
 
         var movie = Movie.CreateMovie(request.BaseFolder, request.FolderName, request.Title, request.VideoLocation, request.Description, request.IMDBId, request.CoverUrl ?? "", request.Year);
 
-        this.dbContext.Movies.Add(movie);
-        await dbContext.SaveChangesAsync();
+        await this.movieQUnitOfWork.Movies.AddAsync(movie);
+        await movieQUnitOfWork.SaveAsync();
 
         result.Payload = movie.ToMovieInfo();
 

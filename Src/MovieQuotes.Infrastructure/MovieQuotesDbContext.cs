@@ -32,17 +32,7 @@ public class MovieQuotesDbContext : DbContext
         modelBuilder.ApplyConfiguration(new PhraseWordsConfig());
         modelBuilder.ApplyConfiguration(new WordConfig());
         modelBuilder.ApplyConfiguration(new StudyPhraseConfig());
-
-        modelBuilder.Entity<StudyPhraseProgress>()
-            .HasOne(p => p.StudyPhrase)
-            .WithOne(s => s.Progress)
-            .HasForeignKey<StudyPhraseProgress>(p => p.StudyPhraseId);
-
-        modelBuilder.Entity<StudyPhraseProgress>()
-            .Property(p => p.EaseFactor)
-            .HasDefaultValue(2.5);
-
-        modelBuilder.Entity<StudyPhraseProgress>().HasKey(p => p.Id);
+        modelBuilder.ApplyConfiguration(new StudyPhraseProgressConfig());       
 
     }
 }

@@ -7,23 +7,23 @@ using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Application.Features.MoviePhrases.Mappings;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
 
 internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, OperationResult<Phrase>>
 {
-    private readonly MovieQuotesDbContext dbContext;
+    private readonly IMovieQUnitOfWork unitOfWork;
 
-    public EditPhraseCommandHandler(MovieQuotesDbContext dbContext)
+    public EditPhraseCommandHandler(IMovieQUnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
     }
     public async Task<OperationResult<Phrase>> Handle(EditPhraseCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<Phrase>();
 
-        var phrase = await this.dbContext.SubtitlePhrases
+        var phrase = await unitOfWork.SubtitlePhrases.Query
             .FirstOrDefaultAsync(a => a.Id == request.PhraseId || (a.MovieId == request.MovieId && a.Sequence == request.Sequence));
 
         if (phrase is null)
@@ -36,12 +36,16 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
         var textEdit = phrase.EditText(request.PhraseText);
 
         if (textEdit | durationEdited)
-            await this.dbContext.SaveChangesAsync();
+        {
+            await unitOfWork.SubtitlePhrases.UpdateAsync(phrase);
+            await unitOfWork.SaveAsync();
+        }
 
         if (durationEdited && !string.IsNullOrWhiteSpace(phrase.VideoClipPath))
         {
-            phrase.DeleteVideoClip();
-            await this.dbContext.SaveChangesAsync(cancellationToken);
+            phrase.DeleteVideoClip(); // Delete the existing video clip if the duration has changed 
+            await unitOfWork.SubtitlePhrases.UpdateAsync(phrase);
+            await unitOfWork.SaveAsync();
         }
 
         result.Payload = phrase.ToPhrase();

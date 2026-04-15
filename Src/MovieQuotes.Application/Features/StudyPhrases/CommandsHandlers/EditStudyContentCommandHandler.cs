@@ -7,21 +7,20 @@ using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Commands;
 using MovieQuotes.Application.Features.StudyPhrases.Mappings;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 
 internal class EditStudyContentCommandHandler : IRequestHandler<EditStudyContentCommand, OperationResult<StudyPhrase>>
 {
-    private readonly MovieQuotesDbContext dbContext;
-    public EditStudyContentCommandHandler(MovieQuotesDbContext dbContext)
+    private readonly IMovieQUnitOfWork unitOfWork;
+    public EditStudyContentCommandHandler(IMovieQUnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
     }
     public async Task<OperationResult<StudyPhrase>> Handle(EditStudyContentCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<StudyPhrase>();
 
-        var studyPhrase = dbContext.StudyPhrases.Include(a => a.Phrase)
-            .FirstOrDefault(a => a.Id == request.StudyId);
+        var studyPhrase = await unitOfWork.StudyPhrases.GetByIdAsync(request.StudyId);
 
         if (studyPhrase is null)
         {
@@ -37,7 +36,8 @@ internal class EditStudyContentCommandHandler : IRequestHandler<EditStudyContent
         studyPhrase.EditOrigin(request.Origin);
         studyPhrase.EditNotes(request.Notes);
 
-        var affectedRows = await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.StudyPhrases.UpdateAsync(studyPhrase);
+        var affectedRows = await unitOfWork.SaveAsync(cancellationToken);
 
         if (affectedRows <= 0)
         {

@@ -8,14 +8,14 @@ using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.VideoClips.Commands;
 using MovieQuotes.Application.Features.VideoClips.CommandsHandlers;
 using MovieQuotes.Application.Features.VideoClips.Queries;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 
 internal class VideoClipQueryHandler : IRequestHandler<VideoClipQuery, OperationResult<string>>
 {
-    private readonly MovieQuotesDbContext dbContext;
-    public VideoClipQueryHandler(MovieQuotesDbContext dbContext)
+    private readonly IMovieQUnitOfWork unitOfWork;
+    public VideoClipQueryHandler(IMovieQUnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task<OperationResult<string>> Handle(VideoClipQuery request, CancellationToken cancellationToken)
@@ -30,7 +30,7 @@ internal class VideoClipQueryHandler : IRequestHandler<VideoClipQuery, Operation
         }
 
         var cmd = new CreatePhraseClipCommand(phrase.Id,phrase.MovieName,phrase.Sequence,phrase.MoviePath,phrase.StartTime,phrase.Duration);
-        var handler = new CreatePhraseClipCommandHandler(dbContext);
+        var handler = new CreatePhraseClipCommandHandler(unitOfWork);
         var rst = await handler.Handle(cmd, cancellationToken);
         if (rst.IsError)
             result.AddErrorRange(rst.Errors);
@@ -42,7 +42,7 @@ internal class VideoClipQueryHandler : IRequestHandler<VideoClipQuery, Operation
 
     private async Task<Phrase?> GetPhraseFromDBAsync(VideoClipQuery request, CancellationToken token)
     {
-        var dbQuery = dbContext.SubtitlePhrases
+        var dbQuery = unitOfWork.SubtitlePhrases.Query
                             .Select(a => new Phrase()
                             {
                                 Id = a.Id,

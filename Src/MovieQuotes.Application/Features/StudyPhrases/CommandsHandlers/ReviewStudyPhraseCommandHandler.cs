@@ -7,15 +7,15 @@ using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Commands;
 using MovieQuotes.Application.Features.StudyPhrases.Mappings;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 
 public class ReviewStudyPhraseCommandHandler : IRequestHandler<ReviewStudyPhraseCommand, OperationResult<DateTime>>
 {
-    private readonly MovieQuotesDbContext _dbContext;
+    private readonly IMovieQUnitOfWork _unitOfWork;
 
-    public ReviewStudyPhraseCommandHandler(MovieQuotesDbContext dbContext)
+    public ReviewStudyPhraseCommandHandler(IMovieQUnitOfWork unitOfWork)
     {
-        _dbContext = dbContext;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<OperationResult<DateTime>> Handle(ReviewStudyPhraseCommand request, CancellationToken cancellationToken)
@@ -28,8 +28,8 @@ public class ReviewStudyPhraseCommandHandler : IRequestHandler<ReviewStudyPhrase
             return result;
         }
 
-        var studyPhraseProgress = await _dbContext.StudyPhraseProgress
-        .FirstOrDefaultAsync(p => p.StudyPhraseId == request.StudyPhraseId, cancellationToken: cancellationToken);
+        var studyPhraseProgress = await _unitOfWork.StudyPhraseProgress
+        .GetProgressForPhrase(request.StudyPhraseId);
 
         if (studyPhraseProgress == null)
         {
@@ -37,13 +37,13 @@ public class ReviewStudyPhraseCommandHandler : IRequestHandler<ReviewStudyPhrase
              // If no progress record exists for the given StudyPhraseId, it means the phrase has not been reviewed before.
              // In this case, we can create a new progress record with the initial review data.
              studyPhraseProgress = Domain.Models.StudyPhraseProgress.Create(request.StudyPhraseId);
-             _dbContext.StudyPhraseProgress.Add(studyPhraseProgress);
-             await _dbContext.SaveChangesAsync(cancellationToken);
+             await _unitOfWork.StudyPhraseProgress.AddAsync(studyPhraseProgress);
+             await _unitOfWork.SaveAsync(cancellationToken);
         }
 
         studyPhraseProgress.Review(request.Quality);
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.StudyPhraseProgress.UpdateAsync(studyPhraseProgress);
+        await _unitOfWork.SaveAsync(cancellationToken);
 
         result.Payload = studyPhraseProgress.NextReviewDate;
         return result;

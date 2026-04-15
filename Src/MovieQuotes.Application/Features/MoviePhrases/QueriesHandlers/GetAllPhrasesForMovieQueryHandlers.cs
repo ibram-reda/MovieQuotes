@@ -8,8 +8,8 @@ using MovieQuotes.Application.Common.Services;
 using MovieQuotes.Application.Features.MoviePhrases.Mappings;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
+using MovieQuotes.Domain.Interfaces;
 using MovieQuotes.Domain.Models;
-using MovieQuotes.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -17,11 +17,11 @@ using System.Threading.Tasks;
 
 internal class GetAllPhrasesForMovieQueryHandlers : IRequestHandler<GetAllPhrasesForMovieQuery, OperationResult<List<Phrase>>>
 {
-    private readonly MovieQuotesDbContext dbContext;
+    private readonly IMovieQUnitOfWork unitOfWork;
 
-    public GetAllPhrasesForMovieQueryHandlers(MovieQuotesDbContext dbContext)
+    public GetAllPhrasesForMovieQueryHandlers(IMovieQUnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task<OperationResult<List<Phrase>>> Handle(GetAllPhrasesForMovieQuery request, CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ internal class GetAllPhrasesForMovieQueryHandlers : IRequestHandler<GetAllPhrase
         var src = request.Language switch
         {
             Language.ar => await GetArabicFromDesk(request.MovieId, result),
-            Language.en => this.dbContext.SubtitlePhrases
+            Language.en => unitOfWork.SubtitlePhrases.Query
             .Where(a => a.MovieId == request.MovieId),
             _ => throw new NotSupportedException($"Language {request.Language} is not supported.")
         };
@@ -53,7 +53,7 @@ internal class GetAllPhrasesForMovieQueryHandlers : IRequestHandler<GetAllPhrase
 
     async Task<IQueryable<SubtitlePhrase>> GetArabicFromDesk(int MovieId, OperationResult<List<Phrase>> result)
     {
-        var movie = await this.dbContext.Movies.FirstOrDefaultAsync(a => a.Id == MovieId);
+        var movie = await unitOfWork.Movies.Query.FirstOrDefaultAsync(a => a.Id == MovieId);
 
         if (movie is null)
             result.AddError(ErrorCode.NotFound, "Movie not found");

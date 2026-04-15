@@ -6,20 +6,20 @@ using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Mappings;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.Infrastructure;
+using MovieQuotes.Domain.Interfaces;
 
 internal class GetMovieDetailsQueryHandler : IRequestHandler<GetMovieDetailsQuery, OperationResult<MovieFullInfo>>
 {
-    private readonly MovieQuotesDbContext dbContext;
-    public GetMovieDetailsQueryHandler(MovieQuotesDbContext dbContext)
+    private readonly IMovieQUnitOfWork unitOfWork;
+    public GetMovieDetailsQueryHandler(IMovieQUnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext;
+        this.unitOfWork = unitOfWork;
     }
     public async Task<OperationResult<MovieFullInfo>> Handle(GetMovieDetailsQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<MovieFullInfo>();
 
-        var query = dbContext.Movies
+        var query = unitOfWork.Movies.Query
             .Where(a => a.Id == request.MovieId)
             .Select(a => a.ToMovieFullInfo());
 
