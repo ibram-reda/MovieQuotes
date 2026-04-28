@@ -39,4 +39,12 @@ public class EditStudyContentCommand : IRequest<OperationResult<StudyPhrase>>
     public string? Origin { get; set; }
     public string? Notes { get; set; }
 
+    public bool IsDraft { get; set; } = false;
+
+    public string Examples { get; set; } = string.Empty;
+
+    public string Synonyms {get;set;} = string.Empty;
+    public string Level { get; set; } = string.Empty;
+    public string Pronunciation { get; set; } = string.Empty;
+
 }

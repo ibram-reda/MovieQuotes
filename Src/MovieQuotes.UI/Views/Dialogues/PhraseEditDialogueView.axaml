@@ -23,7 +23,7 @@
     </TabItem>
 
 
-    <TabItem Header="Edit Content" >
+    <TabItem Header="Edit Content" IsSelected="True" >
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
            <ContentControl Content="{Binding UpdateStudyVocabViewModel}"/>

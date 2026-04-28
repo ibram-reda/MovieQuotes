@@ -103,7 +103,7 @@
       </Button>
 
       <Button ToolTip.Tip="Edit Phrase"
-              Command="{Binding EditPhraseCommand}" >
+              Command="{Binding EditPhraseCommand}"  HotKey="F2" >
         <PathIcon Data="{StaticResource  edit_regular}" />
       </Button>
 
@@ -171,9 +171,19 @@
                        Classes="info-text"
                        IsVisible="{Binding ShowCompleteContent}" />
 
+            <TextBlock Text="{Binding CurrentPlayingPhrase.Examples}"
+                       Classes="info-text"
+                       Foreground="rgb(7, 128, 87)"
+                       IsVisible="{Binding ShowCompleteContent}"/>
+            
+            <TextBlock Text="{Binding CurrentPlayingPhrase.Synonyms}"
+                       Classes="info-text"
+                       Foreground="rgb(219, 221, 85)"
+                       IsVisible="{Binding ShowCompleteContent}"/>
+
             <TextBlock Text="{Binding CurrentPlayingPhrase.Notes}"
                        Classes="info-text"
-                       Foreground="#a5d"
+                       Foreground="rgb(89, 10, 134)"
                        IsVisible="{Binding ShowCompleteContent}"/>
 
           </StackPanel>

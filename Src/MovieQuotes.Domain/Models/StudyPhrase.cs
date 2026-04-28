@@ -1,4 +1,5 @@
 ﻿namespace MovieQuotes.Domain.Models;
+
 public class StudyPhrase
 {
     private StudyPhrase()
@@ -7,6 +8,7 @@ public class StudyPhrase
     public int Id { get; private set; }
     public int PhraseId { get; private set; }
     public virtual SubtitlePhrase? Phrase { get; private set; }
+
 
     /// <summary>
     /// can be one of the following
@@ -39,6 +41,13 @@ public class StudyPhrase
     /// </summary>
     public string? ArPhraseTranslation { get; private set; }
 
+    public bool IsDraft { get; private set; } = false;
+    public string Examples { get; private set; } = string.Empty;
+    public string Synonyms { get; private set; } = string.Empty;
+
+    public string Level { get; private set; } = string.Empty;
+    public string Pronunciation { get; private set; } = string.Empty;
+
     /// <summary>
     /// Gets the notes associated with this instance.
     /// </summary>
@@ -53,7 +62,12 @@ public class StudyPhrase
         string? arContent,
         string? arPhrase,
         string? origin,
-        string? Note)
+        string? Note,
+        bool isDraft = false,
+        string examples = "",
+        string synonyms = "",
+        string level = "",
+        string pronunciation = "")
     {
         return new StudyPhrase
         {
@@ -64,7 +78,12 @@ public class StudyPhrase
             ArContentTranslation = arContent,
             ArPhraseTranslation = arPhrase,
             Origin = origin,
-            Notes = Note
+            Notes = Note,
+            IsDraft = isDraft,
+            Examples = examples,
+            Synonyms = synonyms,
+            Level = level,
+            Pronunciation = pronunciation
         };
     }
 
@@ -75,57 +94,100 @@ public class StudyPhrase
         string? arContent,
         string? arPhrase,
         string? origin,
-        string? note)
+        string? note,
+        bool isDraft = false,
+        string examples = "",
+        string synonyms = "",
+        string level = "",
+        string pronunciation = "")
     {
-        return StudyPhrase.CreateStudyPhrase(phrase.Id, studyType, content, translation,arContent,arPhrase,origin,note);
+        return StudyPhrase.CreateStudyPhrase(phrase.Id, studyType, content, translation, arContent, arPhrase, origin, note, isDraft, examples, synonyms, level, pronunciation);
     }
 
     public void EditContent(string? content)
     {
-        if(content == this.Content)
+        if (content == this.Content)
             return;
         this.Content = content;
     }
 
     public void EditStudyType(string? studyType)
     {
-        if(studyType == this.StudyType)
+        if (studyType == this.StudyType)
             return;
         this.StudyType = studyType;
     }
 
     public void EditTranslation(string? translation)
     {
-        if(translation == this.Translation)
+        if (translation == this.Translation)
             return;
         this.Translation = translation;
     }
 
     public void EditArContentTranslation(string? arContent)
     {
-        if(arContent == this.ArContentTranslation)
+        if (arContent == this.ArContentTranslation)
             return;
         this.ArContentTranslation = arContent;
     }
 
     public void EditArPhraseTranslation(string? arPhrase)
     {
-        if(arPhrase == this.ArPhraseTranslation)
+        if (arPhrase == this.ArPhraseTranslation)
             return;
         this.ArPhraseTranslation = arPhrase;
     }
 
     public void EditOrigin(string? origin)
     {
-        if(origin == this.Origin)
+        if (origin == this.Origin)
             return;
         this.Origin = origin;
     }
 
     public void EditNotes(string? notes)
     {
-        if(notes == this.Notes)
+        if (notes == this.Notes)
             return;
         this.Notes = notes;
+    }
+
+    public void EditExamples(string examples)
+    {
+        if (examples == this.Examples)
+            return;
+        this.Examples = examples;
+    }
+
+    public void EditSynonyms(string synonyms)
+    {
+        if (synonyms == this.Synonyms)
+            return;
+        this.Synonyms = synonyms;
+    }
+
+    public void MarkAsDraft()
+    {
+        this.IsDraft = true;
+    }
+
+    public void MarkAsReady()
+    {
+        this.IsDraft = false;
+    }
+
+    public void EditLevel(string level)
+    {
+        if (level == this.Level)
+            return;
+        this.Level = level;
+    }
+
+    public void EditPronunciation(string pronunciation)
+    {
+        if (pronunciation == this.Pronunciation)
+            return;
+        this.Pronunciation = pronunciation;
     }
 }

@@ -48,4 +48,13 @@ public class CreateStudyPhraseCommand : IRequest<OperationResult<StudyPhrase>>
     /// </summary>
     public string? Notes { get; set; }
 
+    public bool IsDraft { get; set; } = true;
+
+    public string Examples { get; set; } = string.Empty;
+
+    public string Synonyms {get;set;} = string.Empty;
+
+    public string Level { get; set; } = string.Empty;
+    public string Pronunciation { get; set; } = string.Empty;
+
 }

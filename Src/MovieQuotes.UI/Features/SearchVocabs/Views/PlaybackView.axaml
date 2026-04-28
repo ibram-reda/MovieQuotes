@@ -41,6 +41,7 @@
 
       <Button Content="Previous" Command="{Binding PreviousCommand}" />
       <Button Content="Next" Command="{Binding NextCommand}" />
+      <Button Content="Create Study" Command="{Binding CreateStudyCommand}" />
     </StackPanel>
 
     <Grid Grid.Row="2">

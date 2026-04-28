@@ -1,7 +1,10 @@
 ﻿namespace MovieQuotes.UI.Services;
 
+using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Microsoft.Extensions.DependencyInjection;
 using MovieQuotes.UI.ViewModels;
+using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
 using System.Threading.Tasks;
 
@@ -11,7 +14,7 @@ public class NavigationService
     {
 
     }
-    PageViewModelBase? _OldPage = null;   
+    PageViewModelBase? _OldPage = null;
     private PageViewModelBase? _CurrentPage;
     public event Action<PageViewModelBase>? CurrentPageChanged;
     public PageViewModelBase CurrentViewModel
@@ -29,7 +32,7 @@ public class NavigationService
         _OldPage = CurrentViewModel;
         CurrentViewModel = App.Current?.Services?.GetRequiredService<T>()!;
         if (_OldPage is IDisposable vm) vm.Dispose();
-        if (initValue is not null) 
+        if (initValue is not null)
             CurrentViewModel.Init(initValue);
 
     }
@@ -46,10 +49,27 @@ public class NavigationService
 
     public void NavigateTo(PageViewModelBase viewModel)
     {
-        if(CurrentViewModel == viewModel) return;
+        if (CurrentViewModel == viewModel) return;
         _OldPage = CurrentViewModel;
         CurrentViewModel = viewModel;
         if (_OldPage is IDisposable vm) vm.Dispose();
+    }
+
+    public void NavigateToPopup(DialogueViewModelBase vm)
+    {
+        var window = new Window();
+        window.DataContext = vm;
+        var viewLocator = App.Current?.Services?.GetRequiredService<IDataTemplate>();
+        if (viewLocator is not null)
+        {
+            window.Content = viewLocator.Build(vm);
+        }
+        window.Show();
+
+        vm.DialogueClosed += (s, e) =>
+        {
+            window.Close();
+        };
     }
 
     public void GoBack(object? message = null)

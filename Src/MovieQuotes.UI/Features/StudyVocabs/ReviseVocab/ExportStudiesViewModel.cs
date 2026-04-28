@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 public partial class ExportStudy:ObservableObject
 {
@@ -20,7 +21,7 @@ public partial class ExportStudy:ObservableObject
         this.Phrase = phrase;
     }
     [ObservableProperty] bool isSelected =true;
-    public StudyPhrase Phrase;
+    public StudyPhrase Phrase {get;}
     [ObservableProperty] string studyPhrase;
 }
 internal partial class ExportStudiesViewModel : DialogueViewModelBase
@@ -34,6 +35,9 @@ internal partial class ExportStudiesViewModel : DialogueViewModelBase
     public IClipboard? Clipboard { get; set; }
     public List<ExportStudy> ExportStudies { get; } = [];
     public List<ExportStudy> SelectedExportStudies { get; } = [];
+
+    public override string Title => "Export Studies";
+
     public event Action<StudyPhrase>? OnSelectionChanged;
     public ExportStudiesViewModel(List<StudyPhrase> phrases)
     {
@@ -84,12 +88,49 @@ internal partial class ExportStudiesViewModel : DialogueViewModelBase
         this.CancelCommand.Execute(true);
     }
 
+    [RelayCommand]
+    void ExportAnki()
+    {
+        var sd = "#separator:tab \n#html:true\n";
+        var text = string.Join(Environment.NewLine,
+                                ExportStudies
+                               .Where(es => !es.Phrase.IsDraft)
+                               .Select(es => GetExportTextAnki(es.Phrase))
+                               .Shuffle())
+                               ;
+
+        Clipboard?.SetTextAsync(sd + text);
+        this.CancelCommand.Execute(true);
+    }
+
+
+
     void Recal()
     {
         foreach (var es in ExportStudies)
         {
             es.StudyPhrase = GetExportText(es.Phrase);
         }
+    }
+
+    string GetExportTextAnki(StudyPhrase phrase)
+    {
+        var orgin = !string.IsNullOrEmpty(phrase.Origin?.Trim()) ? $"{phrase.Origin} - " : "";
+
+        var content = $"{orgin}{phrase.Content} ({phrase.StudyType})";
+
+        var answer = @$"
+            <font color=""black"">{phrase.ArContentTranslation}</font>
+            <font color=""gray""> {phrase.Translation?.Trim()}</font>
+            <font color=""green""> {phrase.PhraseText?.Trim()}</font>
+            <font color=""orange""> {phrase.PhraseArTranslation?.Trim()}</font> 
+            <font color=""Green""> {phrase.Examples.Trim()}</font>
+            <font COLOR=""red""> {phrase.Notes?.Trim()}</font>
+            <font color=""brown"">movie Name:{phrase.MovieName?.Trim()}</font>
+
+        ".Replace("\n", "<br>");
+         
+        return $"{content}\t{Regex.Replace(answer, @"\s+", " ")}";
     }
     string GetExportText(StudyPhrase phrase)
     {

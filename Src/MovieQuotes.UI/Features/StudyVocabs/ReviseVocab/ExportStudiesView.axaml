@@ -2,45 +2,51 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="using:MovieQuotes.UI.Features.StudyVocabs.ReviseVocab"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              x:DataType="local:ExportStudiesViewModel"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MovieQuotes.UI.Features.StudyVocabs.ReviseVocab.ExportStudiesView"
              Loaded="ExportStudiesView_Loaded">
   <Grid RowDefinitions="auto, *">
 
-  <WrapPanel Orientation="Horizontal">
+    <WrapPanel Orientation="Horizontal">
       <CheckBox Content="SelectAll" IsChecked="{Binding IsSelectAll}" />
       <CheckBox Content="IncludeEnDefention" IsChecked="{Binding IncludeEnDefention}"/>
       <CheckBox Content="IncludePhras" IsChecked="{Binding IncludePhras}"/>
       <CheckBox Content="IncludePhrasTranslation" IsChecked="{Binding IncludePhrasTranslation}"/>
-	  <Button Content="Export Selected Studies" 
+      <Button Content="Export Selected Studies"
               Focusable="False"
-              Command="{Binding ExportCommand}" 
+              Command="{Binding ExportCommand}"
               Margin="5"/>
 
-      <Button Content="Cancel" 
+      <Button Content="Export Anki Format"
               Focusable="False"
-              Command="{Binding CancelCommand}" 
+              Command="{Binding ExportAnkiCommand}"
               Margin="5"/>
 
-  </WrapPanel>	  
+      <Button Content="Cancel"
+              Focusable="False"
+              Command="{Binding CancelCommand}"
+              Margin="5"/>
 
-  <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-  <ListBox ItemsSource="{Binding ExportStudies}"
-           SelectionMode="Single"
-           SelectedItem="{Binding SelectedStudy}">
-    <ListBox.ItemTemplate>
-      <DataTemplate>
-        <StackPanel Orientation="Horizontal" 
-                    Spacing="10" Margin="5"
-                    ToolTip.Tip="{Binding StudyPhrase}">
-          <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
-          <TextBlock Text="{Binding StudyPhrase}" VerticalAlignment="Center"/>
-        </StackPanel>
-      </DataTemplate>
-    </ListBox.ItemTemplate>
- </ListBox>
- </ScrollViewer>
+    </WrapPanel>
+
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+      <ListBox ItemsSource="{Binding ExportStudies}"
+               SelectionMode="Single"
+               SelectedItem="{Binding SelectedStudy}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal"
+                        Spacing="10" Margin="5"
+                        ToolTip.Tip="{Binding StudyPhrase}">
+              <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding StudyPhrase}" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding Phrase.NextReviewDate}" />
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </ScrollViewer>
   </Grid>
 </UserControl>

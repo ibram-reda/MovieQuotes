@@ -21,16 +21,23 @@ public partial class UpdateStudyVocabViewModel : ViewModelBase
     public int StudyId { get; init; }
 
     private StudyPhrase? dbPhrase = null;
-     
+
     public bool NeedUpdate => IsContentChanged();
-     
+
     [ObservableProperty] string content = string.Empty;
     [ObservableProperty] string arPhraseTranslateion;
-    [ObservableProperty] string arContentTranslation = string.Empty;  
-    [ObservableProperty] string translation = string.Empty; 
-    [ObservableProperty] string studyType = string.Empty; 
-    [ObservableProperty] string origin = string.Empty; 
+    [ObservableProperty] string arContentTranslation = string.Empty;
+    [ObservableProperty] string translation = string.Empty;
+    [ObservableProperty] string studyType = string.Empty;
+    [ObservableProperty] string origin = string.Empty;
     [ObservableProperty] string notes = string.Empty;
+    [ObservableProperty] bool isDraft = true;
+    [ObservableProperty] string examples = string.Empty;
+    [ObservableProperty] string synonyms = string.Empty;
+    [ObservableProperty] string level = string.Empty;
+    [ObservableProperty] string pronunciation = string.Empty;
+
+
 
     public string[] AllowedType { get; } = ["noun", "adjective", "verb", "idiom", "phrasal verb", "phrase", "exclamation", "conjunction", "adverb"];
 
@@ -41,13 +48,19 @@ public partial class UpdateStudyVocabViewModel : ViewModelBase
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(Content) 
-            or nameof(Translation) 
+        if (e.PropertyName is nameof(Content)
+            or nameof(Translation)
             or nameof(StudyType)
-            or nameof(ArContentTranslation) 
+            or nameof(ArContentTranslation)
             or nameof(Origin)
             or nameof(Notes)
-            or nameof(ArPhraseTranslateion))
+            or nameof(ArPhraseTranslateion)
+            or nameof(IsDraft)
+            or nameof(Examples)
+            or nameof(Synonyms)
+            or nameof(Level)
+            or nameof(Pronunciation)
+            )
         {
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(NeedUpdate)));
             SaveCommand.NotifyCanExecuteChanged();
@@ -68,7 +81,7 @@ public partial class UpdateStudyVocabViewModel : ViewModelBase
 
     public override async Task InitAsync(object? initValue)
     {
-        if(this.dbPhrase is not null)
+        if (this.dbPhrase is not null)
             return;
         var query = new GetStudyPhraseByIdQuery(this.StudyId);
         var result = await mediator.Send(query);
@@ -93,11 +106,16 @@ public partial class UpdateStudyVocabViewModel : ViewModelBase
         this.Origin = result.Payload.Origin;
         this.Notes = result.Payload.Notes;
         this.ArPhraseTranslateion = result.Payload.PhraseArTranslation;
+        this.IsDraft = result.Payload.IsDraft;
+        this.Examples = result.Payload.Examples;
+        this.Synonyms = result.Payload.Synonyms;
+        this.Level = result.Payload.Level;
+        this.Pronunciation = result.Payload.Pronunciation;
     }
 
     bool IsContentChanged()
     {
-        if(dbPhrase is null)
+        if (dbPhrase is null)
             return false;
         var res = this.Content != dbPhrase.Content ||
                this.Translation != dbPhrase.Translation ||
@@ -105,14 +123,17 @@ public partial class UpdateStudyVocabViewModel : ViewModelBase
                this.ArContentTranslation != dbPhrase.ArContentTranslation ||
                this.Origin != dbPhrase.Origin ||
                this.Notes != dbPhrase.Notes ||
-               this.ArPhraseTranslateion != dbPhrase.PhraseArTranslation;
-
-
+               this.ArPhraseTranslateion != dbPhrase.PhraseArTranslation ||
+               this.IsDraft != dbPhrase.IsDraft ||
+               this.Examples != dbPhrase.Examples ||
+               this.Synonyms != dbPhrase.Synonyms||
+               this.Level != dbPhrase.Level ||
+               this.Pronunciation != dbPhrase.Pronunciation;
 
         return res;
     }
-     
-    [RelayCommand(CanExecute =nameof(NeedUpdate))]
+
+    [RelayCommand(CanExecute = nameof(NeedUpdate))]
     private async Task Save()
     {
         var cmd = new Application.Features.StudyPhrases.Commands.EditStudyContentCommand
@@ -124,18 +145,39 @@ public partial class UpdateStudyVocabViewModel : ViewModelBase
             ArContentTranslation = this.ArContentTranslation,
             ArPhraseTranslation = this.ArPhraseTranslateion,
             Origin = this.Origin,
-            Notes = this.Notes
+            Notes = this.Notes,
+            IsDraft = this.IsDraft,
+            Examples = PutDashInStartingLines(this.Examples),
+            Synonyms = this.Synonyms,
+            Level = this.Level,
+            Pronunciation = this.Pronunciation
+
         };
         var result = await mediator.Send(cmd);
         if (result.IsError)
         {
             foreach (var err in result.Errors)
                 this.ErrorMessages.Add(err.Message);
-            
+
         }
         dbPhrase = result.Payload!;
         this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(NeedUpdate)));
         OnSaved?.Invoke(result.IsSuccess, result.Payload);
+    }
+
+    string PutDashInStartingLines(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return text;
+        var lines = text.Split(Environment.NewLine);
+        for (int i = 0; i < lines.Length; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(lines[i]) && !lines[i].TrimStart().StartsWith("-"))
+            {
+                lines[i] = "- " + lines[i].TrimStart();
+            }
+        }
+        return string.Join(Environment.NewLine, lines);
     }
 
     [RelayCommand]

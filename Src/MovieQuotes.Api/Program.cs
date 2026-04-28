@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Infrastructure;
+using MovieQuotes.Infrastructure.Data;
+using MovieQuotes.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,8 @@ builder.Services.AddCors(options =>
 
 var cs = builder.Configuration.GetConnectionString("local");
 builder.Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs));
+
+builder.Services.AddScoped<IMovieQUnitOfWork, MovieQUnitOfWork>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
 

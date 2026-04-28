@@ -2,7 +2,9 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using MovieQuotes.UI.Services;
 using System;
 
 public class DialogueCloseEventArgs : EventArgs
@@ -17,8 +19,13 @@ public class DialogueCloseEventArgs : EventArgs
     public object? Pram { get; }
 }
 
-public abstract partial class DialogueViewModelBase : ObservableObject
+public abstract partial class DialogueViewModelBase :  ViewModelBase
 {
+    public DialogueViewModelBase():base(null,null)
+    {
+        this.mediator= GetService<IMediator>();
+        this.NavigationService= GetService<NavigationService>();
+    }
     public event EventHandler<DialogueCloseEventArgs>? DialogueClosed;
 
     protected virtual void OnClose(bool status,object? pram = null)

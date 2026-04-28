@@ -8,11 +8,12 @@ using MovieQuotes.Application.Features.StudyPhrases.Commands;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
+using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
 using System.Threading.Tasks;
 
 
-internal partial class CreateStudyVocabViewModel : ViewModelBase
+internal partial class CreateStudyVocabViewModel : DialogueViewModelBase
 {
     public override string Title => "Create New Vocab";
     public event Action<bool,OperationResult<StudyPhrase>>? OnSaved;
@@ -29,6 +30,12 @@ internal partial class CreateStudyVocabViewModel : ViewModelBase
     [ObservableProperty] string studyType = string.Empty;
     [ObservableProperty] string origin = string.Empty;
     [ObservableProperty] string notes = string.Empty;
+    [ObservableProperty] bool isDraft = true;
+    [ObservableProperty] string examples = string.Empty;
+    [ObservableProperty] string synonyms = string.Empty;
+    [ObservableProperty] string level = string.Empty;
+    [ObservableProperty] string pronunciation = string.Empty;
+ 
 
     public string[] AllowedType { get; } = ["noun", "adjective", "verb", "idiom", "phrasal verb", "phrase", "exclamation", "conjunction", "adverb"];
 
@@ -37,10 +44,8 @@ internal partial class CreateStudyVocabViewModel : ViewModelBase
     {        
     }
      
-    public CreateStudyVocabViewModel( int phraseId,string phraseText,string arText):base(null,null)
-    {
-        this.mediator= GetService<IMediator>();
-        this.NavigationService= GetService<NavigationService>();
+    public CreateStudyVocabViewModel( int phraseId,string phraseText,string arText)
+    {        
         PhraseId = phraseId;
         PhraseText = phraseText;
         ArPhraseTranslation = arText;
@@ -58,7 +63,12 @@ internal partial class CreateStudyVocabViewModel : ViewModelBase
             ArContentTranslation = this.ArContentTranslation,
             ArPhraseTranslation = this.ArPhraseTranslation,
             Origin = this.Origin,
-            Notes = this.Notes
+            Notes = this.Notes,
+            IsDraft = this.IsDraft,
+            Examples = this.Examples,   
+            Synonyms = this.Synonyms,
+            Level = this.Level,
+            Pronunciation = this.Pronunciation
         };
 
         var result = await mediator.Send(cmd);
@@ -70,6 +80,7 @@ internal partial class CreateStudyVocabViewModel : ViewModelBase
         }
 
         OnSaved?.Invoke(result.IsSuccess,result);
+        this.OnClose(result.IsSuccess);
     }
 
     [RelayCommand]
@@ -78,6 +89,7 @@ internal partial class CreateStudyVocabViewModel : ViewModelBase
         var res = new OperationResult<StudyPhrase>();
         res.AddError( Application.Common.Enums.ErrorCode.CanceledOperation, "Cancelled by user");
         OnSaved?.Invoke(false,res);
+        this.OnClose(false,res);
     }
 
 }

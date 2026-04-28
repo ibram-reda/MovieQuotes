@@ -24,6 +24,8 @@ public partial class PhraseEditDialogueViewModel : DialogueViewModelBase
               this.OnClose(phrase != null, phrase);
     }
 
+    public override string Title =>  "Edit Phrase";
+
     [RelayCommand]
     private void Save()
     { 

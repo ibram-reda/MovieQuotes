@@ -35,6 +35,14 @@ internal class EditStudyContentCommandHandler : IRequestHandler<EditStudyContent
         studyPhrase.EditArPhraseTranslation(request.ArPhraseTranslation);
         studyPhrase.EditOrigin(request.Origin);
         studyPhrase.EditNotes(request.Notes);
+        studyPhrase.EditExamples(request.Examples);
+        studyPhrase.EditSynonyms(request.Synonyms);
+        studyPhrase.EditLevel(request.Level);
+        studyPhrase.EditPronunciation(request.Pronunciation);
+        if(request.IsDraft)
+            studyPhrase.MarkAsDraft();
+        else
+            studyPhrase.MarkAsReady();
 
         await unitOfWork.StudyPhrases.UpdateAsync(studyPhrase);
         var affectedRows = await unitOfWork.SaveAsync(cancellationToken);

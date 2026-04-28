@@ -20,6 +20,12 @@ public class StudyPhrase
     /// </summary>
     public TimeSpan EndTime { get; set; } = TimeSpan.Zero;
 
+    public bool IsDraft { get; set; } = false;
+
+    public string Examples { get; set; } = string.Empty;
+
+    public string Synonyms {get;set;} = string.Empty;
+
     public DateTime NextReviewDate { get; set; } = DateTime.Now;
 
     /// <summary>
@@ -68,5 +74,8 @@ public class StudyPhrase
     /// Gets or sets additional notes or comments associated with the object.
     /// </summary>
     public string? Notes { get; set; }
+
+    public string Level { get; set; } = string.Empty;
+    public string Pronunciation { get; set; } = string.Empty;
 
 }

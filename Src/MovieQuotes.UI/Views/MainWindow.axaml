@@ -31,7 +31,7 @@
       <Button Classes="link" 
               Command="{Binding NavigateCommand}"
               CommandParameter="PlayBack">
-        03. Playback Phrase
+        03. Search &amp; Playback
       </Button>
 
       <Button Classes="link" 

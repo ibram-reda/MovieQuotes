@@ -42,7 +42,12 @@ internal class CreateStudyPhraseCommandHandler : IRequestHandler<CreateStudyPhra
                 request.ArContentTranslation,
                 request.ArPhraseTranslation,
                 request.Origin,
-                request.Notes);
+                request.Notes,
+                request.IsDraft,
+                request.Examples,
+                request.Synonyms,
+                request.Level,
+                request.Pronunciation);
 
             await unitOfWork.StudyPhrases.AddAsync(dbStudyPhrase);
             await unitOfWork.SaveAsync();

@@ -24,6 +24,11 @@ internal static class StudyPhraseMappings
             Origin = src.Origin,
             Notes = src.Notes,
             NextReviewDate = src.Progress?.NextReviewDate ?? DateTime.Now,
+            IsDraft = src.IsDraft,
+            Examples = src.Examples,
+            Synonyms = src.Synonyms,
+            Level = src.Level,
+            Pronunciation = src.Pronunciation
             };
     }
 }

@@ -10,6 +10,7 @@ using MovieQuotes.Domain.Interfaces;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using System.Linq;
+using Avalonia.Controls.Templates;
 
 public static class ServiceCollectionExtensions
 {
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
     {
         Services.AddSingleton<IFilesService>(x => new FilesService(window));
         Services.AddSingleton<NavigationService>();
+        Services.AddTransient<IDataTemplate, ViewLocator>();
 
 
         var viewModelsTypes = typeof(ViewModelBase).Assembly.GetTypes()

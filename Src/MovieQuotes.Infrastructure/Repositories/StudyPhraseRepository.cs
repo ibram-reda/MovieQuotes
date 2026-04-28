@@ -12,6 +12,8 @@ public class StudyPhraseRepository : GenericRepository<StudyPhrase>, IStudyPhras
 
     override public async Task<StudyPhrase?> GetByIdAsync(int id)
     {
-        return await _dbSet.Include(a => a.Phrase).FirstOrDefaultAsync(p => p.Id == id);
+        return await _dbSet.Include(a => a.Phrase)
+                    .Include(a=>a.Progress)
+                    .FirstOrDefaultAsync(p => p.Id == id);
     }
 }

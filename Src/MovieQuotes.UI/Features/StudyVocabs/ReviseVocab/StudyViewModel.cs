@@ -42,7 +42,7 @@ public partial class StudyViewModel : PageViewModelBase
 
     [ObservableProperty] int _Quality = 0;
 
-    public int DuePhrasesCount => this.Phrases.Count(p => p.NextReviewDate <= DateTime.Now);
+    public int DuePhrasesCount => this.Phrases.Count(p => p.NextReviewDate <= DateTime.Now && !p.IsDraft);
 
     public List<string> QualityStrings { get; } = [
         "complete blackout",
@@ -121,7 +121,7 @@ public partial class StudyViewModel : PageViewModelBase
     public bool NextCanExecute() => this.CurrentPlayingIndex < this.Phrases.Count - 1;
     public bool PreviousCanExecute() => this.CurrentPlayingIndex > 0;
 
-    public bool HasPlayingPhrase => CurrentPlayingPhrase != null ;
+    public bool HasPlayingPhrase => CurrentPlayingPhrase != null;
 
     [RelayCommand(CanExecute = nameof(PreviousCanExecute))]
     void Previous()
@@ -148,8 +148,8 @@ public partial class StudyViewModel : PageViewModelBase
         this.Phrases.Sort((a, b) =>
         {
             if (a.NextReviewDate == null && b.NextReviewDate == null) return 0;
-            if (a.NextReviewDate == null) return 1;
-            if (b.NextReviewDate == null) return -1;
+            if (a.NextReviewDate == null || a.IsDraft) return 1;
+            if (b.NextReviewDate == null || b.IsDraft) return -1;
             return DateTime.Compare(a.NextReviewDate, b.NextReviewDate);
         });
         this.SetCurrentPhraseIndex(0);
@@ -213,6 +213,8 @@ public partial class StudyViewModel : PageViewModelBase
             MainMediaPlayer.Play(); // Re-play the phrase after update
         };
         this.ShowEditDialog = true;
+        ShowPhraseContent = true;
+        ShowCompleteContent = true;
     }
 
     bool AddReviewCanExecute() => CurrentPlayingPhrase != null && CurrentPlayingPhrase.NextReviewDate <= DateTime.Now;

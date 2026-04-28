@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieQuotes.Infrastructure;
 
@@ -10,9 +11,11 @@ using MovieQuotes.Infrastructure;
 namespace MovieQuotes.Infrastructure.Migrations
 {
     [DbContext(typeof(MovieQuotesDbContext))]
-    partial class MovieQuotesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260415191447_AddMoreDataForStudy")]
+    partial class AddMoreDataForStudy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,11 +136,6 @@ namespace MovieQuotes.Infrastructure.Migrations
                     b.Property<bool>("IsDraft")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("Level")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("varchar(2)");
-
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
@@ -148,11 +146,6 @@ namespace MovieQuotes.Infrastructure.Migrations
 
                     b.Property<int>("PhraseId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Pronunciation")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("StudyType")
                         .HasMaxLength(100)
