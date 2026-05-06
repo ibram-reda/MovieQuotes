@@ -154,9 +154,24 @@
                        IsVisible="{Binding ShowCompleteContent}" />
           </StackPanel>
 
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+
+            <TextBlock Text="{Binding CurrentPlayingPhrase.Pronunciation}"
+                       Classes="info-text"
+                       Margin="0"/>  
+            
+            <Border Background="#1d2956" CornerRadius="20" Padding="5" Margin="0"
+                    IsVisible="{Binding CurrentPlayingPhrase.Level, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+              <TextBlock Text="{Binding CurrentPlayingPhrase.Level}"
+              Classes="info-text" 
+              FontSize="15"
+              Margin="0"/>  
+            </Border>
+
             <TextBlock Text="{Binding CurrentPlayingPhrase.StudyType}"
                        Classes="info-text"
-                       Margin="0"/>
+                       Margin="0"/>  
+            </StackPanel>
 
             <TextBlock Text="{Binding CurrentPlayingPhrase.Translation}"
                        Classes="info-text"

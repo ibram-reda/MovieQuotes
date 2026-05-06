@@ -29,8 +29,8 @@
     <Setter Property="TextWrapping" Value="Wrap"/>
     <Setter Property="HorizontalAlignment" Value="Center"/>
     <Setter Property="VerticalAlignment" Value="Center"/>
-</Style>
-
+  </Style>
+ 
   <Style Selector="TextBlock.copyable" >
     <Setter Property="Cursor" Value="Hand"/>
     <Style Selector="^:pointerover" >
@@ -46,7 +46,7 @@
   <Style Selector="Button.saveBtn">
     <Setter Property="Background" Value="{DynamicResource OkBtnBackground}"/>
     <Setter Property="Foreground" Value="{DynamicResource OkBtnForground}"/>
-</Style>
+  </Style>
 
   <Style Selector="Button.cancelBtn">
     <Setter Property="Background" Value="{DynamicResource CancelBtnBackground}"/>
@@ -58,14 +58,14 @@
     <Setter Property="Cursor" Value="Hand"/>
     <Style Selector="^:pointerover /template/ContentPresenter">
       <Setter Property="Background" Value="gray"/>
-  </Style>
+    </Style>
   </Style>
 
   <Style Selector="StackPanel.navigation" >
     <Setter Property="Orientation" Value="Horizontal"/>
     <Setter Property="Background" Value="{DynamicResource SurfeceBackground}"/>
     <Setter Property="Margin" Value="0,0,0,5"/>
-</Style>
+  </Style>
 
   <Style Selector="Button.contentbtn">
     <Setter Property="Background" Value="Transparent"/>
@@ -76,6 +76,6 @@
 
     <Style Selector="^:pointerover /template/ContentPresenter">
       <Setter Property="Background" Value="Transparent"/>
-  </Style>
+    </Style>
   </Style>
 </Styles>

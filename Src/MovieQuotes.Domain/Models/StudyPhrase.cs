@@ -74,16 +74,16 @@ public class StudyPhrase
             PhraseId = phraseId,
             StudyType = studyType,
             Content = content,
-            Translation = translation,
+            Translation = translation?.Trim(),
             ArContentTranslation = arContent,
             ArPhraseTranslation = arPhrase,
             Origin = origin,
             Notes = Note,
             IsDraft = isDraft,
-            Examples = examples,
+            Examples = PutDashInStartingLines(examples),
             Synonyms = synonyms,
             Level = level,
-            Pronunciation = pronunciation
+            Pronunciation = pronunciation?.Trim()
         };
     }
 
@@ -122,7 +122,7 @@ public class StudyPhrase
     {
         if (translation == this.Translation)
             return;
-        this.Translation = translation;
+        this.Translation = translation?.Trim();
     }
 
     public void EditArContentTranslation(string? arContent)
@@ -157,7 +157,7 @@ public class StudyPhrase
     {
         if (examples == this.Examples)
             return;
-        this.Examples = examples;
+        this.Examples = PutDashInStartingLines(examples);
     }
 
     public void EditSynonyms(string synonyms)
@@ -188,6 +188,22 @@ public class StudyPhrase
     {
         if (pronunciation == this.Pronunciation)
             return;
-        this.Pronunciation = pronunciation;
+        this.Pronunciation = pronunciation.Trim();
+    }
+
+
+    static string PutDashInStartingLines(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return text;
+        var lines = text.Split(Environment.NewLine);
+        for (int i = 0; i < lines.Length; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(lines[i]) && !lines[i].TrimStart().StartsWith("-"))
+            {
+                lines[i] = "- " + lines[i].TrimStart();
+            }
+        }
+        return string.Join(Environment.NewLine, lines.Where(l => !string.IsNullOrWhiteSpace(l)));
     }
 }

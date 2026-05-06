@@ -135,11 +135,11 @@ internal partial class ExportStudiesViewModel : DialogueViewModelBase
     string GetExportText(StudyPhrase phrase)
     {
         var orgin = !string.IsNullOrEmpty(phrase.Origin?.Trim()) ? $"{phrase.Origin} - " : "";
-         
+        var pronounciation = !string.IsNullOrEmpty(phrase.Pronunciation?.Trim()) ? $" {phrase.Pronunciation}" : "";
 
         var sb = new StringBuilder();
 
-         sb.Append( $@"{orgin}{phrase.Content} ({phrase.StudyType}) {phrase.ArContentTranslation}");
+         sb.Append( $@"{orgin}{phrase.Content}{pronounciation} ({phrase.StudyType}) {phrase.ArContentTranslation}");
         if(IncludeEnDefention && !string.IsNullOrEmpty(phrase.Translation?.Trim()))
         {
                 sb.Append($"\n💡 {phrase.Translation}");

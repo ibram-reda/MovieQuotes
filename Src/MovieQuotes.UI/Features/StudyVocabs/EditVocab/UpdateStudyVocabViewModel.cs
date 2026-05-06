@@ -147,7 +147,7 @@ public partial class UpdateStudyVocabViewModel : ViewModelBase
             Origin = this.Origin,
             Notes = this.Notes,
             IsDraft = this.IsDraft,
-            Examples = PutDashInStartingLines(this.Examples),
+            Examples = this.Examples,
             Synonyms = this.Synonyms,
             Level = this.Level,
             Pronunciation = this.Pronunciation
@@ -163,21 +163,6 @@ public partial class UpdateStudyVocabViewModel : ViewModelBase
         dbPhrase = result.Payload!;
         this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(NeedUpdate)));
         OnSaved?.Invoke(result.IsSuccess, result.Payload);
-    }
-
-    string PutDashInStartingLines(string text)
-    {
-        if (string.IsNullOrEmpty(text))
-            return text;
-        var lines = text.Split(Environment.NewLine);
-        for (int i = 0; i < lines.Length; i++)
-        {
-            if (!string.IsNullOrWhiteSpace(lines[i]) && !lines[i].TrimStart().StartsWith("-"))
-            {
-                lines[i] = "- " + lines[i].TrimStart();
-            }
-        }
-        return string.Join(Environment.NewLine, lines);
     }
 
     [RelayCommand]
