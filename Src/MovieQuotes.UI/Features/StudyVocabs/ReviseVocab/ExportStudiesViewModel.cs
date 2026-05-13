@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.StudyPhrases.Models;
+using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
 using System.Collections.Generic;
@@ -39,11 +40,14 @@ internal partial class ExportStudiesViewModel : DialogueViewModelBase
     public List<ExportStudy> ExportStudies { get; } = [];
     public List<ExportStudy> SelectedExportStudies { get; } = [];
 
+    private readonly INotificationService _notificationService ;
+
     public override string Title => "Export Studies";
 
     public event Action<StudyPhrase>? OnSelectionChanged;
     public ExportStudiesViewModel(List<StudyPhrase> phrases)
     {
+        _notificationService = GetService<INotificationService>();
         ExportStudies.AddRange(phrases.Select(p => new ExportStudy(p)));
         Recal();
         this.PropertyChanged += (s, e) =>
@@ -89,6 +93,7 @@ internal partial class ExportStudiesViewModel : DialogueViewModelBase
                                .Select((es, i) => $"{i + 1,2}. {es.StudyPhrase}"));
 
         Clipboard?.SetTextAsync(text);
+        _notificationService.ShowSuccess("Exported", $"Copy {ExportStudies.Count(es => es.IsSelected)} studies to clipboard");
         this.CancelCommand.Execute(true);
     }
 
@@ -125,6 +130,9 @@ internal partial class ExportStudiesViewModel : DialogueViewModelBase
             await writer.WriteAsync(line);
             await writer.WriteAsync(Environment.NewLine);
         }
+
+        _notificationService.ShowSuccess("Exported", $"Exported {ExportStudies.Count(es => !es.Phrase.IsDraft)} studies to {filePath}");
+
 
         this.CancelCommand.Execute(true);
     }
