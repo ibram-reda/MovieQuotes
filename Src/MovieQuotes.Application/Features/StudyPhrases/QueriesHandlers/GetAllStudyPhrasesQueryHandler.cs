@@ -35,6 +35,7 @@ internal class GetAllStudyPhrasesQueryHandler : IRequestHandler<GetAllStudyPhras
         var qry = baseQuery.Include(a => a.Phrase)
                            .Include(a => a.Phrase!.Movie)
                            .Include(a => a.Progress)
+                           .OrderByDescending(a => a.AddedDate) 
                            .Select(a => a.ToStudyPhrase());
 
         var totalCount = await qry.CountAsync();

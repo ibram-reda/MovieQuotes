@@ -13,15 +13,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using static MovieQuotes.UI.Extensions.StringExtensions;
 
-public partial class ExportStudy:ObservableObject
+public partial class ExportStudy : ObservableObject
 {
     public ExportStudy(StudyPhrase phrase)
     {
         this.Phrase = phrase;
     }
-    [ObservableProperty] bool isSelected =true;
-    public StudyPhrase Phrase {get;}
+    [ObservableProperty] bool isSelected = true;
+    public StudyPhrase Phrase { get; }
     [ObservableProperty] string studyPhrase;
 }
 internal partial class ExportStudiesViewModel : DialogueViewModelBase
@@ -32,6 +34,7 @@ internal partial class ExportStudiesViewModel : DialogueViewModelBase
     [ObservableProperty] bool includePhras;
     [ObservableProperty] bool includePhrasTranslation;
     [ObservableProperty] ExportStudy? selectedStudy;
+    [ObservableProperty] bool includePronunciation;
     public IClipboard? Clipboard { get; set; }
     public List<ExportStudy> ExportStudies { get; } = [];
     public List<ExportStudy> SelectedExportStudies { get; } = [];
@@ -45,7 +48,7 @@ internal partial class ExportStudiesViewModel : DialogueViewModelBase
         Recal();
         this.PropertyChanged += (s, e) =>
         {
-            if(e.PropertyName == nameof(SelectedStudy))
+            if (e.PropertyName == nameof(SelectedStudy))
             {
                 OnSelectionChanged?.Invoke(SelectedStudy?.Phrase);
             }
@@ -66,12 +69,13 @@ internal partial class ExportStudiesViewModel : DialogueViewModelBase
             }
             else if (e.PropertyName == nameof(IncludeEnDefention) ||
                      e.PropertyName == nameof(IncludePhras) ||
-                     e.PropertyName == nameof(IncludePhrasTranslation))
+                     e.PropertyName == nameof(IncludePhrasTranslation) ||
+                     e.PropertyName == nameof(IncludePronunciation))
             {
                 Recal();
             }
         };
-         
+
     }
 
 
@@ -82,24 +86,46 @@ internal partial class ExportStudiesViewModel : DialogueViewModelBase
         var text = string.Join(Environment.NewLine,
                                ExportStudies
                                .Where(es => es.IsSelected)
-                               .Select((es,i) => $"{i+1,2}. {es.StudyPhrase}"));
+                               .Select((es, i) => $"{i + 1,2}. {es.StudyPhrase}"));
 
         Clipboard?.SetTextAsync(text);
         this.CancelCommand.Execute(true);
     }
 
     [RelayCommand]
-    void ExportAnki()
+    async Task ExportAnki()
     {
-        var sd = "#separator:tab \n#html:true\n";
-        var text = string.Join(Environment.NewLine,
-                                ExportStudies
-                               .Where(es => !es.Phrase.IsDraft)
-                               .Select(es => GetExportTextAnki(es.Phrase))
-                               .Shuffle())
-                               ;
+        var Header = """
+            #separator:tab
+            #html:true
+            #notetype column:1
+            #deck column:2
+            
+            """;
+        var fileName = $"MoviePhrasesAnki.txt";
+        var folderName = "MovieQuotes";
+        var folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), folderName);
+        if (!System.IO.Directory.Exists(folderPath))
+        {
+            System.IO.Directory.CreateDirectory(folderPath);
+        }
+        var filePath = System.IO.Path.Combine(folderPath, fileName);
+        using var writer = new System.IO.StreamWriter(filePath, false, Encoding.UTF8);
 
-        Clipboard?.SetTextAsync(sd + text);
+        writer.Write(Header);
+
+        foreach (var study in ExportStudies.Where(es => !es.Phrase.IsDraft))
+        {
+
+            var line = GetExportTextAnki(study.Phrase);
+            if (line.Contains("\""))
+            {
+                line = line.Replace("\"", "&quot;");
+            }
+            await writer.WriteAsync(line);
+            await writer.WriteAsync(Environment.NewLine);
+        }
+
         this.CancelCommand.Execute(true);
     }
 
@@ -113,44 +139,48 @@ internal partial class ExportStudiesViewModel : DialogueViewModelBase
         }
     }
 
+
     string GetExportTextAnki(StudyPhrase phrase)
     {
-        var orgin = !string.IsNullOrEmpty(phrase.Origin?.Trim()) ? $"{phrase.Origin} - " : "";
+        var studyType = phrase.StudyType.RemoveSpace();
+        var origin = phrase.Origin.RemoveSpace();
+        var movieName = phrase.MovieName.RemoveSpace();
+        var content = phrase.Content.RemoveSpace();
+        var translation = phrase.Translation.GetOptionalMurkupList().ReplaceNewLine().RemoveSpace();
+        var arContentTranslation = phrase.ArContentTranslation.ReplaceNewLine().RemoveSpace();
+        var phraseText = phrase.PhraseText.ReplaceNewLine().RemoveSpace();
+        var phraseArTranslation = phrase.PhraseArTranslation?.RemoveSpace();
+        var examples = phrase.Examples?.GetMurkupList().RemoveSpace();
+        var notes = phrase.Notes?.ReplaceNewLine()?.RemoveSpace();
+        var pronunciation = phrase.Pronunciation?.RemoveSpace();
+        var synonyms = phrase.Synonyms?.GetMurkupList()?.RemoveSpace();
+        var level = phrase.Level;
 
-        var content = $"{orgin}{phrase.Content} ({phrase.StudyType})";
+        var v = $"moviwords\tMovie Words\t{phrase.StudyId}\t{studyType}\t{origin}\t{content}\t{pronunciation}\t{translation}\t{arContentTranslation}\t{phraseText}\t{phraseArTranslation}\t{examples}\t{notes}\t{movieName}\t{level}\t{synonyms}"
+       .Replace("\n", "<br>");
 
-        var answer = @$"
-            <font color=""black"">{phrase.ArContentTranslation}</font>
-            <font color=""gray""> {phrase.Translation?.Trim()}</font>
-            <font color=""green""> {phrase.PhraseText?.Trim()}</font>
-            <font color=""orange""> {phrase.PhraseArTranslation?.Trim()}</font> 
-            <font color=""Green""> {phrase.Examples.Trim()}</font>
-            <font COLOR=""red""> {phrase.Notes?.Trim()}</font>
-            <font color=""brown"">movie Name:{phrase.MovieName?.Trim()}</font>
-
-        ".Replace("\n", "<br>");
-         
-        return $"{content}\t{Regex.Replace(answer, @"\s+", " ")}";
+        return v;
     }
+
     string GetExportText(StudyPhrase phrase)
     {
         var orgin = !string.IsNullOrEmpty(phrase.Origin?.Trim()) ? $"{phrase.Origin} - " : "";
-        var pronounciation = !string.IsNullOrEmpty(phrase.Pronunciation?.Trim()) ? $" {phrase.Pronunciation}" : "";
+        var pronounciation = IncludePronunciation && !string.IsNullOrEmpty(phrase.Pronunciation?.Trim()) ? $" {phrase.Pronunciation?.Trim()}" : "";
 
         var sb = new StringBuilder();
 
-         sb.Append( $@"{orgin}{phrase.Content}{pronounciation} ({phrase.StudyType}) {phrase.ArContentTranslation}");
-        if(IncludeEnDefention && !string.IsNullOrEmpty(phrase.Translation?.Trim()))
+        sb.Append($@"{orgin}{phrase.Content}{pronounciation} ({phrase.StudyType}) {phrase.ArContentTranslation}");
+        if (IncludeEnDefention && !string.IsNullOrEmpty(phrase.Translation?.Trim()))
         {
-                sb.Append($"\n💡 {phrase.Translation}");
+            sb.Append($"\n💡 {phrase.Translation}");
         }
         if (IncludePhras)
-         {
-                sb.Append($"\n🎬 {phrase.PhraseText}");
-         }
+        {
+            sb.Append($"\n🎬 {phrase.PhraseText}");
+        }
         if (IncludePhrasTranslation && !string.IsNullOrEmpty(phrase.PhraseArTranslation?.Trim()))
         {
-                    sb.Append($"\n👉 {phrase.PhraseArTranslation}");
+            sb.Append($"\n👉 {phrase.PhraseArTranslation}");
         }
 
         return sb.ToString();

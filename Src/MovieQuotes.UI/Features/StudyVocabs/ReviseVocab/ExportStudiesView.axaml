@@ -21,6 +21,7 @@
       <CheckBox Content="IncludeEnDefention" IsChecked="{Binding IncludeEnDefention}"/>
       <CheckBox Content="IncludePhras" IsChecked="{Binding IncludePhras}"/>
       <CheckBox Content="IncludePhrasTranslation" IsChecked="{Binding IncludePhrasTranslation}"/>
+      <CheckBox Content="IncludePronunciation" IsChecked="{Binding IncludePronunciation}"/>
       <Button Content="Export Selected Studies"
               Focusable="False"
               Command="{Binding ExportCommand}"
