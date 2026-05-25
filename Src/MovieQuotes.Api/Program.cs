@@ -3,6 +3,7 @@ using MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Infrastructure;
 using MovieQuotes.Infrastructure.Data;
 using MovieQuotes.Domain.Interfaces;
+using MovieQuotes.Application.Features.Movies.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ var cs = builder.Configuration.GetConnectionString("local");
 builder.Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs));
 
 builder.Services.AddScoped<IMovieQUnitOfWork, MovieQUnitOfWork>();
+builder.Services.AddSingleton(new TmdbService(null!));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
 

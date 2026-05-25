@@ -49,7 +49,33 @@ check if every thing is fine
 dotnet --list-sdks
 ```
 
-### 3. install VLC and ffmpeg
+### 3. Manage User Secrets and Third-Party API Keys (Optional)
+
+*MovieQuotes* integrates with [TMDB](https://www.themoviedb.org) to fetch movie metadata when creating a movie instance, including posters, backdrops, genres, and the TMDB ID. 
+
+Because the TMDB API key has usage quotas and rate limits, it is not included in the repository. You can create your own API key from TMDB and store it locally using .NET User Secrets.
+
+Navigate to the UI project:
+
+```bash
+cd ./src/MovieQuotes.UI
+```
+
+Add your TMDB API key:
+
+```bash
+dotnet user-secrets set "TmdbApiKey" "<your-api-key>"
+```
+
+You should also configure your database connection string the same way:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:Default" "Server=myServer;Database=MovieQuotesDb;"
+```
+
+**Note** *MovieQuotes* will still work without a TMDB API key, but in that case you will need to provide all movie data manually instead of having it fetched automatically from TMDB.
+
+### 4. install VLC and ffmpeg
 this app 'MovieQuotes' use [Vlc] as vedio player
 ```bash
 sudo apt install libvlc-dev
@@ -60,7 +86,7 @@ and use ffmpeg to cut and generate vedio clips
 sudo apt install ffmpeg
 ```
 
-### 4. Create the database
+### 5. Create the database
 this app use entity framework to work with database so we need to [install entity framework tools] 
 ```bash
 dotnet tool install --global dotnet-ef
@@ -71,10 +97,10 @@ cd ./src/MovieQuotes.Infrastructure/
 dotnet ef database update -s ../MovieQuotes.Api/MovieQuotes.Api.csproj
 ```
 
-### 5. Set the Cash Folder location
+### 6. Set the Cash Folder location
 in [Domain Constants](./Src/MovieQuotes.Domain/Models/Constants.cs#L5) and [Application Constants](./Src/MovieQuotes.Application/Features/Constants.cs#L5) File change the `CashPath` Constant to a location on your system to generate short video clips on it. 
 
-### 6. run the application
+### 7. run the application
 navigate your terminal to the uI project
 ```bash
 cd ./src/MovieQuotes.UI
@@ -84,7 +110,7 @@ and Build and run the appliation
 dotnet run
 ```
 
-### 7. populate with data and movies
+### 8. populate with data and movies
 download your vedios from internet or from anywhere but we need 3 basic file ber each movie we need Photo called `cover.jpg` we need vedio `<yourmovieName>.mp4` and subtitle file `<yourMovieName>.en.srt` locate your movies in folder structure like the  following - you can have optional more file like `info.json` file that contains IMDBID and description of the movie
 
 ```

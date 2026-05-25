@@ -1,5 +1,6 @@
 ﻿namespace MovieQuotes.Infrastructure.Configuration;
 
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MovieQuotes.Domain.Models;
@@ -18,6 +19,10 @@ public class MovieConfig : IEntityTypeConfiguration<Movie>
         builder.Property(x => x.Title)
             .IsRequired()
             .HasMaxLength(150);
+            
+         builder.Property(x => x.BackdropFilePath).HasMaxLength(100);
+         builder.Property(x => x.PosterFilePath).HasMaxLength(100);
+         builder.Property(X=>X.TMDbId).HasMaxLength(50);
 
         builder.Property(x => x.FolderName)
             .IsRequired()

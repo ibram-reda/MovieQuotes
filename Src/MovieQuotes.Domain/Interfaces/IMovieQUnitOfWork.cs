@@ -8,11 +8,11 @@ public interface IMovieQUnitOfWork : IAsyncDisposable
     IWordRepository Words { get; }
     IStudyPhraseRepository StudyPhrases { get; }
     IStudyPhraseProgressRepository StudyPhraseProgress { get; }
-    
+    IGenreRepository Genres { get; }
+
     Task<int> SaveAsync(CancellationToken cancellationToken = default);
     Task<bool> BeginTransactionAsync(CancellationToken cancellationToken = default);
     Task<bool> CommitTransactionAsync(CancellationToken cancellationToken = default);
     Task<bool> RollbackTransactionAsync(CancellationToken cancellationToken = default);
 }
 
- 

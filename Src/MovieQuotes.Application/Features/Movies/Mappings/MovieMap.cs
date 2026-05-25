@@ -26,6 +26,9 @@ internal static class MovieMap
         MovieFullInfo result = new MovieFullInfo();
         result.Id = movie.Id;
         result.Title = movie.Title;
+        result.BackdropUrl = Path.Combine( movie.BaseFolderDir, movie.FolderName, movie.BackdropFilePath?.TrimStart('/') ?? string.Empty);
+        result.Genres = movie.Genres.Select(a => a.Name).ToList();
+        result.PosterUrl = Path.Combine( movie.BaseFolderDir, movie.FolderName, movie.PosterFilePath?.TrimStart('/') ?? string.Empty);   
         result.LocalPath = Path.Combine( movie.BaseFolderDir, movie.FolderName, movie.VideoFilePath ?? string.Empty);
         result.IMDBId = movie.IMDBId;
         result.Description = movie.Description;

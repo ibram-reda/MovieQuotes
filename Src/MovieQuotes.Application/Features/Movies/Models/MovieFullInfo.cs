@@ -11,4 +11,8 @@ public class MovieFullInfo
     public string? SubtitlePath { get; set; } = string.Empty;
     public string? CoverUrl { get; set; } = string.Empty;
     public int? Year { get; set; }
+
+    public string? BackdropUrl { get; set; } = string.Empty;
+    public List<string> Genres { get; set; } = new();
+    public string? PosterUrl { get; set; } = string.Empty;
 }

@@ -8,6 +8,7 @@ using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Application.Features.Movies.Mappings;
 using MovieQuotes.Application.Features.Movies.Models;
+using MovieQuotes.Application.Features.Movies.Services;
 using MovieQuotes.Domain.Exception;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Domain.Interfaces;
@@ -15,11 +16,13 @@ using MovieQuotes.Domain.Interfaces;
 public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, OperationResult<MovieInfo>>
 {
     private readonly IMovieQUnitOfWork movieQUnitOfWork;
+    private readonly TmdbService tmdbService;
 
-    public CreateMovieCommandHandler(IMovieQUnitOfWork movieQUnitOfWork)
+    public CreateMovieCommandHandler(IMovieQUnitOfWork movieQUnitOfWork, TmdbService tmdbService)
     {
         this.movieQUnitOfWork = movieQUnitOfWork;
-    } 
+        this.tmdbService = tmdbService;
+    }
     public async Task<OperationResult<MovieInfo>> Handle(CreateMovieCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<MovieInfo>();
@@ -40,10 +43,38 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
             return result;
         #endregion
 
-        var movie = Movie.CreateMovie(request.BaseFolder, request.FolderName, request.Title, request.VideoLocation, request.Description, request.IMDBId, request.CoverUrl ?? "", request.Year);
+        var vedioName = Path.GetFileName(request.VideoLocation);
+        var coverName = Path.GetFileName(request.CoverUrl ?? "");
+
+        var movie = Movie.CreateMovie(request.BaseFolder, request.FolderName, request.Title, vedioName, request.Description, request.IMDBId, coverName, request.Year);
 
         await this.movieQUnitOfWork.Movies.AddAsync(movie);
         await movieQUnitOfWork.SaveAsync();
+
+
+        // Fetch TMDb data and update the movie with the fetched data
+        // TODO: move the following logic to a worker that runs in the background after creating the movie,
+        //  to avoid making the user wait for the TMDb data fetching and backdrop downloading process to complete before getting a response from the Application layer.
+        var tmdbData = await tmdbService.FetchTmdbDataAsync(movie);
+        movie.UpdateTMDbData(tmdbData);
+        await movieQUnitOfWork.Movies.UpdateAsync(movie);
+        await movieQUnitOfWork.SaveAsync();
+
+        // update genre for the movie
+        var generes = await this.tmdbService.GetMovieGenresAsync(movie);
+        foreach (var genreId in generes)
+        {
+            var genre = await this.movieQUnitOfWork.Genres.GetByIdAsync(genreId);
+            if (genre != null)
+                movie.AddGenre(genre);
+        }
+        await this.movieQUnitOfWork.Movies.UpdateAsync(movie);
+        await movieQUnitOfWork.SaveAsync();
+
+
+        //Download the backdrop image if available after fetching the TMDb data.
+        await movie.DownloadBackDropAsync();
+        await movie.DownloadPosterAsync();
 
         result.Payload = movie.ToMovieInfo();
 

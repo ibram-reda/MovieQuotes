@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using MediatR;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.UI.Features.Movies.CreateMovie;
+using MovieQuotes.UI.Features.Movies.MovieDetails;
 using MovieQuotes.UI.Features.Movies.WatchMovie;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
@@ -54,6 +55,6 @@ public partial class MovieCardViewModel : ViewModelBase
             this.NavigationService.NavigateTo<NewMovieViewModel>(this.MovieInfo);
             return;
         }
-        await this.NavigationService.NavigateToAsync<MovieDetailsViewModel>(this.MovieId);
+        await this.NavigationService.NavigateToAsync<MovieDetailViewModel>(this.MovieId);
     }
 }

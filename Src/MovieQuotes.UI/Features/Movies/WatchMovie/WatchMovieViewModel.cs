@@ -1,5 +1,6 @@
 ﻿namespace MovieQuotes.UI.Features.Movies.WatchMovie;
 
+using Avalonia.Controls.Generators;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
@@ -15,23 +16,24 @@ using System.Linq;
 using System.Threading.Tasks;
 
 
-internal partial class MovieDetailsViewModel : PageViewModelBase, IDisposable
+internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
 {
     private LibVLC MainLibVLC { get; }
     public MediaPlayer MainMediaPlayer { get; }
 
     [System.Obsolete("For design-time use only")]
-    public MovieDetailsViewModel()
+    public WatchMovieViewModel()
     {
     }
 
-    public MovieDetailsViewModel(IMediator mediator, NavigationService nav) : base(mediator, nav)
+    public WatchMovieViewModel(IMediator mediator, NavigationService nav) : base(mediator, nav)
     {
         MainLibVLC = new();
         MainMediaPlayer = new(MainLibVLC)
         {
             EnableHardwareDecoding = false,
         };
+        MainMediaPlayer.EnableHardwareDecoding = true;
         MainMediaPlayer.Opening += MainMediaPlayer_Opening;
         MainMediaPlayer.TimeChanged += MainMediaPlayer_TimeChanged;
         MainMediaPlayer.LengthChanged += MainMediaPlayer_LengthChanged;
@@ -240,7 +242,7 @@ internal partial class MovieDetailsViewModel : PageViewModelBase, IDisposable
 
         }
     }
-    ~MovieDetailsViewModel()
+    ~WatchMovieViewModel()
     {
         this.Dispose();
     }

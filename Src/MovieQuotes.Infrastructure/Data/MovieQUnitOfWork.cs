@@ -15,6 +15,7 @@ public class MovieQUnitOfWork : IMovieQUnitOfWork
     private IWordRepository? _wordRepository;
     private IStudyPhraseRepository? _studyPhraseRepository;
     private IStudyPhraseProgressRepository? _studyPhraseProgressRepository;
+    private IGenreRepository? _genreRepository;
 
     public MovieQUnitOfWork(MovieQuotesDbContext context)
     {
@@ -32,6 +33,8 @@ public class MovieQUnitOfWork : IMovieQUnitOfWork
     public IStudyPhraseRepository StudyPhrases => _studyPhraseRepository ??= new StudyPhraseRepository(_context);
 
     public IStudyPhraseProgressRepository StudyPhraseProgress => _studyPhraseProgressRepository ??= new StudyPhraseProgressRepository(_context);
+
+    public IGenreRepository Genres => _genreRepository ??= new GenreRepository(_context);
 
     public async Task<int> SaveAsync(CancellationToken cancellationToken = default)
     {

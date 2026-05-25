@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MovieQuotes.UI.Features.Movies.MovieDetails" 
+             xmlns:controls="using:MovieQuotes.UI.Views.Controls"
+             x:DataType="vm:MovieDetailViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MovieQuotes.UI.Features.Movies.MovieDetails.MovieDetailView">
+
+    <d:Design.DataContext>
+        <vm:MovieDetailViewModel  />
+    </d:Design.DataContext>
+
+    <!--Movie Details page-->
+    <Grid >
+        <Image  Source="{Binding Backdrop,Converter={StaticResource PathToBitmapConverter}}" Stretch="UniformToFill"/>
+        <!-- Overlay Square -->
+        <Rectangle Fill="black"  Stretch="UniformToFill" Opacity="0.8"/> 
+
+        <Grid ColumnDefinitions="auto,*" >
+
+            <Image Grid.Column="0" Margin="20" VerticalAlignment="Top"
+            Source="{Binding MoviePoster,Converter={StaticResource PathToBitmapConverter}}" 
+            Stretch="UniformToFill" Height="600"/>
+            <StackPanel Grid.Column="1" Margin="20">
+                <TextBlock Text="{Binding MovieName}" FontSize="24" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Genres}" FontStyle="Italic" Margin="0,5"/>
+                <TextBlock Text="{Binding Overview}" TextWrapping="Wrap" Margin="0,10"/>
+                <Button Content="Watch Movie" Command="{Binding WatchMovieCommand}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

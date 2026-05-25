@@ -16,6 +16,8 @@ public class MovieQuotesDbContext : DbContext
 
 
     public DbSet<Movie> Movies => Set<Movie>();
+    public DbSet<Genre> Genres => Set<Genre>();
+
     public DbSet<SubtitlePhrase> SubtitlePhrases => Set<SubtitlePhrase>();
 
     public DbSet<PhraseWords> PhraseWords => Set<PhraseWords>();
@@ -32,7 +34,8 @@ public class MovieQuotesDbContext : DbContext
         modelBuilder.ApplyConfiguration(new PhraseWordsConfig());
         modelBuilder.ApplyConfiguration(new WordConfig());
         modelBuilder.ApplyConfiguration(new StudyPhraseConfig());
-        modelBuilder.ApplyConfiguration(new StudyPhraseProgressConfig());       
+        modelBuilder.ApplyConfiguration(new StudyPhraseProgressConfig());  
+        modelBuilder.ApplyConfiguration(new GenreConfig());     
 
     }
 }

@@ -5,9 +5,9 @@
              xmlns:vm="using:MovieQuotes.UI.Features.Movies.WatchMovie"
              xmlns:vlc="using:LibVLCSharp.Avalonia"
              xmlns:controls="using:MovieQuotes.UI.Views.Controls"
-             x:DataType="vm:MovieDetailsViewModel"
+             x:DataType="vm:WatchMovieViewModel"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="MovieQuotes.UI.Features.Movies.WatchMovie.MovieDetailsView">
+             x:Class="MovieQuotes.UI.Features.Movies.WatchMovie.WatchMovieView">
 
   <Grid RowDefinitions="*,auto,auto"  Background="#333">
 
