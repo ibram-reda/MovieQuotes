@@ -24,7 +24,7 @@ internal class GetMovieDetailsQueryHandler : IRequestHandler<GetMovieDetailsQuer
             .Include(a => a.Genres)
             .Select(a => a.ToMovieFullInfo());
 
-        result.Payload = await query.FirstOrDefaultAsync();
+        result.Payload = await query.AsNoTracking().FirstOrDefaultAsync();
 
         return result;
     }

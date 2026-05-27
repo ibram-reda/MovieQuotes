@@ -12,16 +12,22 @@ using MovieQuotes.Application.Features.Movies.Services;
 using MovieQuotes.Domain.Exception;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Domain.Interfaces;
+using Hangfire;
+using MovieQuotes.Application.Features.Movies.Jobs;
 
 public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, OperationResult<MovieInfo>>
 {
     private readonly IMovieQUnitOfWork movieQUnitOfWork;
     private readonly TmdbService tmdbService;
+    private readonly IBackgroundJobClient backgroundJobClient;
+    private readonly ILogger<CreateMovieCommandHandler> logger;
 
-    public CreateMovieCommandHandler(IMovieQUnitOfWork movieQUnitOfWork, TmdbService tmdbService)
+    public CreateMovieCommandHandler(IMovieQUnitOfWork movieQUnitOfWork, TmdbService tmdbService, IBackgroundJobClient backgroundJobClient,ILogger<CreateMovieCommandHandler> logger)
     {
         this.movieQUnitOfWork = movieQUnitOfWork;
         this.tmdbService = tmdbService;
+        this.backgroundJobClient = backgroundJobClient;
+        this.logger = logger;
     }
     public async Task<OperationResult<MovieInfo>> Handle(CreateMovieCommand request, CancellationToken cancellationToken)
     {
@@ -50,31 +56,12 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
 
         await this.movieQUnitOfWork.Movies.AddAsync(movie);
         await movieQUnitOfWork.SaveAsync();
+        this.logger.LogInformation($"Movie '{movie.Title}' (ID: {movie.Id}) created successfully. Enqueuing metadata job...");
 
 
         // Fetch TMDb data and update the movie with the fetched data
-        // TODO: move the following logic to a worker that runs in the background after creating the movie,
-        //  to avoid making the user wait for the TMDb data fetching and backdrop downloading process to complete before getting a response from the Application layer.
-        var tmdbData = await tmdbService.FetchTmdbDataAsync(movie);
-        movie.UpdateTMDbData(tmdbData);
-        await movieQUnitOfWork.Movies.UpdateAsync(movie);
-        await movieQUnitOfWork.SaveAsync();
-
-        // update genre for the movie
-        var generes = await this.tmdbService.GetMovieGenresAsync(movie);
-        foreach (var genreId in generes)
-        {
-            var genre = await this.movieQUnitOfWork.Genres.GetByIdAsync(genreId);
-            if (genre != null)
-                movie.AddGenre(genre);
-        }
-        await this.movieQUnitOfWork.Movies.UpdateAsync(movie);
-        await movieQUnitOfWork.SaveAsync();
-
-
-        //Download the backdrop image if available after fetching the TMDb data.
-        await movie.DownloadBackDropAsync();
-        await movie.DownloadPosterAsync();
+        backgroundJobClient.Enqueue<MovieMetadataJob>(x =>  x.ProcessAsync(movie.Id));
+        this.logger.LogInformation($"Metadata job enqueued for movie '{movie.Title}' (ID: {movie.Id}).");
 
         result.Payload = movie.ToMovieInfo();
 

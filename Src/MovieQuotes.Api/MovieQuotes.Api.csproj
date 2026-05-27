@@ -4,9 +4,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>9720f1aa-03b2-4c5e-b553-78ec7a05ddcc</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hangfire" Version="1.8.23" />
+    <PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />  
     <PackageReference Include="MediatR" Version="13.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
       <PrivateAssets>all</PrivateAssets>

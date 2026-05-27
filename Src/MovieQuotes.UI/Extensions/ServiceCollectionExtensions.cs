@@ -1,5 +1,7 @@
 ﻿namespace MovieQuotes.UI.Extensions;
 
+using Hangfire;
+using Hangfire.MySql;
 using Avalonia.Controls;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,10 +47,22 @@ public static class ServiceCollectionExtensions
 
         // add database
         var cs = configuration.GetConnectionString("DefaultConnection");
+        var hangfire = configuration.GetConnectionString("HangfireConnection");
         var TmdbApiKey = configuration["TmdbApiKey"];
         Services.AddSingleton(new TmdbService(TmdbApiKey));
         Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs), ServiceLifetime.Transient);
 
         Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
+
+         // Add Hangfire services
+        Services.AddHangfire(hangfireConfig => hangfireConfig
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseStorage(new MySqlStorage(hangfire, new MySqlStorageOptions
+            {
+                
+            })));
+
+        Services.AddHangfireServer();
     }
 }
