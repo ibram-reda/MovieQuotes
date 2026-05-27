@@ -45,6 +45,10 @@ internal partial class MovieDetailViewModel : PageViewModelBase
 
     [ObservableProperty] string releaseDate = "";
     [ObservableProperty] string genres = "";
+
+    [ObservableProperty] float voteAverage = 0f;
+    [ObservableProperty] int voteCount = 0;
+    [ObservableProperty] bool isAdult = false; 
     
     
     
@@ -74,7 +78,11 @@ internal partial class MovieDetailViewModel : PageViewModelBase
         this.Overview = reuslt.Payload.Description ?? "";
         this.MoviePoster = reuslt.Payload.PosterUrl ?? "";
         this.Backdrop = reuslt.Payload.BackdropUrl ?? ""; 
-        this.Genres = string.Join(", ", reuslt.Payload.Genres);
+        this.Genres = string.Join(", ", reuslt.Payload.Genres); 
+        this.VoteAverage = reuslt.Payload.VoteAverage;
+        this.VoteCount = reuslt.Payload.VoteCount;
+        this.IsAdult = reuslt.Payload.IsAdult;
+        this.ReleaseDate =  reuslt.Payload.Year?.ToString() ?? "";
 
     }
 

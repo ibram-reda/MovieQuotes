@@ -26,7 +26,11 @@
             <StackPanel Grid.Column="1" Margin="20">
                 <TextBlock Text="{Binding MovieName}" FontSize="24" FontWeight="Bold"/>
                 <TextBlock Text="{Binding Genres}" FontStyle="Italic" Margin="0,5"/>
+                <TextBlock Text="{Binding VoteAverage, StringFormat='Rating: {0:F1}'}" FontStyle="Italic" Margin="0,5"/>
+                <TextBlock Text="{Binding VoteCount, StringFormat='Votes Count: {0}'}" FontStyle="Italic" Margin="0,5"/>
+                <TextBlock Text="{Binding IsAdult, StringFormat='Adult Content: {0}'}" FontStyle="Italic" Margin="0,5"/>
                 <TextBlock Text="{Binding Overview}" TextWrapping="Wrap" Margin="0,10"/>
+                <TextBlock Text="{Binding ReleaseDate}" FontStyle="Italic" Margin="0,5"/>
                 <Button Content="Watch Movie" Command="{Binding WatchMovieCommand}" />
             </StackPanel>
         </Grid>

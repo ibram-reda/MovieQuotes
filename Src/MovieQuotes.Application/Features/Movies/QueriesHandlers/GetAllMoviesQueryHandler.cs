@@ -28,9 +28,55 @@ public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, Opera
 
         var query = unitOfWork.Movies.Query;
 
-        if (!string.IsNullOrWhiteSpace(request.SearchText))
-            query = query.Where(m => m.Title.Contains(request.SearchText) || 
-                                     m.FolderName.Contains(request.SearchText));
+        var filters = MovieSearchParser.Parse(request.SearchText ?? "");
+
+        if (!string.IsNullOrWhiteSpace(filters.Text))
+        {
+            query = query.Where(m =>
+                m.Title.Contains(filters.Text) ||
+                m.FolderName.Contains(filters.Text));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filters.ImdbId))
+        {
+            query = query.Where(m => m.IMDBId == filters.ImdbId);
+        }
+
+        if (filters.Year.HasValue)
+        {
+            query = query.Where(m =>
+                m.Year == filters.Year.Value);
+        }
+
+        if (filters.MinYear.HasValue)
+        {
+            query = query.Where(m =>
+                m.Year >= filters.MinYear.Value);
+        }
+
+        if (filters.MaxYear.HasValue)
+        {
+            query = query.Where(m =>
+                m.Year <= filters.MaxYear.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(filters.Genre))
+        {
+            query = query.Where(m =>
+                m.Genres.Any(g => g.Name == filters.Genre));
+        }
+
+        if (filters.MinRating.HasValue)
+        {
+            query = query.Where(m =>
+                m.VoteAverage >= filters.MinRating.Value);
+        }
+
+        if (filters.MaxRating.HasValue)
+        {
+            query = query.Where(m =>
+                m.VoteAverage <= filters.MaxRating.Value);
+        }
 
 
         query = query.OrderByDescending(m => m.AddedDate);

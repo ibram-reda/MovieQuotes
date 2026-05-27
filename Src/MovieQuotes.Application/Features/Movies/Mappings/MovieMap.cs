@@ -34,6 +34,9 @@ internal static class MovieMap
         result.Description = movie.Description;
         result.Year = movie.Year;
         result.CoverUrl = Path.Combine( movie.BaseFolderDir, movie.FolderName, movie.CoverFilePath ?? string.Empty);
+        result.VoteAverage = movie.VoteAverage;
+        result.VoteCount = movie.VoteCount;
+        result.IsAdult = movie.IsAdult;
         return result;
     }
 }

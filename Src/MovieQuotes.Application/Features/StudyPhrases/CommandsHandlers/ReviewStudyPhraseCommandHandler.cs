@@ -34,11 +34,9 @@ public class ReviewStudyPhraseCommandHandler : IRequestHandler<ReviewStudyPhrase
         if (studyPhraseProgress == null)
         {
 
-             // If no progress record exists for the given StudyPhraseId, it means the phrase has not been reviewed before.
-             // In this case, we can create a new progress record with the initial review data.
-             studyPhraseProgress = Domain.Models.StudyPhraseProgress.Create(request.StudyPhraseId);
-             await _unitOfWork.StudyPhraseProgress.AddAsync(studyPhraseProgress);
-             await _unitOfWork.SaveAsync(cancellationToken);
+             // throw new InvalidOperationException($"No progress found for StudyPhraseId {request.StudyPhraseId}");
+            result.AddError(ErrorCode.NotFound, $"No progress found for StudyPhraseId {request.StudyPhraseId}");
+            return result;
         }
 
         studyPhraseProgress.Review(request.Quality);

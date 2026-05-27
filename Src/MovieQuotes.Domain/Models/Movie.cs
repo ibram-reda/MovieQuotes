@@ -22,6 +22,10 @@ public class Movie
     public string? PosterFilePath { get; private set; } = string.Empty;
     public string? TMDbId { get; private set; } = string.Empty;
 
+    public float VoteAverage { get; set; } = 0f;
+    public int VoteCount { get; set; } = 0;
+    public bool IsAdult { get; set; } = false;
+
     public virtual List<Genre> Genres { get; } = new();
 
     public DateTime AddedDate { get; private set; }
@@ -113,6 +117,9 @@ public class Movie
         this.BackdropFilePath = results[0].GetProperty("backdrop_path").GetString()?.TrimStart('/');
         this.PosterFilePath = results[0].GetProperty("poster_path").GetString()?.TrimStart('/');
         this.TMDbId = results[0].GetProperty("id").GetInt32().ToString();  
+        this.VoteAverage = results[0].GetProperty("vote_average").GetSingle();
+        this.VoteCount = results[0].GetProperty("vote_count").GetInt32();
+        this.IsAdult = results[0].GetProperty("adult").GetBoolean();
     }
 
     public async Task DownloadBackDropAsync()

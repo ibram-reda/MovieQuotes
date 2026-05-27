@@ -15,4 +15,7 @@ public class MovieFullInfo
     public string? BackdropUrl { get; set; } = string.Empty;
     public List<string> Genres { get; set; } = new();
     public string? PosterUrl { get; set; } = string.Empty;
+    public float VoteAverage { get; set; } = 0f;
+    public int VoteCount { get; set; } = 0;
+    public bool IsAdult { get; set; } = false;
 }
