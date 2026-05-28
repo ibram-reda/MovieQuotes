@@ -2,6 +2,7 @@ namespace MovieQuotes.UI.Features.StudyVocabs.ReviseVocab;
 
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Input.Platform; 
 using MovieQuotes.UI.ViewModels;
 
 public partial class StudyView : UserControl
@@ -26,6 +27,7 @@ public partial class StudyView : UserControl
         if (sender is TextBlock textBlock)
         {
             var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+            
             if (clipboard is not null)
                 await clipboard.SetTextAsync(textBlock.Text); 
         }

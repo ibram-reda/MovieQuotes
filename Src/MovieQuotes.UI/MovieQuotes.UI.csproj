@@ -14,26 +14,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.13" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.13" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.13" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.13" />
+    <PackageReference Include="Avalonia" Version="12.0.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.0.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.13" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="Hangfire" Version="1.8.23" />
-    <PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" /> 
-    <PackageReference Include="LibVLCSharp" Version="3.9.6" />
-    <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.17" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" /> 
+    <PackageReference Include="LibVLCSharp" Version="3.9.7.1" />
+    <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.7.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.8" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
-    <PackageReference Include="MySql.EntityFrameworkCore" Version="10.0.1+MySQL9.6.0" />
-    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.23" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
+    <PackageReference Include="MySql.EntityFrameworkCore" Version="10.0.7+MySQL9.7.0" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.23.1" />
   </ItemGroup>
 
   <ItemGroup>

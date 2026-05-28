@@ -7,15 +7,12 @@
     <UserSecretsId>9720f1aa-03b2-4c5e-b553-78ec7a05ddcc</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Hangfire" Version="1.8.23" />
-    <PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />  
-    <PackageReference Include="MediatR" Version="13.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
+  <ItemGroup> 
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MySql.EntityFrameworkCore" Version="10.0.1+MySQL9.6.0" />
+    <PackageReference Include="MySql.EntityFrameworkCore" Version="10.0.7+MySQL9.7.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
   </ItemGroup>
 
