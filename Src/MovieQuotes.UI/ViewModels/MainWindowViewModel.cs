@@ -8,11 +8,22 @@ using MovieQuotes.UI.Features.Movies.CreateMovie;
 using MovieQuotes.UI.Features.StudyVocabs.ReviseVocab;
 using MovieQuotes.UI.Services;
 using System;
+using Avalonia;
+using Avalonia.Styling;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
     [ObservableProperty] private bool _RenderNavigationBar = true;
     [ObservableProperty] private string _WindowTitle = "";
+    [ObservableProperty] bool _isDarkMode = true;
+
+    partial void OnIsDarkModeChanged(bool value)
+    {
+        if (Application.Current is { } app)
+        {
+            app.RequestedThemeVariant = value ? ThemeVariant.Dark : ThemeVariant.Light;
+        }
+    }
 
     [System.Obsolete("For design-time use only")]
     public MainWindowViewModel()

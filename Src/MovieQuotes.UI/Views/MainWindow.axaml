@@ -55,6 +55,8 @@
         <Button  Content="Clear Error"
                  Command="{Binding CurrentViewModel.ClearErrorsCommand }"/>
 
+      <ToggleSwitch IsChecked="{Binding IsDarkMode}"
+                    OnContent="Dark" OffContent="Light" />
     </StackPanel>
 
     <!--Content-->
