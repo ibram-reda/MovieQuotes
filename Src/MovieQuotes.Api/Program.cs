@@ -35,7 +35,7 @@ builder.Services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
     .UseSimpleAssemblyNameTypeSerializer()
     .UseRecommendedSerializerSettings()
-    .UseStorage(new MySqlStorage(cs, new MySqlStorageOptions
+    .UseStorage(new MySqlStorage(hangfire, new MySqlStorageOptions
     {
          
     })));

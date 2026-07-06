@@ -43,7 +43,7 @@ public partial class StudyViewModel : PageViewModelBase
     [ObservableProperty] int _Quality = 0;
 
     public int DuePhrasesCount => this.Phrases.Count(p => p.NextReviewDate <= DateTime.Now && !p.IsDraft);
-
+    public int DraftPhrasesCount => this.Phrases.Count(p => p.IsDraft);
     public List<string> QualityStrings { get; } = [
         "complete blackout",
         "wrong",
@@ -85,6 +85,7 @@ public partial class StudyViewModel : PageViewModelBase
             NextCommand.NotifyCanExecuteChanged();
             PreviousCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(DuePhrasesCount));
+            OnPropertyChanged(nameof(DraftPhrasesCount));
         };
 
     }
@@ -96,6 +97,7 @@ public partial class StudyViewModel : PageViewModelBase
         if (!NextCanExecute()) return;
         this.MainMediaPlayer.Stop();
         SetCurrentPhraseIndex(++CurrentPlayingIndex);
+        this.MainMediaPlayer.Play();
         ShowCompleteContent = false;
         ShowPhraseContent = false;
     }
@@ -156,6 +158,19 @@ public partial class StudyViewModel : PageViewModelBase
         ShowCompleteContent = false;
         ShowPhraseContent = false;
     }
+    [RelayCommand]
+    void OrderByDraft()
+    {
+        this.Phrases.Sort((a, b) =>
+        {
+            if (a.IsDraft == b.IsDraft) return 0;
+            if (a.IsDraft) return -1;
+            return 1;
+        });
+        this.SetCurrentPhraseIndex(0);
+        ShowCompleteContent = true;
+        ShowPhraseContent = true;
+    }
     void SetCurrentPhrase(StudyPhrase phrase)
     {
         this.CurrentPlayingIndex = this.Phrases.IndexOf(phrase);
@@ -211,6 +226,7 @@ public partial class StudyViewModel : PageViewModelBase
 
             SetCurrentPhraseIndex(this.CurrentPlayingIndex);
             MainMediaPlayer.Play(); // Re-play the phrase after update
+            OnPropertyChanged(nameof(DraftPhrasesCount));
         };
         this.ShowEditDialog = true;
         ShowPhraseContent = true;
@@ -274,6 +290,8 @@ public partial class StudyViewModel : PageViewModelBase
             });
             foreach (var m in (reslt.Payload ?? []).OrderByDescending(a => a.StudyCount))
                 Movies.Add(m);
+
+            this.SelectedMovie = this.Movies.FirstOrDefault();
         }
 
     }

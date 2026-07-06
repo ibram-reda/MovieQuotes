@@ -62,9 +62,13 @@
         <TextBlock Text="{Binding Phrases.Count}"/>
       </StackPanel>
 
-      <TextBlock Text="{Binding DuePhrasesCount, StringFormat='Due Phrases: {0}'}"
+      <TextBlock Text="{Binding DuePhrasesCount, StringFormat='Due: {0}'}"
                  VerticalAlignment="Center"
                  Foreground="Green"/>
+      
+      <TextBlock Text="{Binding DraftPhrasesCount, StringFormat='Draft: {0}'}"
+                 VerticalAlignment="Center"
+                 Foreground="Orange"/>
 
       <Button Content="Previous"
               HotKey="Left"
@@ -117,17 +121,20 @@
         <PathIcon Data="{StaticResource  delete_forever_regular}"/>
     </Button>
 
+    <Button Content="Order  by Draft"
+            Focusable="False"
+            Command="{Binding OrderByDraftCommand}" />
+
     </StackPanel>
 
     <Grid Grid.Row="1">
 
-      <TextBlock Classes="info-text" FontSize="45" Text="{Binding CurrentPlayingPhrase.Content}"
-                 Foreground="Orange"/>
-      <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}" IsVisible="{Binding ShowPhraseContent}">
-        <!--overlay on vedio screen-->
-        <Grid IsVisible="{Binding CurrentPlayingPhrase}"
-              VerticalAlignment="Stretch"
-              HorizontalAlignment="Stretch"
+      <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Stretch"
+                     Margin="10">
+        <!--overlay on vedio screen--> 
+        <Grid Classes.display-center = "{Binding !ShowPhraseContent}"
               Margin="10">
           <Grid.Styles>
             <Style Selector="Control">
@@ -140,6 +147,7 @@
           <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
             <TextBlock Text="{Binding CurrentPlayingPhrase.Content}"
                        Classes="info-text copyable"
+                       FontSize="45"
                        PointerPressed="TextBlock_PointerPressed"
                        Foreground="Orange"/>
 
@@ -180,6 +188,7 @@
             <TextBlock Text="{Binding CurrentPlayingPhrase.PhraseText}"
                        Classes="info-text copyable"
                        PointerPressed="TextBlock_PointerPressed"
+                       IsVisible="{Binding ShowPhraseContent}"                        
                        Foreground="red"/>
             <TextBlock Text="{Binding CurrentPlayingPhrase.PhraseArTranslation}"
                        FlowDirection="RightToLeft"

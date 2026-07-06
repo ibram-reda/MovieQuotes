@@ -65,26 +65,42 @@ public class FilesService : IFilesService
         {
             // Linux
             // Common file managers: nautilus (GNOME), dolphin (KDE), thunar (Xfce), nemo (Cinnamon), caja (MATE)
-            // You can try to use a generic command like 'xdg-open' which usually detects the default file manager.
 
-            string command;
-            if (File.Exists(filePath) || Directory.Exists(filePath))
-            {
-                // If the path exists, try opening it with the default application
-                command = "xdg-open";
-            }
-            else
-            {
-                // Fallback or specific file manager if xdg-open doesn't work well without a valid path
-                command = "nautilus"; // Example, you might need to check which one is installed
-            }
+            string command = "nautilus"; // Example, you might need to check which one is installed
 
-            Process.Start(new ProcessStartInfo
+            Process? p;
+            try
             {
-                FileName = command,
-                Arguments = $"\"{filePath}\"",
-                UseShellExecute = true
-            });
+                p = Process.Start(new ProcessStartInfo
+                {
+                    FileName = command,
+                    Arguments = $"\"{filePath}\"",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to start file manager: {ex.Message}");
+                 return false;
+            }
+            if (p == null)
+            {
+                Console.WriteLine("Failed to start file manager.");
+                return false;
+            } 
+            if (!p.WaitForExit(5000)) // Wait for 5 seconds
+            {
+                Console.WriteLine("File manager did not exit in time.");
+                return false;
+            }
+            if (p.ExitCode != 0)
+            {
+                Console.WriteLine($"File manager exited with code {p.ExitCode}.");
+                Console.WriteLine($"Error details: {p.StandardError.ReadToEnd()}");
+                return false;
+            }
         }
         else
         {
