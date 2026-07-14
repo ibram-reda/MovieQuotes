@@ -218,6 +218,7 @@ public partial class StudyViewModel : PageViewModelBase
                 oldPhrase!.PhraseText = newPhrase.Text;
                 oldPhrase!.StartTime = newPhrase.StartTime;
                 oldPhrase!.EndTime = newPhrase.EndTime;
+                oldPhrase!.VideoLocation = newPhrase.VideoLocation;
                 var index = this.Phrases.IndexOf(oldPhrase);
                 Phrases.Remove(oldPhrase);
                 Phrases.Insert(index, oldPhrase);

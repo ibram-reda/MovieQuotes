@@ -170,5 +170,8 @@ public class Movie
         }
     }
 
-    
+    internal string GetVideoPath()
+    {
+        return Path.Combine(BaseFolderDir, FolderName, VideoFilePath);
+    }
 }

@@ -33,17 +33,16 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
         }
 
         var durationEdited = phrase.EditDuration(request.StartTime, request.EndTime);
-        var textEdit = phrase.EditText(request.PhraseText);
+        var textEdit = phrase.EditText(request.PhraseText);        
+
+        if (durationEdited)
+        {
+            phrase.DeleteVideoClip(); // Delete the existing video clip if the duration has changed 
+            await phrase.GenerateVideoClipAsync(Constants.CashPath); // Generate a new video clip with the updated duration
+        }
 
         if (textEdit | durationEdited)
         {
-            await unitOfWork.SubtitlePhrases.UpdateAsync(phrase);
-            await unitOfWork.SaveAsync();
-        }
-
-        if (durationEdited && !string.IsNullOrWhiteSpace(phrase.VideoClipPath))
-        {
-            phrase.DeleteVideoClip(); // Delete the existing video clip if the duration has changed 
             await unitOfWork.SubtitlePhrases.UpdateAsync(phrase);
             await unitOfWork.SaveAsync();
         }

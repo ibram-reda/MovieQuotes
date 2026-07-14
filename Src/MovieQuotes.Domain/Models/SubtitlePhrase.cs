@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 public class SubtitlePhrase
@@ -119,6 +120,50 @@ public class SubtitlePhrase
             File.Delete(actualPath);
         this.VideoClipPath = null; // reset the video clip path to force recreation
         return true;
+    }
+
+    public async Task<bool> GenerateVideoClipAsync(string CashPath)
+    {
+        // add 200ms small time tolerance to the phrase
+        var sTime = this.StartTime.Subtract(TimeSpan.FromMilliseconds(100));
+        var dTime = this.Duration.Add(TimeSpan.FromMilliseconds(200)); ;
+
+        if(this.Movie is null)
+            throw new InvalidOperationException("Movie is not loaded for this phrase.");
+
+        var outputLocation = Path.Combine(CashPath, this.Movie?.FolderName ?? "", $"{this.Sequence}.MP4");
+        EnsureDirectoryExist(outputLocation);
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "ffmpeg",
+            Arguments = $"-ss {sTime} -y -i \"{this.Movie?.GetVideoPath()}\" -t {dTime} \"{outputLocation}\"",
+            CreateNoWindow = true,
+            UseShellExecute = false,
+            RedirectStandardError = true,
+        };
+
+        using var process = new Process { StartInfo = startInfo };
+        process.Start();
+
+        // from documents  
+        // To avoid deadlocks, always read the output stream first and then wait.  
+        var error = await process.StandardError.ReadToEndAsync();
+        if (!process.WaitForExit(60000)) // 1 min timeout
+        {
+            process.Kill();
+            return false;
+        }
+        this.VideoClipPath = outputLocation.Replace(CashPath, Constants.CashTemplate);
+        return process.ExitCode == 0;
+    }
+
+    private void EnsureDirectoryExist(string path)
+    {
+        var directory = Path.GetDirectoryName(path);
+        if (!Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory!);
+        }
     }
 
 
