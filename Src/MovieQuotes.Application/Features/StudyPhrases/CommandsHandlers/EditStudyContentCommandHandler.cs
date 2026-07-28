@@ -39,19 +39,29 @@ internal class EditStudyContentCommandHandler : IRequestHandler<EditStudyContent
         studyPhrase.EditSynonyms(request.Synonyms);
         studyPhrase.EditLevel(request.Level);
         studyPhrase.EditPronunciation(request.Pronunciation);
-        if(request.IsDraft)
+        if (request.IsDraft)
             studyPhrase.MarkAsDraft();
         else
             studyPhrase.MarkAsReady();
 
-        await unitOfWork.StudyPhrases.UpdateAsync(studyPhrase);
-        var affectedRows = await unitOfWork.SaveAsync(cancellationToken);
-
-        if (affectedRows <= 0)
+        try
         {
-            result.AddError(ErrorCode.UpdateError, StudyPhraseMessages.FailedToUpdate);
+
+            await unitOfWork.StudyPhrases.UpdateAsync(studyPhrase);
+            var affectedRows = await unitOfWork.SaveAsync(cancellationToken);
+
+            if (affectedRows <= 0)
+            {
+                result.AddError(ErrorCode.UpdateError, StudyPhraseMessages.FailedToUpdate);
+                return result;
+            }
+        }
+        catch (Exception ex)
+        {
+            result.AddException(ex);
             return result;
         }
+
 
         result.Payload = studyPhrase.ToStudyPhrase();
         return result;

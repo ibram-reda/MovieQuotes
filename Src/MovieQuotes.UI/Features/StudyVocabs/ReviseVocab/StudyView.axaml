@@ -134,11 +134,14 @@
                      VerticalAlignment="Stretch"
                      Margin="10">
         <!--overlay on vedio screen--> 
-        <Grid Classes.display-center = "{Binding !ShowPhraseContent}"
+        <Grid Classes.display-center = "{Binding !ShowPhraseContent}" 
               Margin="10">
           <Grid.Styles>
             <Style Selector="Control">
               <Setter Property="Focusable" Value="False"/>
+            </Style>
+            <Style Selector="TextBlock">
+              <Setter Property="FontFamily" Value="Calisto"/> 
             </Style>
           </Grid.Styles>
           <!--phrase content-->
@@ -208,6 +211,11 @@
             <TextBlock Text="{Binding CurrentPlayingPhrase.Notes}"
                        Classes="info-text"
                        Foreground="rgb(89, 10, 134)"
+                       IsVisible="{Binding ShowCompleteContent}"/>
+
+            <TextBlock Text="{Binding CurrentPlayingPhrase.MovieName, StringFormat='Movie: {0}'}"
+                       Classes="info-text"
+                       Foreground="#AA1414"
                        IsVisible="{Binding ShowCompleteContent}"/>
 
           </StackPanel>

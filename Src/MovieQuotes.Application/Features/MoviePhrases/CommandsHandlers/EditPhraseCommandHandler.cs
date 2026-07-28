@@ -24,6 +24,7 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
         var result = new OperationResult<Phrase>();
 
         var phrase = await unitOfWork.SubtitlePhrases.Query
+            .Include(a => a.Movie)
             .FirstOrDefaultAsync(a => a.Id == request.PhraseId || (a.MovieId == request.MovieId && a.Sequence == request.Sequence));
 
         if (phrase is null)

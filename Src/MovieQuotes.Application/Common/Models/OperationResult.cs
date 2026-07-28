@@ -39,7 +39,7 @@ public class OperationResult<T>
     {
         var innerExeption = ex;
         var limit = 5; // To prevent potential infinite loops in case of circular references
-        while (innerExeption.InnerException != null)
+        while (innerExeption != null)
         {
             AddError(ErrorCode.UnKnownError, innerExeption.Message);
             innerExeption = innerExeption.InnerException;

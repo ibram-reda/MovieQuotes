@@ -131,7 +131,7 @@ public class SubtitlePhrase
         if(this.Movie is null)
             throw new InvalidOperationException("Movie is not loaded for this phrase.");
 
-        var outputLocation = Path.Combine(CashPath, this.Movie?.FolderName ?? "", $"{this.Sequence}.MP4");
+        var outputLocation = Path.Combine(CashPath, this.Movie?.Title ?? "", $"{this.Sequence}.MP4");
         EnsureDirectoryExist(outputLocation);
         var startInfo = new ProcessStartInfo
         {

@@ -32,7 +32,12 @@ partial class ResyncSubtitleViewModel : PageViewModelBase
     [RelayCommand]
     private async Task Resync()
     {
-        var cmd = new GenerateInfoFilesCommand();
+        var cmd = new SubtitleResyncCommand()
+        {
+            SubtitleFilePath = this.Path,
+            OutPutFileName = this.OutFileName,
+            TimeShift = this.TimeShiftInMS
+        };
         IsBusy = true;
         var result = await this.mediator.Send(cmd);
         IsBusy = false;

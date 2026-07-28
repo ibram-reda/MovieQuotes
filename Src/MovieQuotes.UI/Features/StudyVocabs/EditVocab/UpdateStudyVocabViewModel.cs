@@ -158,7 +158,7 @@ public partial class UpdateStudyVocabViewModel : ViewModelBase
         {
             foreach (var err in result.Errors)
                 this.ErrorMessages.Add(err.Message);
-
+            return;
         }
         dbPhrase = result.Payload!;
         this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(NeedUpdate)));
