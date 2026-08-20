@@ -69,6 +69,15 @@
 
           <Button Classes="link"
                   Command="{Binding NavigateCommand}"
+                  CommandParameter="BrowseStudyMaterials">
+            <StackPanel Orientation="Horizontal">
+              <PathIcon Data="{StaticResource document_one_page_regular}"/>
+              <Label Content="Study Materials" IsVisible="{Binding IsNavigationMenuOpen}"/>
+            </StackPanel>
+          </Button>
+
+          <Button Classes="link"
+                  Command="{Binding NavigateCommand}"
                   CommandParameter="Subtitle">
             <StackPanel Orientation="Horizontal">
               <PathIcon Data="{StaticResource text_font_regular}"/>

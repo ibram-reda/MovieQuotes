@@ -1,0 +1,100 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:MovieQuotes.UI.Views.Controls">
+
+    <Design.PreviewWith>
+        <StackPanel Width="500"
+                    Spacing="10">
+
+            <controls:PaginationControl
+                TotalCount="250"
+                PageSize="20"
+                CurrentPage="5" />
+
+        </StackPanel>
+    </Design.PreviewWith>
+
+
+    <ControlTheme
+        x:Key="{x:Type controls:PaginationControl}"
+        TargetType="controls:PaginationControl">
+
+        <Setter Property="Background"
+                Value="{DynamicResource AppBackgroundColor}" />
+
+        <Setter Property="Foreground"
+                Value="{DynamicResource PrimaryTextColor}" />
+
+
+        <Setter Property="Template">
+
+            <ControlTemplate>
+
+                <StackPanel
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+
+
+                    <!-- Previous -->
+
+                    <Button
+                        Content="&lt;"
+                        Command="{TemplateBinding PreviousPageCommand}"
+                        IsEnabled="{TemplateBinding HasPreviousPage}"
+                        Margin="0,0,8,0" />
+
+
+                    <!-- Page Numbers -->
+
+                    <ItemsControl
+                        ItemsSource="{TemplateBinding PageItems}">
+
+                        <ItemsControl.ItemsPanel>
+
+                            <ItemsPanelTemplate>
+
+                                <StackPanel
+                                    Orientation="Horizontal" />
+
+                            </ItemsPanelTemplate>
+
+                        </ItemsControl.ItemsPanel>
+
+
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate
+                                x:DataType="controls:PaginationPageItem">
+
+                                <Button
+                                    Content="{Binding Display}"
+                                    Command="{Binding Command}"
+                                    CommandParameter="{Binding CommandParameter}"
+                                    IsEnabled="{Binding IsEnabled}"
+                                    Margin="2,0" />
+
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+
+
+                    <!-- Next -->
+
+                    <Button
+                        Content="&gt;"
+                        Command="{TemplateBinding NextPageCommand}"
+                        IsEnabled="{TemplateBinding HasNextPage}"
+                        Margin="8,0,0,0" />
+
+                </StackPanel>
+
+            </ControlTemplate>
+
+        </Setter>
+
+    </ControlTheme>
+
+</ResourceDictionary>

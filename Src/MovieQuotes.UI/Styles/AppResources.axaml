@@ -9,5 +9,6 @@
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="/Views/Controls/TimeSpanControl.axaml"/>
         <ResourceInclude Source="/Views/Controls/RichTextBlock.axaml"/>
+        <ResourceInclude Source="/Views/Controls/PaginationControl.axaml"/>
       </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

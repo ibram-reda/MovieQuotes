@@ -202,6 +202,14 @@ public class StudyMaterial
         ModifiedDate = DateTime.Now;
     }
 
+    public void EditIsVulgar(bool isVulgar)
+    {
+        if (isVulgar == this.IsVulgar)
+            return;
+        this.IsVulgar = isVulgar;
+        ModifiedDate = DateTime.Now;
+    }
+
 
     static string PutDashInStartingLines(string text)
     {

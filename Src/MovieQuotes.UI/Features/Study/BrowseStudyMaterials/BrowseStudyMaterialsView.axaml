@@ -1,0 +1,120 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MovieQuotes.UI.Features.Study.BrowseStudyMaterials"
+             xmlns:controls="using:MovieQuotes.UI.Views.Controls"
+             x:Class="MovieQuotes.UI.Features.Study.BrowseStudyMaterials.BrowseStudyMaterialsView"
+             x:DataType="vm:BrowseStudyMaterialsViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="1100"
+             d:DesignHeight="650"
+             Loaded="BrowseStudyMaterialsView_Loaded">
+
+  <UserControl.Styles>
+    <Style Selector="TextBox.filter">
+      <Setter Property="Margin" Value="0,0,8,0" />
+      <Setter Property="MinWidth" Value="150" />
+    </Style>
+    <Style Selector="TextBlock.label">
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Margin" Value="0,0,5,0" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+    <Border Padding="12"
+            Background="{DynamicResource CardBackgroundColor}"
+            CornerRadius="4">
+      <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="Study materials" Classes="title" VerticalAlignment="Center" />
+          <TextBlock Text="{Binding TotalCount, StringFormat='({0})'}" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2"
+                    Orientation="Horizontal"
+                    Margin="0,12,0,0">
+          <TextBlock Text="Movie ID" Classes="label" />
+          <TextBox Classes="filter" Text="{Binding MovieIdFilter, Mode=TwoWay}" PlaceholderText="Any movie" />
+          <TextBlock Text="Level" Classes="label" />
+          <TextBox Classes="filter" Text="{Binding LevelFilter, Mode=TwoWay}" PlaceholderText="Any level" />
+          <TextBlock Text="Part of speech" Classes="label" />
+          <TextBox Classes="filter" Text="{Binding PartOfSpeechFilter, Mode=TwoWay}" PlaceholderText="Any type" />
+          <TextBox Classes="filter" Width="220"
+                   Text="{Binding SearchText, Mode=TwoWay}"
+                   PlaceholderText="Search materials">
+            <TextBox.KeyBindings>
+              <KeyBinding Gesture="Enter" Command="{Binding ApplyFiltersCommand}" />
+            </TextBox.KeyBindings>
+          </TextBox>
+          <Button Content="Filter" Command="{Binding ApplyFiltersCommand}" Margin="0,0,8,0" />
+          <Button Content="Clear" Command="{Binding ClearFiltersCommand}" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <ScrollViewer Grid.Row="1" Margin="0,12,0,0">
+      <ItemsControl ItemsSource="{Binding Materials}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border Width="330"
+                    Margin="0,0,12,12"
+                    Padding="14"
+                    Background="{DynamicResource CardBackgroundColor}"
+                    CornerRadius="4">
+              <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+                <TextBlock Text="{Binding Content}"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap" />
+                <TextBlock Grid.Row="1"
+                           Text="{Binding Definition}"
+                           Margin="0,6,0,0"
+                           TextWrapping="Wrap" />
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12" Margin="0,10,0,0">
+                  <TextBlock Text="{Binding PartOfSpeech}" Foreground="{DynamicResource AccentColor}" />
+                  <TextBlock Text="{Binding Level}" />
+                  <TextBlock Text="{Binding IsDraft, StringFormat='Draft: {0}'}" />
+                </StackPanel>
+                <TextBlock Grid.Row="3"
+                           Text="{Binding ContentArabicTranslation}"
+                           Margin="0,8,0,0"
+                           TextWrapping="Wrap" />
+                <TextBlock Grid.Row="4"
+                           Text="{Binding Examples}"
+                           Margin="0,8,0,0"
+                           TextWrapping="Wrap"
+                           Opacity="0.8" />
+                <TextBlock Grid.Row="5"
+                           Text="{Binding Notes}"
+                           Margin="0,8,0,0"
+                           TextWrapping="Wrap"
+                           Opacity="0.8" />
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+
+    <Grid Grid.Row="2"
+          ColumnDefinitions="Auto,*,Auto"
+          Margin="0,12,0,0">
+      <controls:PaginationControl Grid.Column="1"
+                                  CurrentPage="{Binding CurrentPageNumber}"
+                                  TotalCount="{Binding TotalCount}"
+                                  PageSize="{Binding ResultPerPage}"
+                                  PageChangedCommand="{Binding GoToPageCommand}" />
+      <TextBlock Grid.Column="2" Background="Green"
+                 Text="{Binding Materials.Count, StringFormat='Showing {0}'}"
+                 VerticalAlignment="Center"
+                 Margin="12,0,0,0" />
+    </Grid>
+  </Grid>
+</UserControl>

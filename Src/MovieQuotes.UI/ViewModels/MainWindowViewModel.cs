@@ -12,6 +12,7 @@ using Avalonia;
 using Avalonia.Styling;
 using MovieQuotes.UI.Features.Settings;
 using MovieQuotes.UI.Features.Study;
+using MovieQuotes.UI.Features.Study.BrowseStudyMaterials;
 using MovieQuotes.UI.Features.Movies.WatchMovie;
 
 public partial class MainWindowViewModel : ViewModelBase
@@ -88,6 +89,9 @@ public partial class MainWindowViewModel : ViewModelBase
                 break;
             case "Study":
                 this.NavigationService.NavigateTo<StudyViewModel>();
+                break;
+            case "BrowseStudyMaterials":
+                this.NavigationService.NavigateTo<BrowseStudyMaterialsViewModel>();
                 break;
             case "Subtitle":
                 this.NavigationService.NavigateTo<SubtitleAddingViewModel>();
