@@ -11,7 +11,7 @@ public class BitmapValueConverter : IValueConverter
 {
     public static BitmapValueConverter Instance = new BitmapValueConverter();
 
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is null)
             return _defaultImage;

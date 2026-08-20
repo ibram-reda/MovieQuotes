@@ -49,13 +49,13 @@
 
   </Style>
   <Style Selector="Button.saveBtn">
-    <Setter Property="Background" Value="{DynamicResource OkBtnBackground}"/>
-    <Setter Property="Foreground" Value="{DynamicResource OkBtnForground}"/>
+    <Setter Property="Background" Value="{DynamicResource CorrectGreenBrush}"/>
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
   </Style>
 
   <Style Selector="Button.cancelBtn">
-    <Setter Property="Background" Value="{DynamicResource CancelBtnBackground}"/>
-    <Setter Property="Foreground" Value="{DynamicResource CancelBtnForground}"/>
+    <Setter Property="Background" Value="{DynamicResource ErrorRedBrush}"/>
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
   </Style>
 
   <Style Selector="Button.link">
@@ -67,14 +67,36 @@
   </Style>
 
   <Style Selector="StackPanel.navigation" >
-    <Setter Property="Orientation" Value="Horizontal"/>
-    <Setter Property="Background" Value="{DynamicResource SurfeceBackground}"/>
+    <Setter Property="Orientation" Value="Vertical"/>
+    <Setter Property="Background" Value="Transparent"/>
     <Setter Property="Margin" Value="0,0,0,5"/>
+    <Setter Property="Spacing" Value="4"/>
+  </Style>
+
+  <Style Selector="Button.menu-toggle">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Foreground" Value="{DynamicResource AppForeground}"/>
+    <Setter Property="FontSize" Value="22"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="0,8"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="Cursor" Value="Hand"/>
+  </Style>
+
+  <Style Selector="Button.nav-icon-button">
+    <Setter Property="Width" Value="48"/>
+    <Setter Property="Height" Value="36"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Foreground" Value="{DynamicResource AppForeground}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="Cursor" Value="Hand"/>
   </Style>
 
   <Style Selector="Button.contentbtn">
     <Setter Property="Background" Value="Transparent"/>
-    <Setter Property="Margin" Value="0"/>
+    <Setter Property="Margin" Value="5"/>
     <Setter Property="Padding" Value="0"/>
     <Setter Property="BorderThickness" Value="0"/>
     <Setter Property="Cursor" Value="Hand" />

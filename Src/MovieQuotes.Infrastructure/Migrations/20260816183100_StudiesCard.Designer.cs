@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieQuotes.Infrastructure;
 
@@ -10,9 +11,11 @@ using MovieQuotes.Infrastructure;
 namespace MovieQuotes.Infrastructure.Migrations
 {
     [DbContext(typeof(MovieQuotesDbContext))]
-    partial class MovieQuotesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260816183100_StudiesCard")]
+    partial class StudiesCard
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,8 +83,7 @@ namespace MovieQuotes.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CardId")
-                        .IsUnique();
+                    b.HasIndex("CardId");
 
                     b.ToTable("CardProgresses");
                 });
@@ -505,8 +507,8 @@ namespace MovieQuotes.Infrastructure.Migrations
             modelBuilder.Entity("MovieQuotes.Domain.Models.CardProgress", b =>
                 {
                     b.HasOne("MovieQuotes.Domain.Models.StudyCard", "Card")
-                        .WithOne("CardProgress")
-                        .HasForeignKey("MovieQuotes.Domain.Models.CardProgress", "CardId")
+                        .WithMany()
+                        .HasForeignKey("CardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -535,7 +537,7 @@ namespace MovieQuotes.Infrastructure.Migrations
             modelBuilder.Entity("MovieQuotes.Domain.Models.StudyCard", b =>
                 {
                     b.HasOne("MovieQuotes.Domain.Models.StudyMaterial", "StudyMaterial")
-                        .WithMany("StudyCards")
+                        .WithMany()
                         .HasForeignKey("StudyMaterialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -590,17 +592,6 @@ namespace MovieQuotes.Infrastructure.Migrations
             modelBuilder.Entity("MovieQuotes.Domain.Models.Movie", b =>
                 {
                     b.Navigation("Subtitles");
-                });
-
-            modelBuilder.Entity("MovieQuotes.Domain.Models.StudyCard", b =>
-                {
-                    b.Navigation("CardProgress")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MovieQuotes.Domain.Models.StudyMaterial", b =>
-                {
-                    b.Navigation("StudyCards");
                 });
 
             modelBuilder.Entity("MovieQuotes.Domain.Models.StudyPhrase", b =>

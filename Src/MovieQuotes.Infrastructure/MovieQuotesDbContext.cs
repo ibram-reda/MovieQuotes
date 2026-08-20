@@ -24,6 +24,9 @@ public class MovieQuotesDbContext : DbContext
     public DbSet<Word> Word => Set<Word>();
 
     public DbSet<StudyPhrase> StudyPhrases => Set<StudyPhrase>();
+    public DbSet<StudyCard> StudyCards => Set<StudyCard>();
+    public DbSet<StudyMaterial> StudyMaterials => Set<StudyMaterial>();
+    public DbSet<CardProgress> CardProgresses => Set<CardProgress>();
 
     public DbSet<StudyPhraseProgress> StudyPhraseProgress  => Set<StudyPhraseProgress>();
 
@@ -35,7 +38,10 @@ public class MovieQuotesDbContext : DbContext
         modelBuilder.ApplyConfiguration(new WordConfig());
         modelBuilder.ApplyConfiguration(new StudyPhraseConfig());
         modelBuilder.ApplyConfiguration(new StudyPhraseProgressConfig());  
-        modelBuilder.ApplyConfiguration(new GenreConfig());     
+        modelBuilder.ApplyConfiguration(new GenreConfig());   
+        modelBuilder.ApplyConfiguration(new StudyMaterialConfig());  
+        modelBuilder.ApplyConfiguration(new StudyCardConfig());  
+        modelBuilder.ApplyConfiguration(new CardProgressConfig());  
 
     }
 }

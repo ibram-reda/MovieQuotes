@@ -1,0 +1,228 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:MovieQuotes.UI.Features.Study"
+             x:DataType="vm:ActiveRecallViewModel"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="800"
+             x:Class="MovieQuotes.UI.Features.Study.ActiveRecallView"
+             Loaded="UserControl_Loaded">
+
+    <UserControl.Styles>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Transitions">
+                <Transitions><BrushTransition Property="Background" Duration="0:0:0.2"/></Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ActiveAccentPurpleColor}"/>
+        </Style>
+    </UserControl.Styles>
+
+    <!-- Main Layout: Outer Padding -->
+    <Grid RowDefinitions="Auto, *" Margin="16">
+
+        <!-- Header/Top Bar -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto, Auto" Margin="0,0,0,24">
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+                <TextBlock Text="Study" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <PathIcon Data="{StaticResource book_open_regular}" FontSize="20" Foreground="{DynamicResource HighlightPurpleTextColor}" VerticalAlignment="Center" />
+
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Scrollable Content Area -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16">
+
+                <!-- Card Counter and Timer Header -->
+                <Grid ColumnDefinitions="Auto, *, Auto">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <TextBlock Grid.Column="0" Text="{Binding CurrentPhraseIndex, StringFormat='Card {0} / '}" Foreground="{StaticResource SecondaryTextBrush}" FontSize="12"/>
+                        <TextBlock Grid.Column="0" Text="{Binding TotalPhrases}" Foreground="{StaticResource SecondaryTextBrush}" FontSize="12"/>
+
+                    </StackPanel>
+                    <!-- Progress Bar -->
+                    <ProgressBar Grid.Column="1" Value="{Binding CurrentPhraseIndex}" Height="4" Minimum="0" Maximum="{Binding TotalPhrases}"
+                                 Foreground="{DynamicResource PrimaryAccentBrush}" Background="{DynamicResource ProgressBackgroundColor}"
+                                 VerticalAlignment="Center" Margin="12,0"/>
+                    <TextBlock x:Name="TxtTime" Grid.Column="2" Text="Elapsed Time: few secondes" Foreground="{StaticResource SecondaryTextBrush}" FontSize="12"/>
+                </Grid>
+
+                <!-- Active Question Card -->
+                <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="{StaticResource StandardCornerRadius}" Padding="24">
+                    <StackPanel Spacing="20">
+                        <Grid ColumnDefinitions="*, Auto,Auto,auto,auto">
+                            <TextBlock Grid.Column="0" Text="WRITE THE MISSING WORD" Foreground="{DynamicResource HighlightPurpleTextColor}" FontSize="11" LetterSpacing="0.5" FontWeight="Medium"/>
+                            <Button Grid.Column="1" IsVisible="{Binding HasChecked}"
+                                    Foreground="{DynamicResource WarningPatternColor}" Background="Transparent" BorderBrush="Transparent"
+                                    CornerRadius="4"
+                                    FontSize="13" Command="{Binding UndoAnswerCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <PathIcon Data="{StaticResource arrow_undo_regular}" />
+                                    <TextBlock Text="Undo" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="2"  FontSize="13" Command="{Binding EditStudyCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <PathIcon Data="{StaticResource edit_regular}" />
+                                    <TextBlock Text="Edit Study" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="3"  FontSize="13" Command="{Binding ShowHintCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <PathIcon Data="{StaticResource eye_show_regular}" />
+                                    <TextBlock Text="Show Hint" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="4" FontSize="13" Command="{Binding PlayAudioCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <PathIcon Data="{StaticResource speaker_regular}" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <TextBlock Text="{Binding QuestionText}" FontSize="18" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding CurrentPhrase?.ArContentTranslation}"
+                                   IsVisible="{Binding IsHintVisible}" Foreground="{DynamicResource secondaryTextBrush}"
+                                   FontSize="16" TextWrapping="Wrap"/>
+
+
+                        <!-- Input Area -->
+                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="12">
+                            <TextBox Grid.Column="0" x:Name="AnswerInputTextBox" Text="{Binding AnswerInput}"
+                                     IsEnabled="{Binding !HasChecked}"
+                                     Background="{DynamicResource AppBackgroundColor}" BorderBrush="{DynamicResource ErrorStatusColor}" BorderThickness="1"
+                                     FontSize="16" Padding="12,8"/>
+                            <!-- Delete 'x' icon is part of TextBox template in Avalonia usually,
+                            but added here for exact replication inside the padding -->
+                            <TextBlock Grid.Column="0" Text="&#xE711;" Foreground="{DynamicResource SecondaryTextBrush}"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0" IsHitTestVisible="False"/>
+
+                            <Button Grid.Column="1"
+                                    IsDefault="{Binding !HasChecked}"
+                                    Command="{Binding CheckAnswerCommand}"
+                                    Content="Check"
+                                    Background="{DynamicResource PrimaryAccentBrush}"
+                                    Foreground="White" Padding="24,10"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Next Button-->
+                <Button Background="{DynamicResource PrimaryAccentBrush}"
+                        Command="{Binding ShowNextPhraseCommand}"
+                        IsDefault="{Binding HasChecked}"
+                        Foreground="White">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="Next Card" VerticalAlignment="Center"/>
+                        <TextBlock Text="->" VerticalAlignment="Center"/> 
+                    </StackPanel>
+                </Button>
+
+                <!-- Answer Feedback Section -->
+                <Grid IsVisible="{Binding IsAnswerVisible}">
+                    <!-- Correct Answer -->
+                    <Border IsVisible="{Binding IsAnswerCorrect}"
+                            Padding="20"
+                            CornerRadius="10">
+
+                        <StackPanel Spacing="8">
+                            <TextBlock
+                                Text="✓ Correct"
+                                FontSize="22"
+                                FontWeight="Bold"
+                                Foreground="{DynamicResource CorrectGreenBrush}" />
+
+                            <TextBlock
+                                Text="{Binding CurrentPhrase.Content}"
+                                FontSize="28" />
+
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Wrong Answer-->
+
+
+                    <!-- Result Analysis Block (Visible Only on Incorrect) -->
+                    <Border Background="#2A171C" IsVisible="{Binding !IsAnswerCorrect}"
+                            BorderBrush="#E57373" BorderThickness="1"
+                            CornerRadius="{StaticResource StandardCornerRadius}" Padding="24">
+
+                        <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto,Auto" ColumnSpacing="24">
+                            <!-- Header Left -->
+                            <StackPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" Orientation="Horizontal" Spacing="12" Margin="0,0,0,16">
+                                <Border Background="#E57373" CornerRadius="50" Width="24" Height="24">
+                                    <TextBlock Text="!" Foreground="{DynamicResource SecondaryTextBrush}" FontWeight="Bold" TextAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" FontSize="24"/>
+                                </Border>
+                                <TextBlock Text="Incorrect" Foreground="#E57373" FontWeight="SemiBold" FontSize="24" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Content Left -->
+                            <StackPanel Grid.Column="0" Grid.Row="1" Spacing="8">
+                                <TextBlock Text="The correct spelling is:" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12"/>
+                                <TextBlock Text="{Binding CurrentPhrase.Content}" Foreground="{DynamicResource CorrectGreenBrush}" FontSize="22" FontWeight="Medium"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="0" Grid.Row="2" Spacing="8">
+                                <TextBlock Text="Your answer analysis" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" HorizontalAlignment="Left"/>
+                                <TextBlock Text="{Binding SpellingAnalysis.Actual}" Foreground="#E57373" FontSize="16" TextDecorations="Strikethrough"/>
+
+                            </StackPanel>
+
+                            <!-- Content Right: Analysis -->
+                            <StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Grid.RowSpan="2" Spacing="12">
+
+                                <!-- Letter-by-letter diff -->
+                                <StackPanel Spacing="1" HorizontalAlignment="Right">
+                                    <TextBlock x:Name="CorrectTextBlock"
+                                               FontSize="30" LineSpacing="5"
+                                               FontFamily="monospaced"
+                                               FontWeight="SemiBold" />
+                                    <!--wrong answer don't display it to focuose only on corret one-->
+                                    <TextBlock x:Name="AnswerTextBlock"
+                                               IsVisible="False" 
+                                               FontSize="30" LineSpacing="5"
+                                               FontFamily="monospaced"
+                                               FontWeight="SemiBold" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding ErrorPattern}" Foreground="#E57373" FontSize="10" HorizontalAlignment="Right"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+
+                <!-- Meaning Block -->
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        CornerRadius="{StaticResource StandardCornerRadius}" Padding="20">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <StackPanel Grid.Column="0" Spacing="8">
+                            <TextBlock Text="Meaning" Foreground="{DynamicResource HighlightPurpleTextColor}" FontSize="12" FontWeight="Medium"/>
+                            <TextBlock Text="{Binding CurrentPhrase.Translation}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Example in Context Block -->
+                <Border Background="{DynamicResource CardBackgroundBrush}" IsVisible="{Binding IsAnswerVisible}" CornerRadius="{StaticResource StandardCornerRadius}" Padding="20">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <StackPanel Grid.Column="0" Spacing="8">
+                            <TextBlock Text="Example in context" Foreground="{DynamicResource HighlightPurpleTextColor}" FontSize="12" FontWeight="Medium"/>
+                            <TextBlock TextWrapping="Wrap" Text="{Binding CurrentPhrase.Examples}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

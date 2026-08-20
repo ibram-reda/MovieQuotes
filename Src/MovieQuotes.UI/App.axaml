@@ -2,53 +2,30 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="MovieQuotes.UI.App"
              xmlns:local="using:MovieQuotes.UI"
-             xmlns:converters ="using:MovieQuotes.UI.Converters"             
+             xmlns:converters ="using:MovieQuotes.UI.Converters"
              RequestedThemeVariant="Dark">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+  <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
-  
-    <Application.Styles>
-        <FluentTheme />  
-        <StyleInclude Source="/Assets/MainStyle.axaml" />
-        <StyleInclude Source="avares://MovieQuotes.UI/Styles/Icons.axaml"/>
-    </Application.Styles>
+  <Application.DataTemplates>
+    <local:ViewLocator/>
+  </Application.DataTemplates>
+
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="/Assets/MainStyle.axaml" />
+    <StyleInclude Source="avares://MovieQuotes.UI/Styles/Icons.axaml"/>
+  </Application.Styles>
 
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        
-        <ResourceDictionary>
-          <ResourceDictionary.ThemeDictionaries>
-            <ResourceDictionary x:Key='Light'>
-              <SolidColorBrush x:Key='AppBackground'>#eee</SolidColorBrush>
-              <SolidColorBrush x:Key='AppForeground'>Black</SolidColorBrush>
-              <SolidColorBrush x:Key='SurfeceBackground'>#aaa</SolidColorBrush>
-              <SolidColorBrush x:Key='OkBtnBackground'>DarkGreen</SolidColorBrush>
-              <SolidColorBrush x:Key='OkBtnForground'>DarkGreen</SolidColorBrush>
-              <SolidColorBrush x:Key='CancelBtnBackground'>DarkGreen</SolidColorBrush>
-              <SolidColorBrush x:Key='CancelBtnForground'>DarkGreen</SolidColorBrush>
-            </ResourceDictionary>
-            <ResourceDictionary x:Key='Dark'>
-              <SolidColorBrush x:Key='AppBackground'>#222</SolidColorBrush>
-              <SolidColorBrush x:Key='AppForeground'>white</SolidColorBrush>
-              <SolidColorBrush x:Key='SurfeceBackground'>#333</SolidColorBrush>
-              <SolidColorBrush x:Key='OkBtnBackground'>#2a2</SolidColorBrush>
-              <SolidColorBrush x:Key='OkBtnForground'>#efe</SolidColorBrush>
-              <SolidColorBrush x:Key='CancelBtnBackground'>#d33</SolidColorBrush>
-              <SolidColorBrush x:Key='CancelBtnForground'>White</SolidColorBrush>
-            </ResourceDictionary>
-          </ResourceDictionary.ThemeDictionaries>
-        </ResourceDictionary>
-        
-        <ResourceInclude Source="/Views/Controls/TimeSpanControl.axaml"/>
-        <ResourceInclude Source="/Views/Controls/RichTextBlock.axaml"/>
+        <MergeResourceInclude Source="/Styles/AppResources.axaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
+
     <converters:BitmapValueConverter x:Key="PathToBitmapConverter" />
     <converters:LongToTimeConverter x:Key="LongToTimeConverter" />
     <converters:IsDateInThePastConverter x:Key="IsDateInThePastConverter" />
+    <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons</FontFamily>
   </Application.Resources>
 </Application>

@@ -11,76 +11,149 @@
         MinHeight="450"
         Icon="/Assets/avalonia-logo.ico"
         Title="{Binding WindowTitle}">
-   
-  
-  <Grid RowDefinitions="auto,*,auto">
 
-    <StackPanel Classes="navigation" 
-                IsVisible="{Binding RenderNavigationBar}">
-      <Button Classes="link"
-                Command="{Binding NavigateCommand}"
-                CommandParameter="InsertNewMovie">
-        01. Insert New Moview
-      </Button>
-      <Button Classes="link"
-              Command="{Binding NavigateCommand}"
-              CommandParameter="GetMovies">
-        02. Brows avalible movies
-      </Button>
 
-      <Button Classes="link" 
-              Command="{Binding NavigateCommand}"
-              CommandParameter="PlayBack">
-        03. Search &amp; Playback
-      </Button>
+  <Grid ColumnDefinitions="Auto,*" Background="{DynamicResource AppBackgroundColor}">
 
-      <Button Classes="link" 
-              Command="{Binding NavigateCommand}"
-              CommandParameter="Study">
-        04. Study
-      </Button>
+    <!-- Navigation Menu -->
+    <Border Grid.Column="0"
+            Width="{Binding NavigationMenuWidth}"
+            IsVisible="{Binding RenderNavigationBar}"
+            Background="{DynamicResource CardBackgroundColor}">
+      <Grid RowDefinitions="Auto,*">
+        <Button Classes="menu-toggle"
+                Command="{Binding ToggleNavigationMenuCommand}"
+                Content="☰"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Margin="8" />
 
-      <Button Classes="link" 
-              Command="{Binding NavigateCommand}"
-              CommandParameter="Subtitle">
-        05. Subtitle
-      </Button>
+        <StackPanel Grid.Row="1"
+                    Classes="navigation"                    
+                    VerticalAlignment="Top">
+          <Button Classes="link"
+                  Command="{Binding NavigateCommand}"
+                  CommandParameter="InsertNewMovie">
+            <StackPanel Orientation="Horizontal">
+              <PathIcon Data="{StaticResource add_square_regular}"/>
+              <Label Content="Add New Movie" IsVisible="{Binding IsNavigationMenuOpen}"/>
+            </StackPanel>
+          </Button>
+          <Button Classes="link"
+                  Command="{Binding NavigateCommand}"
+                  CommandParameter="GetMovies">
+            <StackPanel Orientation="Horizontal">
+              <PathIcon Data="{StaticResource movies_and_tv_regular}"/>
+              <Label Content="Browse Movies" IsVisible="{Binding IsNavigationMenuOpen}"/>
+            </StackPanel>
+          </Button>
 
-      <Button Classes="link"
-              Command="{Binding NavigateCommand}"
-              CommandParameter="ResyncSubtitle">
-        06. Resync Subtitle
-      </Button>
+          <Button Classes="link"
+                  Command="{Binding NavigateCommand}"
+                  CommandParameter="PlayBack">
+            <StackPanel Orientation="Horizontal">
+              <PathIcon Data="{StaticResource search_square_regular}"/>
+              <Label Content="Search &amp; Playback" IsVisible="{Binding IsNavigationMenuOpen}"/>
+            </StackPanel>
+          </Button>
 
-        <Button  Content="Clear Error"
-                 Command="{Binding CurrentViewModel.ClearErrorsCommand }"/>
+          <Button Classes="link"
+                  Command="{Binding NavigateCommand}"
+                  CommandParameter="Study">
+                  
+            <StackPanel Orientation="Horizontal">
+              <PathIcon Data="{StaticResource document_one_page_regular}"/>
+              <Label Content="Study" IsVisible="{Binding IsNavigationMenuOpen}"/>
+            </StackPanel>
+          </Button>
 
-      <ToggleSwitch IsChecked="{Binding IsDarkMode}"
-                    OnContent="Dark" OffContent="Light" />
-    </StackPanel>
+          <Button Classes="link"
+                  Command="{Binding NavigateCommand}"
+                  CommandParameter="Subtitle">
+            <StackPanel Orientation="Horizontal">
+              <PathIcon Data="{StaticResource text_font_regular}"/>
+              <Label Content="Subtitle" IsVisible="{Binding IsNavigationMenuOpen}"/>
+            </StackPanel>
+          </Button>
 
-    <!--Content-->
-     <ContentControl Grid.Row="1"
-       Content="{Binding CurrentViewModel}"/>
+          <Button Classes="link"
+                  Command="{Binding NavigateCommand}"
+                  CommandParameter="ActiveRecall">
+            <StackPanel Orientation="Horizontal">
+              <PathIcon Data="{StaticResource headset_regular}"/>
+              <Label Content="Active Racall" IsVisible="{Binding IsNavigationMenuOpen}"/>
+            </StackPanel>
+          </Button>
 
-    <!--overlay Is Bussy-->
-    <Border Grid.Row="1" IsVisible="{Binding CurrentViewModel.IsBusy}"  >
-      <Grid Background="#30303091" >
-        <TextBlock VerticalAlignment="Center" 
-                   Background="{DynamicResource SurfeceBackground}"
-                   Foreground="{DynamicResource AppForeground}"
-                   Padding="5"
-                   FontSize="24"
-                   HorizontalAlignment="Center"
-                   Text="the current view is Bussy ..."/>
+          <Button Classes="link"
+                  Command="{Binding NavigateCommand}"
+                  CommandParameter="ResyncSubtitle">
+            <StackPanel Orientation="Horizontal">
+              <PathIcon Data="{StaticResource text_font_regular}"/>
+              <Label Content="ResyncSubtitle" />
+            </StackPanel>
+          </Button>
+
+          <Button Classes="link"
+                  Command="{Binding NavigateCommand}"
+                  CommandParameter="Settings">
+            <StackPanel Orientation="Horizontal">
+              <PathIcon Data="{StaticResource settings_regular}"/>
+              <Label Content="Settings" />
+            </StackPanel>
+          </Button>
+
+          <Button Content="Clear Error"
+                  Command="{Binding CurrentViewModel.ClearErrorsCommand}" />
+
+          <ToggleSwitch IsChecked="{Binding IsDarkMode}"
+                        OnContent="Dark"
+                        OffContent="Light" />
+        </StackPanel>
+
         
       </Grid>
-      
     </Border>
- 
-    <!--Error Messages-->
-    <ItemsControl Grid.Row="2"
-                  ItemsSource="{Binding CurrentViewModel.ErrorMessages}"
-                  Foreground="Red"/>
+
+    <Grid Grid.Column="1" RowDefinitions="*,Auto">
+      <!--Content-->
+      <ContentControl Grid.Row="0"
+                      Content="{Binding CurrentViewModel}"/>
+
+      <!-- Dialog View -->
+      <Panel Grid.Row="0" IsVisible="{Binding CurrentViewModel.ShowEditDialog}"
+             Background="{DynamicResource CardBackgroundColor}"
+             Width="700"
+             VerticalAlignment="Center">
+        <Border BorderThickness="1"
+                BorderBrush="{DynamicResource PrimaryAccentPurpleColor}"
+                CornerRadius="{StaticResource StandardCornerRadius}">
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Disabled" >
+            <ContentControl Content="{Binding CurrentViewModel.Dialogue}"/>
+          </ScrollViewer>
+        </Border>
+      </Panel>
+
+      <!--overlay Is Bussy-->
+      <Border Grid.Row="0" IsVisible="{Binding CurrentViewModel.IsBusy}"  >
+        <Grid Background="#30303091" >
+          <TextBlock VerticalAlignment="Center"
+                     Background="{DynamicResource SurfeceBackground}"
+                     Foreground="{DynamicResource AppForeground}"
+                     Padding="5"
+                     FontSize="24"
+                     HorizontalAlignment="Center"
+                     Text="the current view is Bussy ..."/>
+
+        </Grid>
+
+      </Border>
+
+      <!--Error Messages-->
+      <ItemsControl Grid.Row="1"
+                    ItemsSource="{Binding CurrentViewModel.ErrorMessages}"
+                    Foreground="Red"/>
+    </Grid>
   </Grid>
 </Window>

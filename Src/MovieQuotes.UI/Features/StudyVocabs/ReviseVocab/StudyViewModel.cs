@@ -30,11 +30,10 @@ public partial class StudyViewModel : PageViewModelBase
     [NotifyCanExecuteChangedFor(nameof(ShowFolderCommand))]
     [NotifyCanExecuteChangedFor(nameof(EditPhraseCommand))]
     [ObservableProperty] StudyPhrase? currentPlayingPhrase;
-    [NotifyCanExecuteChangedFor(nameof(EditPhraseCommand))]
-    [ObservableProperty] bool showEditDialog = false;
-    public bool IsDialogClosed => !ShowEditDialog;
+
+    
+
     [ObservableProperty] StudyPhrasesGroupByMovie? selectedMovie;
-    [ObservableProperty] DialogueViewModelBase? dialogue;
 
     [ObservableProperty] bool _ShowCompleteContent = false;
     [ObservableProperty] bool _ShowPhraseContent = false;

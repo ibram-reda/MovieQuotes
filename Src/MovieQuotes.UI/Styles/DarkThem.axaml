@@ -1,0 +1,62 @@
+
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
+
+
+    <!-- === Primary & Background Colors === -->
+    <!-- Main application background -->
+    <Color x:Key="AppBackgroundColor">#131829</Color>
+    <!-- Background color for cards, blocks, and text input -->
+    <Color x:Key="CardBackgroundColor">#191F33</Color>
+    <!-- Main brand/UI accent purple (Buttons, Slider) -->
+    <Color x:Key="PrimaryAccentPurpleColor">#7E57C2</Color>
+    <!-- Slightly lighter purple for hover/active states -->
+    <Color x:Key="ActiveAccentPurpleColor">#8F6AD6</Color>
+
+    <!-- === Text Colors === -->
+    <!-- Primary white/light gray for standard text -->
+    <Color x:Key="PrimaryTextColor">#E6E7E8</Color>
+    <!-- Muted gray for secondary info, labels, and context -->
+    <Color x:Key="SecondaryTextColor">#AFC591</Color>
+    <!-- Lighter purple used for inline text highlights -->
+    <Color x:Key="HighlightPurpleTextColor">#A084E0</Color>
+    <!-- Green used for correct answers -->
+    <Color x:Key="CorrectAnswerTextColor">#66BB6A</Color>
+
+    <!-- === Feedback & Status Colors === -->
+    <!-- Red for error states and incorrect answers -->
+    <Color x:Key="ErrorStatusColor">#E57373</Color>
+    <Color x:Key="ErrorStatusColor2">#EFEB682B</Color>
+    <!-- Yellow for warnings and detected error patterns -->
+    <Color x:Key="WarningPatternColor">#FFD54F</Color>
+
+    <!-- === Progress/Skill Meters === -->
+    <!-- Green for "Strong" (90%+) -->
+    <Color x:Key="ProgressBackgroundColor">#2C3550</Color>
+    <Color x:Key="ProgressStrongColor">#4CAF50</Color>
+    <!-- Blue for "Good" (80-89%) -->
+    <Color x:Key="ProgressGoodColor">#2196F3</Color>
+    <!-- Light Green for "Excellent" (95%+) -->
+    <Color x:Key="ProgressExcellentColor">#8BC34A</Color>
+    <!-- Orange for "Needs Work" (70-79%) -->
+    <Color x:Key="ProgressNeedsWorkOrangeColor">#FF9800</Color>
+    <!-- Red for "Needs Work" (<70%) -->
+    <Color x:Key="ProgressNeedsWorkRedColor">#F44336</Color>
+
+
+
+    <!-- === Optional: SolidColorBrush Definitions === -->
+    <!-- If you prefer using Brushes directly in your XAML -->
+
+    <SolidColorBrush x:Key="AppBackground" Color="{StaticResource AppBackgroundColor}" />
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource AppBackgroundColor}" />
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" />
+    <SolidColorBrush x:Key="PrimaryAccentBrush" Color="{StaticResource PrimaryAccentPurpleColor}" />
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryTextColor}" />
+
+    <SolidColorBrush x:Key="SecondaryTextBrush">#A1A7B3</SolidColorBrush>
+    <SolidColorBrush x:Key="CorrectGreenBrush">#66BB6A</SolidColorBrush>
+    <SolidColorBrush x:Key="ErrorRedBrush">#E57373</SolidColorBrush>
+    <CornerRadius x:Key="StandardCornerRadius">8</CornerRadius>
+
+</ResourceDictionary>

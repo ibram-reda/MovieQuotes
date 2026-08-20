@@ -10,10 +10,18 @@ using MovieQuotes.UI.Services;
 using System;
 using Avalonia;
 using Avalonia.Styling;
+using MovieQuotes.UI.Features.Settings;
+using MovieQuotes.UI.Features.Study;
+using MovieQuotes.UI.Features.Movies.WatchMovie;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
+    private const double ExpandedNavigationWidth = 220;
+    private const double CollapsedNavigationWidth = 70;
+
     [ObservableProperty] private bool _RenderNavigationBar = true;
+    [ObservableProperty] private bool _isNavigationMenuOpen = true;
+    [ObservableProperty] private double _navigationMenuWidth = ExpandedNavigationWidth;
     [ObservableProperty] private string _WindowTitle = "";
     [ObservableProperty] bool _isDarkMode = true;
 
@@ -23,6 +31,11 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             app.RequestedThemeVariant = value ? ThemeVariant.Dark : ThemeVariant.Light;
         }
+    }
+
+    partial void OnIsNavigationMenuOpenChanged(bool value)
+    {
+        NavigationMenuWidth = value ? ExpandedNavigationWidth : CollapsedNavigationWidth;
     }
 
     [System.Obsolete("For design-time use only")]
@@ -46,8 +59,20 @@ public partial class MainWindowViewModel : ViewModelBase
                 WindowTitle = $"{Title} : {CurrentViewModel.Title}";
 
         };
+        if(CurrentViewModel is WatchMovieViewModel){
+            NavigationMenuWidth = 0;
+        }else
+        {
+            NavigationMenuWidth = ExpandedNavigationWidth;
+        }  
 
         this.RenderNavigationBar = true;
+    }
+
+    [RelayCommand]
+    private void ToggleNavigationMenu()
+    {
+        IsNavigationMenuOpen = !IsNavigationMenuOpen;
     }
 
     [RelayCommand]
@@ -73,12 +98,18 @@ public partial class MainWindowViewModel : ViewModelBase
             case "ResyncSubtitle":
                 this.NavigationService.NavigateTo<ResyncSubtitleViewModel>();
                 break;
+            case "Settings":
+                this.NavigationService.NavigateTo<SettingsViewModel>();
+                break;
+            case "ActiveRecall":
+                this.NavigationService.NavigateTo<ActiveRecallViewModel>();
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
-    public ViewModelBase CurrentViewModel => NavigationService.CurrentViewModel;
+    public PageViewModelBase CurrentViewModel => NavigationService.CurrentViewModel;
 
 
     public override string Title => "Movie Quotes";

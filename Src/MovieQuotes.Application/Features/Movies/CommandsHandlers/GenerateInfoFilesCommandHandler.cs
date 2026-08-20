@@ -23,15 +23,9 @@ public class GenerateInfoFilesCommandHandler : IRequestHandler<GenerateInfoFiles
         this.movieQUnitOfWork = movieQUnitOfWork;
         this.tmdbService = tmdbService;
     } 
-     class Response
-    {
-        List<Genre> Genres { get; set; } = new List<Genre>();
-    }
     public async Task<OperationResult<bool>> Handle(GenerateInfoFilesCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<bool>();
-
-         
 
         var movies = await this.movieQUnitOfWork.Movies.GetAllAsync();
 

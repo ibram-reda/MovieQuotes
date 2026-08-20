@@ -186,8 +186,16 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
     }
 
     [RelayCommand]
+    async Task GoToPrevious()
+    {
+        this.MainMediaPlayer.Stop();
+        this.NavigationService.GoBack();
+    }
+
+    [RelayCommand]
     async Task OpenPopUp()
     {
+        
         if (this.MainMediaPlayer.IsPlaying)
             this.MainMediaPlayer.Pause();
         this.CreateStudy = new(CurrentPhrase?.Id ?? 0, CurrentPhrase?.Text ?? "", CurrentArPhrase?.Text ?? "");
