@@ -3,6 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:MovieQuotes.UI.Features.Study.BrowseStudyMaterials"
+             xmlns:movieModels="using:MovieQuotes.Application.Features.Movies.Models"
+             xmlns:studyModels="using:MovieQuotes.Application.Features.Study"
              xmlns:controls="using:MovieQuotes.UI.Views.Controls"
              x:Class="MovieQuotes.UI.Features.Study.BrowseStudyMaterials.BrowseStudyMaterialsView"
              x:DataType="vm:BrowseStudyMaterialsViewModel"
@@ -12,6 +14,9 @@
              Loaded="BrowseStudyMaterialsView_Loaded">
 
   <UserControl.Styles>
+    <Style Selector="Border.draft">
+      <Setter Property="Background" Value="{DynamicResource ErrorStatusColor}"/>
+    </Style>
     <Style Selector="TextBox.filter">
       <Setter Property="Margin" Value="0,0,8,0" />
       <Setter Property="MinWidth" Value="150" />
@@ -36,11 +41,43 @@
                     Orientation="Horizontal"
                     Margin="0,12,0,0">
           <TextBlock Text="Movie ID" Classes="label" />
-          <TextBox Classes="filter" Text="{Binding MovieIdFilter, Mode=TwoWay}" PlaceholderText="Any movie" />
+          <ComboBox Classes="filter"
+                    ItemsSource="{Binding Movies}"
+                    SelectedItem="{Binding SelectedMovie, Mode=TwoWay}"
+                    PlaceholderText="Any movie">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="movieModels:MovieWithStudyMaterialCount">
+                <StackPanel>
+                  <StackPanel Orientation="Horizontal" >
+                    <Image Width="30" Source="{Binding CoverUrl,Converter={StaticResource PathToBitmapConverter}}"/>
+                    <TextBlock Text="{Binding Title}"
+                               Width="200"
+                               VerticalAlignment="Center"
+                               TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding StudyMaterialCount}"
+                               VerticalAlignment="Center"
+                               Foreground="Yellow"/>
+                  </StackPanel>
+                </StackPanel>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
           <TextBlock Text="Level" Classes="label" />
           <TextBox Classes="filter" Text="{Binding LevelFilter, Mode=TwoWay}" PlaceholderText="Any level" />
           <TextBlock Text="Part of speech" Classes="label" />
-          <TextBox Classes="filter" Text="{Binding PartOfSpeechFilter, Mode=TwoWay}" PlaceholderText="Any type" />
+          <ComboBox Classes="filter"
+                    ItemsSource="{Binding PartOfSpeechCounts}"
+                    SelectedItem="{Binding SelectedPartOfSpeech, Mode=TwoWay}"
+                    PlaceholderText="Any type">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="studyModels:PartOfSpeechCountDto">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <TextBlock Text="{Binding PartOfSpeech}" />
+                  <TextBlock Text="{Binding Count, StringFormat='({0})'}" Opacity="0.7" />
+                </StackPanel>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
           <TextBox Classes="filter" Width="220"
                    Text="{Binding SearchText, Mode=TwoWay}"
                    PlaceholderText="Search materials">
@@ -66,36 +103,60 @@
             <Border Width="330"
                     Margin="0,0,12,12"
                     Padding="14"
+                    Classes.draft="{Binding IsDraft}"
                     Background="{DynamicResource CardBackgroundColor}"
                     CornerRadius="4">
-              <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
-                <TextBlock Text="{Binding Content}"
+              <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
+                <Grid ColumnDefinitions="*,auto" >
+                       <TextBlock Text="{Binding Origin}"
                            FontSize="18"
                            FontWeight="Bold"
                            TextWrapping="Wrap" />
-                <TextBlock Grid.Row="1"
+                  
+                        <TextBlock Text="{Binding Content}"
+                          IsVisible="{Binding Origin, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap" />
+                        <TextBlock Grid.Column="1" Text="{Binding Level}" />
+                        
+                </Grid>
+                
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center" Margin="0,10,0,0">
+                  <TextBlock Text="{Binding PartOfSpeech}" Foreground="{DynamicResource SecondaryTextColor}" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding ContentArabicTranslation}"
+                          FlowDirection="RightToLeft"
+                          VerticalAlignment="Top"
+                           Margin="0,8,0,0"
+                           TextWrapping="Wrap" />
+                </StackPanel>
+
+                <TextBlock Grid.Row="2"
                            Text="{Binding Definition}"
                            Margin="0,6,0,0"
                            TextWrapping="Wrap" />
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12" Margin="0,10,0,0">
-                  <TextBlock Text="{Binding PartOfSpeech}" Foreground="{DynamicResource AccentColor}" />
-                  <TextBlock Text="{Binding Level}" />
-                  <TextBlock Text="{Binding IsDraft, StringFormat='Draft: {0}'}" />
-                </StackPanel>
-                <TextBlock Grid.Row="3"
-                           Text="{Binding ContentArabicTranslation}"
-                           Margin="0,8,0,0"
-                           TextWrapping="Wrap" />
+
+                <GridSplitter Grid.Row="3" BorderThickness="1" BorderBrush="{DynamicResource SecondaryTextColor}" Height="1" />
+
+                
                 <TextBlock Grid.Row="4"
                            Text="{Binding Examples}"
                            Margin="0,8,0,0"
                            TextWrapping="Wrap"
                            Opacity="0.8" />
-                <TextBlock Grid.Row="5"
-                           Text="{Binding Notes}"
-                           Margin="0,8,0,0"
-                           TextWrapping="Wrap"
-                           Opacity="0.8" />
+                
+                <!--Button Arrea-->
+                <Grid Grid.Row="5" ColumnDefinitions="auto,auto,*,auto" VerticalAlignment="Bottom">
+                  <Button Grid.Column="0">
+                    <PathIcon Data="{StaticResource edit_regular}" />
+                  </Button>
+
+                  <Button Grid.Column="1" >+</Button>
+
+                  <Button Grid.Column="3" ></Button>
+
+
+                </Grid>
               </Grid>
             </Border>
           </DataTemplate>

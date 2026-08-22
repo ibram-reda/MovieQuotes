@@ -1,5 +1,6 @@
 namespace MovieQuotes.UI.Features.Study.BrowseStudyMaterials;
 
+using System.Threading.Tasks;
 using Avalonia.Controls;
 
 public partial class BrowseStudyMaterialsView : UserControl
@@ -9,9 +10,11 @@ public partial class BrowseStudyMaterialsView : UserControl
         InitializeComponent();
     }
 
-    private void BrowseStudyMaterialsView_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void BrowseStudyMaterialsView_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is BrowseStudyMaterialsViewModel viewModel)
-            viewModel.LoadMaterialsCommand.Execute(null);
+        {
+             await viewModel.InitAsync(null);           
+        }
     }
 }
