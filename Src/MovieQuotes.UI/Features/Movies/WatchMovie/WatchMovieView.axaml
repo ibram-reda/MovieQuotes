@@ -46,7 +46,7 @@
           <ScrollViewer HorizontalScrollBarVisibility="Auto"
                         VerticalScrollBarVisibility="Auto" >
 
-            <ContentControl Content="{Binding CreateStudy}"/>
+            <ContentControl Content="{Binding CreateStudyMaterial}"/>
           </ScrollViewer>
         </Panel>
 
@@ -77,7 +77,7 @@
       <StackPanel Grid.Row="0" Spacing="5"
                   Grid.Column="2">
 
-        <Button Content="Add To Study phrases"
+        <Button Content="Add Study Material"
                 Focusable="False"
                 Command="{Binding OpenPopUpCommand}"/>
         <Button Content="Load en subs"

@@ -170,8 +170,13 @@ public class Movie
         }
     }
 
-    internal string GetVideoPath()
+    public string GetVideoPath()
     {
         return Path.Combine(BaseFolderDir, FolderName, VideoFilePath);
+    }
+    public string GetCoverUrl()
+    {
+        return Path.Combine(BaseFolderDir, FolderName, CoverFilePath);
+        
     }
 }

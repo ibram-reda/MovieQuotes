@@ -1,0 +1,88 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MovieQuotes.UI.Features.Study.EditStudyMaterial"
+             x:Class="MovieQuotes.UI.Features.Study.EditStudyMaterial.EditStudyMaterialView"
+             x:DataType="vm:EditStudyMaterialViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="700"
+             d:DesignHeight="700">
+
+  <UserControl.Styles>
+    <Style Selector="TextBox">
+      <Setter Property="Margin" Value="5" />
+      <Setter Property="Padding" Value="5" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="Margin" Value="5" />
+      <Setter Property="MinWidth" Value="180" />
+    </Style>
+    <Style Selector="TextBlock.label">
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Margin" Value="5" />
+    </Style>
+  </UserControl.Styles>
+
+  <ScrollViewer>
+    <StackPanel Margin="12" MinWidth="500">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Text="Edit Study Material" Classes="title" />
+        <Button Grid.Column="1" Content="Close" Command="{Binding CanceledCommand}" />
+      </Grid>
+
+      <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+            ColumnDefinitions="Auto,*"
+            Margin="0,12,0,0">
+        <TextBlock Grid.Row="0" Classes="label" Text="Content" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Content, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="1" Classes="label" Text="Definition" />
+        <TextBox Grid.Row="1" Grid.Column="1" AcceptsReturn="True" Text="{Binding Definition, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="2" Classes="label" Text="Part of speech" />
+        <ComboBox Grid.Row="2" Grid.Column="1"
+                  ItemsSource="{Binding AllowedPartOfSpeech}"
+                  SelectedItem="{Binding PartOfSpeech, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="3" Classes="label" Text="Arabic content" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ContentArabicTranslation, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="4" Classes="label" Text="Arabic phrase" />
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ArPhraseTranslation, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="5" Classes="label" Text="Origin" />
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Origin, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="6" Classes="label" Text="Synonyms" />
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Synonyms, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="7" Classes="label" Text="Examples" />
+        <TextBox Grid.Row="7" Grid.Column="1" AcceptsReturn="True" Text="{Binding Examples, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="8" Classes="label" Text="Notes" />
+        <TextBox Grid.Row="8" Grid.Column="1" AcceptsReturn="True" Text="{Binding Notes, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="9" Classes="label" Text="Level" />
+        <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Level, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="10" Classes="label" Text="Pronunciation" />
+        <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding Pronunciation, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="11" Classes="label" Text="Draft" />
+        <CheckBox Grid.Row="11" Grid.Column="1" IsChecked="{Binding IsDraft, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="12" Classes="label" Text="Vulgar" />
+        <CheckBox Grid.Row="12" Grid.Column="1" IsChecked="{Binding IsVulgar, Mode=TwoWay}" />
+      </Grid>
+
+      <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,12,0,0">
+        <Button Content="Save" Classes="saveBtn" Command="{Binding SaveCommand}" />
+        <Button Content="Cancel" Classes="cancelBtn" Command="{Binding CanceledCommand}" />
+      </StackPanel>
+
+      <ItemsControl Foreground="Red" ItemsSource="{Binding ErrorMessages}" Margin="5,12,5,0" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

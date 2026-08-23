@@ -147,11 +147,16 @@
                 
                 <!--Button Arrea-->
                 <Grid Grid.Row="5" ColumnDefinitions="auto,auto,*,auto" VerticalAlignment="Bottom">
-                  <Button Grid.Column="0">
+                  <Button Grid.Column="0"
+                      Command="{Binding $parent[ItemsControl].((vm:BrowseStudyMaterialsViewModel)DataContext).EditMaterialCommand}"
+                          CommandParameter="{Binding}">
                     <PathIcon Data="{StaticResource edit_regular}" />
                   </Button>
 
-                  <Button Grid.Column="1" >+</Button>
+                    <Button Grid.Column="1"
+                      Command="{Binding $parent[ItemsControl].((vm:BrowseStudyMaterialsViewModel)DataContext).ShowMaterialDetailsCommand}"
+                      CommandParameter="{Binding}"
+                      Content="Details" />
 
                   <Button Grid.Column="3" ></Button>
 

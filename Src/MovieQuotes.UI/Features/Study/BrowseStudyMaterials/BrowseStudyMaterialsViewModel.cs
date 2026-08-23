@@ -7,6 +7,8 @@ using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
 using MovieQuotes.Application.Features.Study;
 using MovieQuotes.Application.Features.Study.GetStudyMaterials;
+using MovieQuotes.UI.Features.Study.EditStudyMaterial;
+using MovieQuotes.UI.Features.Study.StudyMaterialDetails;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using System.Collections.ObjectModel;
@@ -104,6 +106,32 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
     private async Task LoadMaterials()
     {
         await LoadMaterialsAsync(CurrentPageNumber);
+    }
+
+    [RelayCommand]
+    private void EditMaterial(StudyMaterial material)
+    {
+        if (material is null)
+            return;
+
+        var dialogue = new EditStudyMaterialViewModel(material);
+        dialogue.OnSaved += async (isSaved, _) =>
+        {
+            if (isSaved)
+                await LoadMaterialsAsync(CurrentPageNumber);
+            this.ShowEditDialog = false;
+        };
+        this.Dialogue = dialogue;
+        this.ShowEditDialog = true;
+    }
+
+    [RelayCommand]
+    private async Task ShowMaterialDetails(StudyMaterial material)
+    {
+        if (material is null || material.Id <= 0)
+            return;
+
+        await NavigationService.NavigateToAsync<StudyMaterialDetailsViewModel>(material.Id);
     }
 
     private async Task LoadMaterialsAsync(uint pageNumber)

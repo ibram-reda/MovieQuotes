@@ -9,6 +9,7 @@ public class Phrase
     public string MoviePath { get; set; } = string.Empty;
 
     public string VideoLocation { get; set; } = string.Empty;
+    public string MovieCoverUrl {get; set;} = "";
 
     public TimeSpan StartTime { get; set; }
     public TimeSpan EndTime { get; set; }

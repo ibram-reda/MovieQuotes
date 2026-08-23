@@ -9,6 +9,16 @@ public class StudyMaterial
     public int PhraseId { get; private set; }
     public virtual SubtitlePhrase? Phrase { get; private set; }
 
+    public ICollection<StudyMaterialPhrase> Phrases { get; private set; } = [];
+
+    public StudyMaterialPhrase AddPhrase(int phraseId, string? arabicTranslation = null)
+    {
+        var sequence = Phrases.Count == 0 ? 1 : Phrases.Max(phrase => phrase.Sequance) + 1;
+        var materialPhrase = StudyMaterialPhrase.Create(Id, phraseId, sequence, arabicTranslation);
+        Phrases.Add(materialPhrase);
+        return materialPhrase;
+    }
+
 
     /// <summary>
     /// can be one of the following

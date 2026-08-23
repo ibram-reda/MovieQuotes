@@ -22,6 +22,7 @@ public class SubtitlePhrase
     public virtual Movie? Movie { get; private set; }
 
     public List<PhraseWords> PhraseWords { get; private set; } = [];
+    public ICollection<StudyMaterialPhrase> StudyMaterials { get; private set; } = [];
 
 
     public static SubtitlePhrase CreateSubtitlePhrase(int sequence, TimeSpan startTime, TimeSpan endTime, string text)

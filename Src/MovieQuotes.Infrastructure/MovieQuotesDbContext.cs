@@ -42,6 +42,8 @@ public class MovieQuotesDbContext : DbContext
         modelBuilder.ApplyConfiguration(new StudyMaterialConfig());  
         modelBuilder.ApplyConfiguration(new StudyCardConfig());  
         modelBuilder.ApplyConfiguration(new CardProgressConfig());  
+        modelBuilder.ApplyConfiguration(new StudyMaterialPhraseConfig());  
+        
 
     }
 }

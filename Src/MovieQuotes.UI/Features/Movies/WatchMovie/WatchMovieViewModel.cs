@@ -8,7 +8,7 @@ using MediatR;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.UI.Features.StudyVocabs.CreateVoab;
+using MovieQuotes.UI.Features.Study.CreateStudyMaterial;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using System;
@@ -77,7 +77,7 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
     [ObservableProperty] private bool viewContent;
     [ObservableProperty] bool showArabicSubs = true;
     [ObservableProperty] bool canLoadEnSubs = false;
-    [ObservableProperty] CreateStudyVocabViewModel? createStudy;
+    [ObservableProperty] CreateStudyMaterialViewModel? createStudyMaterial;
     SubtitleManager? EnSubtitleManager = null;
     public SubtitleEntry? CurrentPhrase => this.EnSubtitleManager?.CurrentSubtitle;
     public SubtitleEntry? CurrentArPhrase => this.ArSubtitleManager?.CurrentSubtitle;
@@ -198,8 +198,8 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
         
         if (this.MainMediaPlayer.IsPlaying)
             this.MainMediaPlayer.Pause();
-        this.CreateStudy = new(CurrentPhrase?.Id ?? 0, CurrentPhrase?.Text ?? "", CurrentArPhrase?.Text ?? "");
-        this.CreateStudy.OnSaved += (IsSuccess, result) =>
+        this.CreateStudyMaterial = new(CurrentPhrase?.Id ?? 0, CurrentPhrase?.Text ?? "", CurrentArPhrase?.Text ?? "");
+        this.CreateStudyMaterial.OnSaved += (IsSuccess, result) =>
         {
             if (!IsSuccess)
             {

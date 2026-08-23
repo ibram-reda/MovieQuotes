@@ -17,7 +17,8 @@ internal static class PhraseMaps
             Duration = src.Duration,
             MovieName = src.Movie?.Title ?? string.Empty,
             MoviePath = Path.Combine(src.Movie?.BaseFolderDir??"",src.Movie?.FolderName??""),
-            VideoLocation = src.GetVideoClipPath() ?? string.Empty
+            VideoLocation = src.GetVideoClipPath() ?? string.Empty,
+            MovieCoverUrl = src.Movie?.GetCoverUrl()??""
         };
     }
 }

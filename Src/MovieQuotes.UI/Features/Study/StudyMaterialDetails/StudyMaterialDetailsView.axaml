@@ -1,0 +1,113 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MovieQuotes.UI.Features.Study.StudyMaterialDetails"
+             xmlns:study="using:MovieQuotes.Application.Features.Study"
+             xmlns:phrase="using:MovieQuotes.Application.Features.MoviePhrases.Models"
+             x:Class="MovieQuotes.UI.Features.Study.StudyMaterialDetails.StudyMaterialDetailsView"
+             x:DataType="vm:StudyMaterialDetailsViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="900"
+             d:DesignHeight="650">
+
+  <ScrollViewer>
+    <StackPanel Margin="20" Spacing="12">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Text="Study Material Details" Classes="title" />
+        <Button Grid.Column="1" Content="Back" Command="{Binding BackToPreviousCommand}" />
+      </Grid>
+
+      <ItemsControl Foreground="Red" ItemsSource="{Binding ErrorMessages}" />
+
+      <Border IsVisible="{Binding Details}" Padding="16" Background="{DynamicResource CardBackgroundColor}" CornerRadius="4">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+              ColumnDefinitions="Auto,*">
+          <TextBlock Grid.Row="0" Classes="label" Text="Content" />
+          <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Details.Content}" TextWrapping="Wrap" />
+
+          <TextBlock Grid.Row="1" Classes="label" Text="Definition" />
+          <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Details.Definition}" TextWrapping="Wrap" />
+
+          <TextBlock Grid.Row="2" Classes="label" Text="Arabic content" />
+          <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Details.ContentArabicTranslation}" FlowDirection="RightToLeft" TextWrapping="Wrap" />
+
+          <TextBlock Grid.Row="3" Classes="label" Text="Part of speech" />
+          <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Details.PartOfSpeech}" />
+
+          <TextBlock Grid.Row="4" Classes="label" Text="Origin" />
+          <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Details.Origin}" />
+
+          <TextBlock Grid.Row="5" Classes="label" Text="Level" />
+          <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Details.Level}" />
+
+          <TextBlock Grid.Row="6" Classes="label" Text="Pronunciation" />
+          <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Details.Pronunciation}" />
+
+          <TextBlock Grid.Row="7" Classes="label" Text="Synonyms" />
+          <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Details.Synonyms}" TextWrapping="Wrap" />
+
+          <TextBlock Grid.Row="8" Classes="label" Text="Examples" />
+          <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding Details.Examples}" TextWrapping="Wrap" />
+
+          <TextBlock Grid.Row="9" Classes="label" Text="Notes" />
+          <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding Details.Notes}" TextWrapping="Wrap" />
+
+          <TextBlock Grid.Row="10" Classes="label" Text="Tags" />
+          <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding Details.Tags}" TextWrapping="Wrap" />
+
+          <TextBlock Grid.Row="11" Classes="label" Text="Draft" />
+          <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding Details.IsDraft}" />
+
+          <TextBlock Grid.Row="12" Classes="label" Text="Vulgar" />
+          <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding Details.IsVulgar}" />
+        </Grid>
+      </Border>
+
+      <TextBlock Text="Related Phrases" Classes="title" Margin="0,8,0,0" />
+      <ItemsControl ItemsSource="{Binding Details.MaterialPhrases}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="study:StudyMaterialPhrase">
+            <Border Padding="12" Margin="0,0,0,8" Background="{DynamicResource CardBackgroundColor}" CornerRadius="4">
+              <Grid ColumnDefinitions="20,96,*" RowDefinitions="Auto,Auto,Auto,Auto"> 
+                <TextBlock Grid.RowSpan="4" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Sequance, StringFormat='#{0}'}" Opacity="0.7" />
+                <Image Grid.Column="1" Grid.RowSpan="4" Width="80" Height="60" Stretch="UniformToFill"
+                       Source="{Binding MovieCoverUrl, Converter={StaticResource PathToBitmapConverter}}" />
+                <TextBlock  Grid.Column="2" Text="{Binding MovieTitle}" FontWeight="Bold" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding PhraseText}" TextWrapping="Wrap" />
+                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding ArPhraseTranslation}" FlowDirection="RightToLeft" TextWrapping="Wrap" /> 
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <TextBlock Text="Phrases With Matching Content" Classes="title" Margin="0,8,0,0" />
+      <ItemsControl ItemsSource="{Binding MatchingPhrases}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="phrase:Phrase">
+            <Border Padding="12" Margin="0,0,0,8" Background="{DynamicResource CardBackgroundColor}" CornerRadius="4">
+              <Grid ColumnDefinitions="96,*,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+                <Image Grid.RowSpan="3" Width="80" Height="60" Stretch="UniformToFill"
+                       Source="{Binding MovieCoverUrl, Converter={StaticResource PathToBitmapConverter}}" />
+                <TextBlock Grid.Column="1" Text="{Binding MovieName}" FontWeight="Bold" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Text}" TextWrapping="Wrap" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Sequence, StringFormat='Sequence: {0}'}" Opacity="0.7" />
+                <Button Grid.Column="2" Grid.RowSpan="3"
+                  Content="Play"
+                  VerticalAlignment="Center"
+                  Command="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).PlayPhraseCommand}"
+                  CommandParameter="{Binding}" />
+                <Button Grid.Column="3" Grid.RowSpan="3"
+                        Content="Add"
+                        VerticalAlignment="Center"
+                        Command="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).AddPhraseCommand}"
+                        CommandParameter="{Binding}" />
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

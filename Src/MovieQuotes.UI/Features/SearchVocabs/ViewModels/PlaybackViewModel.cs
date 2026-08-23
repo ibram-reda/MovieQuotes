@@ -7,7 +7,7 @@ using MediatR;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.VideoClips.Queries;
-using MovieQuotes.UI.Features.StudyVocabs.CreateVoab;
+using MovieQuotes.UI.Features.Study.CreateStudyMaterial;
 using MovieQuotes.UI.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -106,10 +106,10 @@ public partial class PlaybackViewModel : PageViewModelBase
     [RelayCommand]
     void CreateStudy()
     {
-        CreateStudyVocabViewModel CreateStudy = new(CurrentPlayingPhrase?.Id ?? 0, CurrentPlayingPhrase?.Text ?? "","");
+        CreateStudyMaterialViewModel createStudyMaterial = new(CurrentPlayingPhrase?.Id ?? 0, CurrentPlayingPhrase?.Text ?? "", "");
         
-        NavigationService.NavigateToPopup(CreateStudy);
-        CreateStudy.OnSaved += (IsSuccess, result) =>
+        NavigationService.NavigateToPopup(createStudyMaterial);
+        createStudyMaterial.OnSaved += (IsSuccess, result) =>
         {
             if (!IsSuccess)
             {
