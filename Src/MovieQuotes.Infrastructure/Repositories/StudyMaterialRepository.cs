@@ -14,6 +14,19 @@ public class StudyMaterialRepository : GenericRepository<StudyMaterial>, IStudyM
 
     public override Task<StudyMaterial?> GetByIdAsync(int id)
     {
-        return _dbSet.Include(m => m.StudyCards).ThenInclude(c=>c.CardProgress).FirstOrDefaultAsync(m => m.Id == id);
+        return _dbSet.Include(m => m.StudyCards)
+        .ThenInclude(c=>c.Progresses).FirstOrDefaultAsync(m => m.Id == id);
+    }
+
+    public async Task<bool> RemovePhraseAsync(int studyMaterialId, int phraseId)
+    {
+        var materialPhrase = await _context.Set<StudyMaterialPhrase>()
+            .SingleOrDefaultAsync(item => item.StudyMaterialId == studyMaterialId && item.PhraseId == phraseId);
+
+        if (materialPhrase is null)
+            return false;
+
+        _context.Set<StudyMaterialPhrase>().Remove(materialPhrase);
+        return true;
     }
 }

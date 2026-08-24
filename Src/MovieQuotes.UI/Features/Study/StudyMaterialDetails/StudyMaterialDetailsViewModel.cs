@@ -7,8 +7,10 @@ using MediatR;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.Study;
+using MovieQuotes.Application.Features.Study.AddStudyMaterialToLearning;
 using MovieQuotes.Application.Features.Study.AddPhraseToStudyMaterial;
 using MovieQuotes.Application.Features.Study.GetStudyMaterial;
+using MovieQuotes.Application.Features.Study.UnlinkPhraseFromStudyMaterial;
 using MovieQuotes.Application.Features.VideoClips.Queries;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
@@ -27,7 +29,14 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
+    [NotifyPropertyChangedFor(nameof(HasProgressRecords))]
     private StudyMaterialDetails? details;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(AddToStudyCommand))]
+    private bool isBeingStudied;
+
+    public bool HasProgressRecords => Details?.Progresses.Count > 0;
 
     public ObservableCollection<Phrase> MatchingPhrases { get; } = [];
 
@@ -61,6 +70,7 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
         {
             IsBusy = false;
         }
+        this.AddToStudyCommand.NotifyCanExecuteChanged();
     }
 
     private async Task LoadDetailsAsync(int studyMaterialId)
@@ -73,7 +83,36 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
         }
 
         Details = result.Payload;
+        IsBeingStudied = Details?.IsCurrentlyLerning == true;
     }
+
+    [RelayCommand(CanExecute = nameof(CanAddToStudy))]
+    private async Task AddToStudy()
+    {
+        if (Details is null || Details.Id <= 0)
+            return;
+
+        IsBusy = true;
+        try
+        {
+            var result = await mediator.Send(new AddStudyMaterialToLearningCommand(Details.Id));
+            if (result.IsError)
+            {
+                HandleErrors(result.Errors);
+                return;
+            }
+
+            await LoadDetailsAsync(Details.Id);
+        }
+        finally
+        {
+            IsBusy = false;
+            AddToStudyCommand.NotifyCanExecuteChanged();
+        }
+    }
+
+    private bool CanAddToStudy()
+        => !this.IsBusy && this.Details != null && !this.Details.IsCurrentlyLerning;
 
     [RelayCommand]
     private async Task AddPhrase(Phrase phrase)
@@ -90,8 +129,34 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
                 HandleErrors(result.Errors);
                 return;
             }
-
+            MatchingPhrases.Remove(phrase);
             await LoadDetailsAsync(Details.Id);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task UnlinkPhrase(StudyMaterialPhrase phrase)
+    {
+        if (phrase is null || Details is null || Details.Id <= 0)
+            return;
+
+        IsBusy = true;
+        try
+        {
+            var result = await mediator.Send(new UnlinkPhraseFromStudyMaterialCommand(Details.Id, phrase.PhraseId));
+            if (result.IsError)
+            {
+                HandleErrors(result.Errors);
+                return;
+            }
+
+            var studyMaterialId = Details.Id;
+            await LoadDetailsAsync(studyMaterialId);
+            await SearchMatchingPhrasesAsync(Details?.Content);
         }
         finally
         {
@@ -102,7 +167,10 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
     [RelayCommand]
     private async Task PlayPhrase(Phrase phrase)
     {
-        if (phrase is null || string.IsNullOrWhiteSpace(phrase.VideoLocation))
+        if (phrase is null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(phrase.VideoLocation))
         {
             //Generate the Clip
             var vc = new VideoClipQuery(phrase.Id);
@@ -147,9 +215,10 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
             return;
         }
 
+        var materialPhrases = Details?.MaterialPhrases ?? [];
         foreach (var phrase in result.Payload ?? [])
         {
-            if(!Details.MaterialPhrases.Any(a=>a.PhraseId == phrase.Id))
+            if(!materialPhrases.Any(a=>a.PhraseId == phrase.Id))
                 MatchingPhrases.Add(phrase);
         }
     }

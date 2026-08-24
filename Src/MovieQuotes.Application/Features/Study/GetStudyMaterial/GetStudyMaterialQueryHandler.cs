@@ -33,6 +33,8 @@ internal class GetStudyMaterialQueryHandler : IRequestHandler<GetStudyMaterialQu
             .Include(studyMaterial => studyMaterial.Phrases)
                 .ThenInclude(materialPhrase => materialPhrase.Phrase)
                     .ThenInclude(phrase => phrase.Movie)
+            .Include(s=>s.StudyCards)
+                .ThenInclude(card => card.Progresses)
             .SingleOrDefaultAsync(
                 studyMaterial => studyMaterial.Id == request.StudyMaterialId,
                 cancellationToken);
@@ -59,6 +61,20 @@ internal class GetStudyMaterialQueryHandler : IRequestHandler<GetStudyMaterialQu
             IsVulgar = material.IsVulgar,
             Notes = material.Notes,
             Tags = material.Tags,
+            IsCurrentlyLerning = material.StudyCards.Any(),
+            Progresses = material.StudyCards.SelectMany(c=>c.Progresses.Select(p=>
+                new StudyProgress
+                {
+                    ProgressType = p.ExerciseType.ToString(),
+                    Repetitions = p.Repetitions,
+                    ReviewCount = p.ReviewCount,
+                    LapseCount = p.LapseCount,
+
+                    NextReviewAt = p.NextReviewAt,
+                    LastReviewedAt = p.LastReviewedAt,
+
+                }
+            )).ToList(),
             MaterialPhrases = material.Phrases
                 .OrderBy(materialPhrase => materialPhrase.Sequance)
                 .Select(materialPhrase => new StudyMaterialPhrase

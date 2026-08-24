@@ -5,6 +5,7 @@
       <!-- Add Controls for Previewer Here -->
       <StackPanel Background="{DynamicResource SurfeceBackground}" >
         <TextBlock Classes="title" >this is title</TextBlock>
+        <TextBlock Classes="subtitle" >this is subtitle</TextBlock>
         <Button Classes="link" >like button</Button>
         <StackPanel Orientation="Horizontal" Spacing="10" Margin="10">
           <Button Classes="saveBtn" Content="Save"/>
@@ -22,6 +23,11 @@
   <!-- Title -->
   <Style Selector="TextBlock.title">
     <Setter Property="FontSize"  Value="30"/>
+    <Setter Property="FontWeight"  Value="Bold"/>
+    <Setter Property="Margin"  Value="0,10,0,10"/>
+  </Style>
+  <Style Selector="TextBlock.subtitle">
+    <Setter Property="FontSize"  Value="20"/>
     <Setter Property="FontWeight"  Value="Bold"/>
     <Setter Property="Margin"  Value="0,10,0,10"/>
   </Style>

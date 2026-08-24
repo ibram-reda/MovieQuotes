@@ -10,9 +10,13 @@ internal class CardProgressConfig : IEntityTypeConfiguration<CardProgress>
     {
         builder.HasKey(a => a.Id);
 
+        builder.HasAlternateKey(a=>new{a.CardId,a.ExerciseType});
+
         builder.HasOne(a => a.Card)
-            .WithOne(a=>a.CardProgress)
+            .WithMany(a=>a.Progresses)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(a=>a.ExerciseType).IsRequired().HasDefaultValue(StudyExerciseType.Recognition);
 
         builder.Property(a => a.LastReviewedAt).IsRequired(false);
 

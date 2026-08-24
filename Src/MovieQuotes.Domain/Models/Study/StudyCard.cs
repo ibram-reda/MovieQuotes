@@ -1,12 +1,6 @@
 namespace MovieQuotes.Domain.Models;
 
-public enum StudyMode
-{
-    Recognition = 1,
-    Listening = 2,
-    Reading = 3,
-    Writing = 4,
-}
+
 
 public class StudyCard
 {
@@ -20,28 +14,30 @@ public class StudyCard
 
     public virtual StudyMaterial StudyMaterial { get; private set; } = null!;
 
-    public StudyMode Mode { get; private set; }
+ 
 
     public bool IsActive { get; private set; }
 
-    public CardProgress CardProgress { get; private set; }
+    public ICollection<CardProgress> Progresses { get; private set; } = [];
 
     public DateTime CreatedAt { get; private set; }
 
     public DateTime ModifiedAt { get; private set; }
 
-    public static StudyCard Create(
-        int studyMaterialId,
-        StudyMode mode)
+    public static StudyCard Create(int studyMaterialId)
     {
-        return new StudyCard
+        var card = new StudyCard
         {
             StudyMaterialId = studyMaterialId,
-            Mode = mode,
             IsActive = true,
             CreatedAt = DateTime.Now,
             ModifiedAt = DateTime.Now
         };
+
+        
+    
+
+        return card;
     }
 
     public void Deactivate()

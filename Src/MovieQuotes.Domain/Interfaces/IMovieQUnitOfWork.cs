@@ -5,6 +5,8 @@ public interface IMovieQUnitOfWork : IAsyncDisposable
     IMovieRepository Movies { get; }
     ISubtitlePhraseRepository SubtitlePhrases { get; }
     IStudyMaterialRepository StudyMaterials { get; }
+    IStudyCardRepository StudyCards { get; }
+    ICardProgress CardProgress { get; }
     IPhraseWordsRepository PhraseWords { get; }
     IWordRepository Words { get; }
     IStudyPhraseRepository StudyPhrases { get; }

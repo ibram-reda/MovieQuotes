@@ -14,7 +14,6 @@ internal class StudyCardConfig : IEntityTypeConfiguration<StudyCard>
             .HasForeignKey(a => a.StudyMaterialId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(a => a.Mode).IsRequired();
 
         builder.Property(a => a.IsActive).IsRequired();
 

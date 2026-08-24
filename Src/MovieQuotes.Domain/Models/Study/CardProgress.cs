@@ -9,6 +9,11 @@ public enum ReviewQuality
     Good = 4,
     Perfect = 5
 }
+public enum StudyExerciseType
+{
+    Recognition,
+    ContextRecall
+}
 
 public class CardProgress
 {
@@ -18,6 +23,8 @@ public class CardProgress
 
     public int CardId { get; private set; }
     public StudyCard Card { get; private set; }
+
+    public StudyExerciseType ExerciseType { get; private set; }
 
     public DateTime? LastReviewedAt { get; private set; }
 
@@ -51,14 +58,24 @@ public class CardProgress
 
     public DateTime CreatedDate { get; private set; } = DateTime.Now;
 
-    public static CardProgress Create(int cardId)
+    public static CardProgress Create(int cardId,StudyExerciseType exerciseType)
     {
         return new CardProgress
         {
             CardId = cardId,
+            ExerciseType = exerciseType,
             NextReviewAt = DateTime.Now
         };
     }
+    public static CardProgress Create(StudyExerciseType exerciseType)
+    {
+        return new CardProgress
+        { 
+            ExerciseType = exerciseType,
+            NextReviewAt = DateTime.Now
+        };
+    }
+
 
     public void Review(ReviewQuality reviewQuality)
     {

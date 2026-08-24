@@ -12,6 +12,7 @@ public class MovieQUnitOfWork : IMovieQUnitOfWork
     private IMovieRepository? _movieRepository;
     private IStudyMaterialRepository? _studyMaterialRepository;
     private IStudyCardRepository? _studyCardRepository;
+    private ICardProgress? _cardProgress;
     private ISubtitlePhraseRepository? _subtitlePhraseRepository;
     private IPhraseWordsRepository? _phraseWordsRepository;
     private IWordRepository? _wordRepository;
@@ -26,6 +27,7 @@ public class MovieQUnitOfWork : IMovieQUnitOfWork
 
     public IMovieRepository Movies => _movieRepository ??= new MovieRepository(_context);
     public IStudyCardRepository StudyCards => _studyCardRepository ??= new StudyCardRepository(_context);
+    public ICardProgress CardProgress => _cardProgress ??= new CardProgressRepository(_context);
     public IStudyMaterialRepository StudyMaterials => _studyMaterialRepository ??= new StudyMaterialRepository(_context);
     public ISubtitlePhraseRepository SubtitlePhrases => _subtitlePhraseRepository ??= new SubtitlePhraseRepository(_context);
 
