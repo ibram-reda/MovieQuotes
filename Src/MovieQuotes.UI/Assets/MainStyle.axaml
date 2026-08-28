@@ -1,5 +1,6 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:converters="using:MovieQuotes.UI.Converters">
   <Design.PreviewWith>
     <Border Padding="20" Background="{DynamicResource AppBackground}">
       <!-- Add Controls for Previewer Here -->
@@ -67,9 +68,17 @@
   <Style Selector="Button.link">
     <Setter Property="Background"  Value="Transparent"/>
     <Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="Height" Value="44"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="HorizontalContentAlignment" Value="{ReflectionBinding IsNavigationMenuOpen, Converter={x:Static converters:NavigationContentAlignmentConverter.Instance}}"/>
     <Style Selector="^:pointerover /template/ContentPresenter">
       <Setter Property="Background" Value="gray"/>
     </Style>
+  </Style>
+
+  <Style Selector="Button.link.active /template/ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource PrimaryAccentPurpleColor}"/>
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
   </Style>
 
   <Style Selector="StackPanel.navigation" >

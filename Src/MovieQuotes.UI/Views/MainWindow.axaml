@@ -29,88 +29,25 @@
                 Margin="8" />
 
         <StackPanel Grid.Row="1"
-                    Classes="navigation"                    
+                    Classes="navigation"
                     VerticalAlignment="Top">
-          <Button Classes="link"
-                  Command="{Binding NavigateCommand}"
-                  CommandParameter="InsertNewMovie">
-            <StackPanel Orientation="Horizontal">
-              <PathIcon Data="{StaticResource add_square_regular}"/>
-              <Label Content="Add New Movie" IsVisible="{Binding IsNavigationMenuOpen}"/>
-            </StackPanel>
-          </Button>
-          <Button Classes="link"
-                  Command="{Binding NavigateCommand}"
-                  CommandParameter="GetMovies">
-            <StackPanel Orientation="Horizontal">
-              <PathIcon Data="{StaticResource movies_and_tv_regular}"/>
-              <Label Content="Browse Movies" IsVisible="{Binding IsNavigationMenuOpen}"/>
-            </StackPanel>
-          </Button>
-
-          <Button Classes="link"
-                  Command="{Binding NavigateCommand}"
-                  CommandParameter="PlayBack">
-            <StackPanel Orientation="Horizontal">
-              <PathIcon Data="{StaticResource search_square_regular}"/>
-              <Label Content="Search &amp; Playback" IsVisible="{Binding IsNavigationMenuOpen}"/>
-            </StackPanel>
-          </Button>
-
-          <Button Classes="link"
-                  Command="{Binding NavigateCommand}"
-                  CommandParameter="Study">
-                  
-            <StackPanel Orientation="Horizontal">
-              <PathIcon Data="{StaticResource document_one_page_regular}"/>
-              <Label Content="Study" IsVisible="{Binding IsNavigationMenuOpen}"/>
-            </StackPanel>
-          </Button>
-
-          <Button Classes="link"
-                  Command="{Binding NavigateCommand}"
-                  CommandParameter="BrowseStudyMaterials">
-            <StackPanel Orientation="Horizontal">
-              <PathIcon Data="{StaticResource document_one_page_regular}"/>
-              <Label Content="Study Materials" IsVisible="{Binding IsNavigationMenuOpen}"/>
-            </StackPanel>
-          </Button>
-
-          <Button Classes="link"
-                  Command="{Binding NavigateCommand}"
-                  CommandParameter="Subtitle">
-            <StackPanel Orientation="Horizontal">
-              <PathIcon Data="{StaticResource text_font_regular}"/>
-              <Label Content="Subtitle" IsVisible="{Binding IsNavigationMenuOpen}"/>
-            </StackPanel>
-          </Button>
-
-          <Button Classes="link"
-                  Command="{Binding NavigateCommand}"
-                  CommandParameter="ActiveRecall">
-            <StackPanel Orientation="Horizontal">
-              <PathIcon Data="{StaticResource headset_regular}"/>
-              <Label Content="Active Racall" IsVisible="{Binding IsNavigationMenuOpen}"/>
-            </StackPanel>
-          </Button>
-
-          <Button Classes="link"
-                  Command="{Binding NavigateCommand}"
-                  CommandParameter="ResyncSubtitle">
-            <StackPanel Orientation="Horizontal">
-              <PathIcon Data="{StaticResource text_font_regular}"/>
-              <Label Content="ResyncSubtitle" />
-            </StackPanel>
-          </Button>
-
-          <Button Classes="link"
-                  Command="{Binding NavigateCommand}"
-                  CommandParameter="Settings">
-            <StackPanel Orientation="Horizontal">
-              <PathIcon Data="{StaticResource settings_regular}"/>
-              <Label Content="Settings" />
-            </StackPanel>
-          </Button>
+          <ItemsControl ItemsSource="{Binding NavigationItems}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="models:NavigationItem">
+                <Button Classes="link"
+                        Classes.active="{Binding IsActive}"
+                        Command="{Binding $parent[Window].DataContext.NavigateCommand}"
+                        CommandParameter="{Binding}">
+                  <StackPanel Orientation="Horizontal">
+                    <PathIcon Data="{Binding IconName, Converter={StaticResource NavigationIconConverter}}" />
+                    <Label Content="{Binding DisplayName}"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding $parent[Window].DataContext.IsNavigationMenuOpen}" />
+                  </StackPanel>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
 
           <Button Content="Clear Error"
                   Command="{Binding CurrentViewModel.ClearErrorsCommand}" />

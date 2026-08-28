@@ -25,6 +25,8 @@
 
     <converters:BitmapValueConverter x:Key="PathToBitmapConverter" />
     <converters:LongToTimeConverter x:Key="LongToTimeConverter" />
+    <converters:NavigationContentAlignmentConverter x:Key="NavigationContentAlignmentConverter" />
+    <converters:NavigationIconConverter x:Key="NavigationIconConverter" />
     <converters:IsDateInThePastConverter x:Key="IsDateInThePastConverter" />
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons</FontFamily>
   </Application.Resources>

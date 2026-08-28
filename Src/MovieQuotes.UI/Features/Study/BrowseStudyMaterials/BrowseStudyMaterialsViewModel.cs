@@ -86,9 +86,9 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
     }
 
     [RelayCommand]
-    private async Task LoadPartOfSpeechCounts()
+    private async Task LoadPartOfSpeechCounts(int movieId=0)
     {
-        var query = new GetPartOfSpeechCountsQuery();
+        var query = new GetPartOfSpeechCountsQuery(movieId);
         var result = await mediator.Send(query);
 
         if (result.IsError)
@@ -186,6 +186,8 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         await LoadMaterialsAsync(pageNumber);
     }
 
+    
+
     [RelayCommand]
     private async Task ClearFilters()
     {
@@ -194,5 +196,14 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         SelectedPartOfSpeech = null;
         SearchText = string.Empty;
         await ApplyFilters();
+    }
+    
+    partial void OnSelectedMovieChanged(MovieWithStudyMaterialCount? value)
+    =>OnSelectedMovieChangedAsync(value);
+    async void OnSelectedMovieChangedAsync(MovieWithStudyMaterialCount? movie)
+    {
+        await LoadPartOfSpeechCountsCommand.ExecuteAsync(movie?.Id??0);
+        await ApplyFiltersCommand.ExecuteAsync(null);
+        
     }
 }

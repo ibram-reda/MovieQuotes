@@ -20,5 +20,8 @@ internal class StudyMaterialPhraseConfig : IEntityTypeConfiguration<StudyMateria
 
         builder.Property(a => a.ArabicTranslation)
             .HasMaxLength(300);
+
+        builder.Property(a=>a.Content)
+            .HasMaxLength(100);
     }
 }

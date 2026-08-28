@@ -14,6 +14,8 @@ using MovieQuotes.UI.Features.Settings;
 using MovieQuotes.UI.Features.Study;
 using MovieQuotes.UI.Features.Study.BrowseStudyMaterials;
 using MovieQuotes.UI.Features.Movies.WatchMovie;
+using MovieQuotes.UI.Models;
+using System.Collections.Generic;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
@@ -25,6 +27,19 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private double _navigationMenuWidth = ExpandedNavigationWidth;
     [ObservableProperty] private string _WindowTitle = "";
     [ObservableProperty] bool _isDarkMode = true;
+
+    public IReadOnlyList<NavigationItem> NavigationItems { get; } =
+    [
+        new("add_square_regular", "Add New Movie", typeof(NewMovieViewModel)),
+        new("movies_and_tv_regular", "Browse Movies", typeof(MoviesListViewModel)),
+        new("search_square_regular", "Search & Playback", typeof(PlaybackViewModel)),
+        new("document_one_page_regular", "Study", typeof(StudyViewModel)),
+        new("document_one_page_regular", "Study Materials", typeof(BrowseStudyMaterialsViewModel)),
+        new("text_font_regular", "Subtitle", typeof(SubtitleAddingViewModel)),
+        new("headset_regular", "Active Recall", typeof(ActiveRecallViewModel)),
+        new("text_font_regular", "ResyncSubtitle", typeof(ResyncSubtitleViewModel)),
+        new("settings_regular", "Settings", typeof(SettingsViewModel))
+    ];
 
     partial void OnIsDarkModeChanged(bool value)
     {
@@ -53,6 +68,8 @@ public partial class MainWindowViewModel : ViewModelBase
     private void OnCurrentViewModelChanged(PageViewModelBase obj)
     {
         this.OnPropertyChanged(nameof(CurrentViewModel));
+        foreach (var item in NavigationItems)
+            item.IsActive = item.Matches(obj);
         WindowTitle = $"{Title} : {CurrentViewModel.Title}";
         CurrentViewModel.PropertyChanged += (s, e) =>
         {
@@ -77,40 +94,10 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void Navigate(string PageName)
+    private void Navigate(NavigationItem item)
     {
-        switch (PageName)
-        {
-            case "InsertNewMovie":
-                this.NavigationService.NavigateTo<NewMovieViewModel>();
-                break;
-            case "PlayBack":
-                this.NavigationService.NavigateTo<PlaybackViewModel>();
-                break;
-            case "Study":
-                this.NavigationService.NavigateTo<StudyViewModel>();
-                break;
-            case "BrowseStudyMaterials":
-                this.NavigationService.NavigateTo<BrowseStudyMaterialsViewModel>();
-                break;
-            case "Subtitle":
-                this.NavigationService.NavigateTo<SubtitleAddingViewModel>();
-                break;
-            case "GetMovies":
-                this.NavigationService.NavigateTo<MoviesListViewModel>();
-                break;
-            case "ResyncSubtitle":
-                this.NavigationService.NavigateTo<ResyncSubtitleViewModel>();
-                break;
-            case "Settings":
-                this.NavigationService.NavigateTo<SettingsViewModel>();
-                break;
-            case "ActiveRecall":
-                this.NavigationService.NavigateTo<ActiveRecallViewModel>();
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+        ArgumentNullException.ThrowIfNull(item);
+        NavigationService.NavigateTo(item.PageType);
     }
 
     public PageViewModelBase CurrentViewModel => NavigationService.CurrentViewModel;

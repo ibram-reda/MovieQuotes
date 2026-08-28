@@ -37,6 +37,16 @@ public class NavigationService
 
     }
 
+    public void NavigateTo(Type pageType)
+    {
+        if (!typeof(PageViewModelBase).IsAssignableFrom(pageType))
+            throw new ArgumentException("The page type must inherit from PageViewModelBase.", nameof(pageType));
+
+        _OldPage = CurrentViewModel;
+        CurrentViewModel = (PageViewModelBase)App.Current?.Services?.GetRequiredService(pageType)!;
+        if (_OldPage is IDisposable vm) vm.Dispose();
+    }
+
     public async Task NavigateToAsync<T>(object? initValue = null) where T : PageViewModelBase
     {
         _OldPage = CurrentViewModel;

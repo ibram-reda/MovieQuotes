@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Interfaces;
+using Org.BouncyCastle.Ocsp;
 
 internal sealed class GetPartOfSpeechCountsQueryHandler : IRequestHandler<GetPartOfSpeechCountsQuery, OperationPageResult<PartOfSpeechCountDto>>
 {
@@ -18,9 +19,13 @@ internal sealed class GetPartOfSpeechCountsQueryHandler : IRequestHandler<GetPar
         GetPartOfSpeechCountsQuery request,
         CancellationToken cancellationToken)
     {
-        var counts = await unitOfWork.StudyMaterials.Query
-            .AsNoTracking()
-            .GroupBy(material => material.PartOfSpeech ?? string.Empty)
+        var qury = unitOfWork.StudyMaterials.Query
+            .AsNoTracking();
+
+        if(request.MovieId > 0)
+          qury =  qury.Where(a=>a.Phrases.Any(a=>a.Phrase.Movie!.Id == request.MovieId));
+
+        var counts = await qury.GroupBy(material => material.PartOfSpeech ?? string.Empty)
             .Select(group => new PartOfSpeechCountDto{
                 PartOfSpeech = group.Key,
                 Count = group.Count()
