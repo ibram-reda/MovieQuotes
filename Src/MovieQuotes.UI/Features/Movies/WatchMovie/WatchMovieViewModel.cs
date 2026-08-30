@@ -8,7 +8,7 @@ using MediatR;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.UI.Features.Study.CreateStudyMaterial;
+using MovieQuotes.UI.Features.StudyMaterials.CreateStudyMaterial;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using System;

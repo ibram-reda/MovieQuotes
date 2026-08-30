@@ -15,10 +15,9 @@ public class MovieQUnitOfWork : IMovieQUnitOfWork
     private ICardProgress? _cardProgress;
     private ISubtitlePhraseRepository? _subtitlePhraseRepository;
     private IPhraseWordsRepository? _phraseWordsRepository;
-    private IWordRepository? _wordRepository;
-    private IStudyPhraseRepository? _studyPhraseRepository;
-    private IStudyPhraseProgressRepository? _studyPhraseProgressRepository;
+    private IWordRepository? _wordRepository; 
     private IGenreRepository? _genreRepository;
+    private IStudySessionRepository? _studySessionRepository;
 
     public MovieQUnitOfWork(MovieQuotesDbContext context)
     {
@@ -35,11 +34,8 @@ public class MovieQUnitOfWork : IMovieQUnitOfWork
 
     public IWordRepository Words => _wordRepository ??= new WordRepository(_context);
 
-    public IStudyPhraseRepository StudyPhrases => _studyPhraseRepository ??= new StudyPhraseRepository(_context);
-
-    public IStudyPhraseProgressRepository StudyPhraseProgress => _studyPhraseProgressRepository ??= new StudyPhraseProgressRepository(_context);
-
     public IGenreRepository Genres => _genreRepository ??= new GenreRepository(_context);
+    public IStudySessionRepository StudySessions => _studySessionRepository ??= new StudySessionRepository(_context);
 
     public async Task<int> SaveAsync(CancellationToken cancellationToken = default)
     {

@@ -22,26 +22,26 @@ public class MovieQuotesDbContext : DbContext
 
     public DbSet<PhraseWords> PhraseWords => Set<PhraseWords>();
     public DbSet<Word> Word => Set<Word>();
-
-    public DbSet<StudyPhrase> StudyPhrases => Set<StudyPhrase>();
+ 
     public DbSet<StudyCard> StudyCards => Set<StudyCard>();
     public DbSet<StudyMaterial> StudyMaterials => Set<StudyMaterial>();
     public DbSet<CardProgress> CardProgresses => Set<CardProgress>();
-
-    public DbSet<StudyPhraseProgress> StudyPhraseProgress  => Set<StudyPhraseProgress>();
+    public DbSet<StudySession> StudySessions => Set<StudySession>();
+    public DbSet<StudySessionCard> StudySessionCards => Set<StudySessionCard>();
+ 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new MovieConfig());
         modelBuilder.ApplyConfiguration(new SubtitleConfig());
         modelBuilder.ApplyConfiguration(new PhraseWordsConfig());
-        modelBuilder.ApplyConfiguration(new WordConfig());
-        modelBuilder.ApplyConfiguration(new StudyPhraseConfig());
-        modelBuilder.ApplyConfiguration(new StudyPhraseProgressConfig());  
+        modelBuilder.ApplyConfiguration(new WordConfig()); 
         modelBuilder.ApplyConfiguration(new GenreConfig());   
         modelBuilder.ApplyConfiguration(new StudyMaterialConfig());  
         modelBuilder.ApplyConfiguration(new StudyCardConfig());  
         modelBuilder.ApplyConfiguration(new CardProgressConfig());  
+        modelBuilder.ApplyConfiguration(new StudySessionConfig());
+        modelBuilder.ApplyConfiguration(new StudySessionCardConfig());
         modelBuilder.ApplyConfiguration(new StudyMaterialPhraseConfig());  
         
 

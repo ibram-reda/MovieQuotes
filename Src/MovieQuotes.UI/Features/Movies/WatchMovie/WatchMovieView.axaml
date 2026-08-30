@@ -9,7 +9,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MovieQuotes.UI.Features.Movies.WatchMovie.WatchMovieView">
 
-  <Grid RowDefinitions="*,auto,auto"  Background="#333">
+  <Grid RowDefinitions="*"  Background="#333">
 
     <vlc:VideoView Grid.Row="0"
                    Focusable="False"
@@ -17,14 +17,12 @@
                    VerticalAlignment="Stretch"
                    HorizontalAlignment="Stretch"
                    ZIndex="-1">
-      <Grid RowDefinitions="auto,*,auto">
+      <Grid RowDefinitions="auto,*,auto,auto">
         <Grid.ContextMenu>
           <ContextMenu>
             <MenuItem Header="Back to Home" Command="{Binding GoToPreviousCommand}"/>
           </ContextMenu>
         </Grid.ContextMenu>
-
-
 
         <TextBlock Grid.Row="0"
                    Foreground="Orange"
@@ -56,6 +54,49 @@
                    FontSize="24"
                    FontWeight="Bold"
                    Text="{Binding CurrentPhrase.Text}"/>
+
+
+        <Grid Grid.Row="3"
+              RowDefinitions="50,50"
+              ColumnDefinitions="auto,*,auto"
+              Margin="10">
+          <Slider Grid.Row="0"
+                  Grid.ColumnSpan="2"
+                  Margin="0"
+                  HorizontalAlignment="Stretch"
+                  Maximum="{Binding MovieLength}"
+                  Value="{Binding CurrentTime}" />
+
+          <StackPanel Grid.Row="0" Spacing="5"
+                      Grid.Column="2">
+
+            <Button Content="Add Study Material"
+                    Focusable="False"
+                    Command="{Binding OpenPopUpCommand}"/>
+            <Button Content="Load en subs"
+                    IsVisible="{Binding CanLoadEnSubs}"
+                    Command="{Binding LoadEnPhrasesCommand}"/>
+          </StackPanel>
+
+
+          <controls:MediaPlayerControls
+            Grid.Row="1"
+            Grid.Column="0"
+            Player="{Binding MainMediaPlayer}"
+            NextPhrase="{Binding GoToNextPhraseCommand}"
+            PreviousPhrase="{Binding GoToPreviousPhraseCommand}"/>
+
+          <StackPanel Orientation="Horizontal"
+                      Grid.Column="2"
+                      Grid.Row="1">
+            <Button Content="Go Back" Command="{Binding GoToPreviousCommand}"/>
+            <TextBlock Text="{Binding CurrentTime,Converter={StaticResource LongToTimeConverter}}"/>
+
+            <TextBlock Text=" of "/>
+            <TextBlock Text="{Binding MovieLength,Converter={StaticResource LongToTimeConverter}}"/>
+
+          </StackPanel>
+        </Grid>
       </Grid>
 
     </vlc:VideoView>
@@ -63,47 +104,7 @@
 
 
 
-    <Grid Grid.Row="2"
-          RowDefinitions="50,50"
-          ColumnDefinitions="auto,*,auto"
-          Margin="10">
-      <Slider Grid.Row="0"
-              Grid.ColumnSpan="2"
-              Margin="0"
-              HorizontalAlignment="Stretch"
-              Maximum="{Binding MovieLength}"
-              Value="{Binding CurrentTime}" />
 
-      <StackPanel Grid.Row="0" Spacing="5"
-                  Grid.Column="2">
-
-        <Button Content="Add Study Material"
-                Focusable="False"
-                Command="{Binding OpenPopUpCommand}"/>
-        <Button Content="Load en subs"
-                IsVisible="{Binding CanLoadEnSubs}"
-                Command="{Binding LoadEnPhrasesCommand}"/>
-      </StackPanel>
-
-
-      <controls:MediaPlayerControls
-        Grid.Row="1"
-        Grid.Column="0"
-        Player="{Binding MainMediaPlayer}"
-        NextPhrase="{Binding GoToNextPhraseCommand}"
-        PreviousPhrase="{Binding GoToPreviousPhraseCommand}"/>
-
-      <StackPanel Orientation="Horizontal"
-                  Grid.Column="2"
-                  Grid.Row="1">
-        <Button Content="Go Back" Command="{Binding GoToPreviousCommand}"/>
-        <TextBlock Text="{Binding CurrentTime,Converter={StaticResource LongToTimeConverter}}"/>
-
-        <TextBlock Text=" of "/>
-        <TextBlock Text="{Binding MovieLength,Converter={StaticResource LongToTimeConverter}}"/>
-
-      </StackPanel>
-    </Grid>
 
   </Grid>
 </UserControl>

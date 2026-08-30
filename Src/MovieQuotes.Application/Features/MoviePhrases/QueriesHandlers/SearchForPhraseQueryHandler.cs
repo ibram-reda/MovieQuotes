@@ -8,7 +8,6 @@ using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Mappings;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
-using MovieQuotes.Application.Features.StudyPhrases;
 using MovieQuotes.Domain.Interfaces;
 using System.Linq;
 using System.Threading;
@@ -44,7 +43,7 @@ public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery,
 
         if (itemCountToSkip > totalCount)
         {
-            result.AddError(ErrorCode.NotFound, StudyPhraseMessages.PageNotFound, request.PageNumber, totalCount / request.ResultPerPage);
+            result.AddError(ErrorCode.NotFound, MoviePhrasesMessages.PageNotFound, request.PageNumber, totalCount / request.ResultPerPage);
             return result;
         }
 

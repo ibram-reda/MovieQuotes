@@ -8,10 +8,9 @@ public interface IMovieQUnitOfWork : IAsyncDisposable
     IStudyCardRepository StudyCards { get; }
     ICardProgress CardProgress { get; }
     IPhraseWordsRepository PhraseWords { get; }
-    IWordRepository Words { get; }
-    IStudyPhraseRepository StudyPhrases { get; }
-    IStudyPhraseProgressRepository StudyPhraseProgress { get; }
+    IWordRepository Words { get; } 
     IGenreRepository Genres { get; }
+    IStudySessionRepository StudySessions { get; }
 
     Task<int> SaveAsync(CancellationToken cancellationToken = default);
     Task<bool> BeginTransactionAsync(CancellationToken cancellationToken = default);

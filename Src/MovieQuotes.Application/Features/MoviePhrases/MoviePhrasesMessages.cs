@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 internal static class MoviePhrasesMessages
 {
+    public const string PageNotFound = "Not found";
     public const string MovieNotFound = "movie with id {0} is not found";
     public const string PhraseNotFound = "phrase with id {0} is not found";
     public const string RequiredMovieId = "movie id is required"; 

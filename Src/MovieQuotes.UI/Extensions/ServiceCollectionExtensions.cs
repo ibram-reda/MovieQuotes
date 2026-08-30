@@ -9,6 +9,7 @@ using MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Infrastructure;
 using MovieQuotes.Infrastructure.Data;
 using MovieQuotes.Domain.Interfaces;
+using MovieQuotes.Infrastructure.Repositories;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using System.Linq;
@@ -42,6 +43,7 @@ public static class ServiceCollectionExtensions
         }
 
         Services.AddScoped<IMovieQUnitOfWork, MovieQUnitOfWork>();
+        Services.AddScoped<IStudySessionRepository, StudySessionRepository>();
 
         Services.AddLogging(); 
 

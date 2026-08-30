@@ -1,0 +1,31 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Design.PreviewWith >
+        <StackPanel Width="1000" Background="{StaticResource AppBackgroundColor}"  >
+            <TextBlock Text="Controles" Classes="title"/>
+            <PhraseText Text="I am bebo" Highlight="bebo" />
+ 
+
+        </StackPanel>
+    </Design.PreviewWith>
+
+  <!---->
+     <ControlTheme x:Key="{x:Type PhraseText}"
+                  TargetType="PhraseText">
+
+        <Setter Property="HighlightBackground" Value="transparent"/>
+        <Setter Property="HighlightForeground" Value="{DynamicResource SecondaryTextColor}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <TextBlock
+                    Name="PART_TextBlock"
+                    TextWrapping="Wrap"
+                    Foreground="{TemplateBinding Foreground}"
+                    FontSize="{TemplateBinding FontSize}"
+                    FontFamily="{TemplateBinding FontFamily}"
+                    FontWeight="{TemplateBinding FontWeight}"  />
+            </ControlTemplate>
+        </Setter>
+
+    </ControlTheme>
+</ResourceDictionary>

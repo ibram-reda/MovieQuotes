@@ -4,18 +4,17 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
 using MovieQuotes.UI.Features.Movies.BrowseMovies;
-using MovieQuotes.UI.Features.Movies.CreateMovie;
-using MovieQuotes.UI.Features.StudyVocabs.ReviseVocab;
+using MovieQuotes.UI.Features.Movies.CreateMovie; 
 using MovieQuotes.UI.Services;
 using System;
 using Avalonia;
 using Avalonia.Styling;
-using MovieQuotes.UI.Features.Settings;
-using MovieQuotes.UI.Features.Study;
-using MovieQuotes.UI.Features.Study.BrowseStudyMaterials;
+using MovieQuotes.UI.Features.Settings; 
+using MovieQuotes.UI.Features.StudyMaterials.BrowseStudyMaterials; 
 using MovieQuotes.UI.Features.Movies.WatchMovie;
 using MovieQuotes.UI.Models;
 using System.Collections.Generic;
+using MovieQuotes.UI.Features.Study;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
@@ -32,11 +31,10 @@ public partial class MainWindowViewModel : ViewModelBase
     [
         new("add_square_regular", "Add New Movie", typeof(NewMovieViewModel)),
         new("movies_and_tv_regular", "Browse Movies", typeof(MoviesListViewModel)),
-        new("search_square_regular", "Search & Playback", typeof(PlaybackViewModel)),
-        new("document_one_page_regular", "Study", typeof(StudyViewModel)),
+        new("search_square_regular", "Search & Playback", typeof(PlaybackViewModel)), 
         new("document_one_page_regular", "Study Materials", typeof(BrowseStudyMaterialsViewModel)),
+        new("book_open_regular", "Learning", typeof(ActiveRecallViewModel)),
         new("text_font_regular", "Subtitle", typeof(SubtitleAddingViewModel)),
-        new("headset_regular", "Active Recall", typeof(ActiveRecallViewModel)),
         new("text_font_regular", "ResyncSubtitle", typeof(ResyncSubtitleViewModel)),
         new("settings_regular", "Settings", typeof(SettingsViewModel))
     ];

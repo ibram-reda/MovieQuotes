@@ -344,118 +344,58 @@ namespace MovieQuotes.Infrastructure.Migrations
                     b.ToTable("StudyMaterialPhrase");
                 });
 
-            modelBuilder.Entity("MovieQuotes.Domain.Models.StudyPhrase", b =>
+            modelBuilder.Entity("MovieQuotes.Domain.Models.StudySession", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("AddedDate")
-                        .ValueGeneratedOnAdd()
+                    b.Property<DateTime?>("CompletedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("ArContentTranslation")
-                        .HasMaxLength(120)
-                        .HasColumnType("varchar(120)");
-
-                    b.Property<string>("ArPhraseTranslation")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<string>("Content")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("Examples")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<bool>("IsDraft")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Level")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("varchar(2)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<string>("Origin")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int>("PhraseId")
+                    b.Property<int>("CurrentCardPosition")
                         .HasColumnType("int");
 
-                    b.Property<string>("Pronunciation")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                    b.Property<int>("ExerciseType")
+                        .HasColumnType("int");
 
-                    b.Property<string>("StudyType")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Synonyms")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("varchar(300)");
-
-                    b.Property<string>("Translation")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PhraseId");
+                    b.HasIndex("CompletedAt");
 
-                    b.ToTable("StudyPhrases");
+                    b.ToTable("StudySessions");
                 });
 
-            modelBuilder.Entity("MovieQuotes.Domain.Models.StudyPhraseProgress", b =>
+            modelBuilder.Entity("MovieQuotes.Domain.Models.StudySessionCard", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime?>("CompletedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<double>("EaseFactor")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("double")
-                        .HasDefaultValue(2.5);
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("IntervalDays")
+                    b.Property<int>("Order")
                         .HasColumnType("int");
 
-                    b.Property<int>("LapseCount")
+                    b.Property<int>("StudyCardId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("LastReviewed")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("NextReviewDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("Repetition")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReviewCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StudyPhraseId")
+                    b.Property<int>("StudySessionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StudyPhraseId")
+                    b.HasIndex("StudySessionId", "Order")
                         .IsUnique();
 
-                    b.ToTable("StudyPhraseProgress");
+                    b.ToTable("StudySessionCards");
                 });
 
             modelBuilder.Entity("MovieQuotes.Domain.Models.SubtitlePhrase", b =>
@@ -600,26 +540,13 @@ namespace MovieQuotes.Infrastructure.Migrations
                     b.Navigation("StudyMaterial");
                 });
 
-            modelBuilder.Entity("MovieQuotes.Domain.Models.StudyPhrase", b =>
+            modelBuilder.Entity("MovieQuotes.Domain.Models.StudySessionCard", b =>
                 {
-                    b.HasOne("MovieQuotes.Domain.Models.SubtitlePhrase", "Phrase")
-                        .WithMany()
-                        .HasForeignKey("PhraseId")
+                    b.HasOne("MovieQuotes.Domain.Models.StudySession", null)
+                        .WithMany("Cards")
+                        .HasForeignKey("StudySessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Phrase");
-                });
-
-            modelBuilder.Entity("MovieQuotes.Domain.Models.StudyPhraseProgress", b =>
-                {
-                    b.HasOne("MovieQuotes.Domain.Models.StudyPhrase", "StudyPhrase")
-                        .WithOne("Progress")
-                        .HasForeignKey("MovieQuotes.Domain.Models.StudyPhraseProgress", "StudyPhraseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("StudyPhrase");
                 });
 
             modelBuilder.Entity("MovieQuotes.Domain.Models.SubtitlePhrase", b =>
@@ -650,9 +577,9 @@ namespace MovieQuotes.Infrastructure.Migrations
                     b.Navigation("StudyCards");
                 });
 
-            modelBuilder.Entity("MovieQuotes.Domain.Models.StudyPhrase", b =>
+            modelBuilder.Entity("MovieQuotes.Domain.Models.StudySession", b =>
                 {
-                    b.Navigation("Progress");
+                    b.Navigation("Cards");
                 });
 
             modelBuilder.Entity("MovieQuotes.Domain.Models.SubtitlePhrase", b =>

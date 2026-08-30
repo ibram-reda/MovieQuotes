@@ -1,6 +1,172 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <Design.PreviewWith>
+        <ThemeVariantScope RequestedThemeVariant="Light">
+
+            <Border Width="1300" Padding="20" Background="{StaticResource AppBackgroundBrush}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Light theme resources" Foreground="{StaticResource PrimaryTextBrush}" FontSize="22" FontWeight="Bold" />
+
+                    <WrapPanel ItemWidth="220" ItemHeight="90" HorizontalAlignment="Left">
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="6">
+                                <Border Width="32" Height="32" CornerRadius="6" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1" />
+                                <TextBlock Text="AppBackgroundBrush" Foreground="{StaticResource PrimaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="6">
+                                <Border Width="32" Height="32" CornerRadius="6" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1" />
+                                <TextBlock Text="CardBackgroundBrush" Foreground="{StaticResource PrimaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="6">
+                                <Border Width="32" Height="32" CornerRadius="6" Background="{StaticResource PrimaryAccentBrush}" />
+                                <TextBlock Text="PrimaryAccentBrush" Foreground="{StaticResource PrimaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="6">
+                                <Border Width="32" Height="32" CornerRadius="6" Background="{StaticResource PrimaryTextBrush}" />
+                                <TextBlock Text="PrimaryTextBrush" Foreground="{StaticResource PrimaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="6">
+                                <Border Width="32" Height="32" CornerRadius="6" Background="{StaticResource OkBtnBackground}" />
+                                <TextBlock Text="OkBtnBackground" Foreground="{StaticResource PrimaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="6">
+                                <Border Width="32" Height="32" CornerRadius="6" Background="{StaticResource CancelBtnBackground}" />
+                                <TextBlock Text="CancelBtnBackground" Foreground="{StaticResource PrimaryTextBrush}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                    </WrapPanel>
+
+                    <TextBlock Text="Colors" Foreground="{StaticResource PrimaryTextBrush}" FontSize="18" FontWeight="SemiBold" />
+                    <WrapPanel ItemWidth="220" ItemHeight="78" HorizontalAlignment="Left">
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource AppBackgroundBrush}" />
+                                <TextBlock Text="AppBackgroundColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource CardBackgroundBrush}" />
+                                <TextBlock Text="CardBackgroundColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource PrimaryAccentBrush}" />
+                                <TextBlock Text="PrimaryAccentPurpleColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource ActiveAccentPurpleColor}" />
+                                <TextBlock Text="ActiveAccentPurpleColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource PrimaryTextBrush}" />
+                                <TextBlock Text="PrimaryTextColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource SecondaryTextBrush}" />
+                                <TextBlock Text="SecondaryTextColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource HighlightPurpleTextColor}" />
+                                <TextBlock Text="HighlightPurpleTextColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource CorrectAnswerTextColor}" />
+                                <TextBlock Text="CorrectAnswerTextColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource ErrorStatusColor}" />
+                                <TextBlock Text="ErrorStatusColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource WarningPatternColor}" />
+                                <TextBlock Text="WarningPatternColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource ProgressStrongColor}" />
+                                <TextBlock Text="ProgressStrongColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource ProgressGoodColor}" />
+                                <TextBlock Text="ProgressGoodColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource ProgressExcellentColor}" />
+                                <TextBlock Text="ProgressExcellentColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="9" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource ProgressNeedsWorkOrangeColor}" />
+                                <TextBlock Text="ProgressNeedsWorkOrangeColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="8" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="4">
+                                <Border Width="28" Height="28" CornerRadius="6" Background="{StaticResource ProgressNeedsWorkRedColor}" />
+                                <TextBlock Text="ProgressNeedsWorkRedColor" Foreground="{StaticResource PrimaryTextBrush}" FontSize="8" />
+                            </StackPanel>
+                        </Border>
+                    </WrapPanel>
+
+                    <TextBlock Text="Fonts" Foreground="{StaticResource PrimaryTextBrush}" FontSize="18" FontWeight="SemiBold" />
+                    <WrapPanel ItemWidth="220" ItemHeight="90" HorizontalAlignment="Left">
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="ThemePreviewFontFamily" Foreground="{StaticResource PrimaryTextBrush}" FontFamily="{StaticResource ThemePreviewFontFamily}" FontSize="15"/>
+                                <TextBlock Text="Segoe UI" Foreground="{StaticResource SecondaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="ThemeCodeFontFamily" Foreground="{StaticResource PrimaryTextBrush}" FontFamily="{StaticResource ThemeCodeFontFamily}" FontSize="15"/>
+                                <TextBlock Text="Cascadia Code" Foreground="{StaticResource SecondaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="6" Padding="8" CornerRadius="8" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource PrimaryAccentBrush}" BorderThickness="1">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="SymbolThemeFontFamily" Foreground="{StaticResource PrimaryTextBrush}" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="15"/>
+                                <TextBlock Text="Segoe Fluent Icons" Foreground="{StaticResource SecondaryTextBrush}" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+        </ThemeVariantScope>
+    </Design.PreviewWith>
+
     <!-- === Basic Brushes === -->
 
     <SolidColorBrush x:Key="AppForeground">#1F2937</SolidColorBrush>
@@ -81,5 +247,11 @@
     <SolidColorBrush x:Key="PrimaryAccentBrush" Color="{StaticResource PrimaryAccentPurpleColor}" />
 
     <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryTextColor}" />
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryTextColor}" />
+    <SolidColorBrush x:Key="CorrectGreenBrush" Color="{StaticResource CorrectAnswerTextColor}" />
+    <SolidColorBrush x:Key="ErrorRedBrush" Color="{StaticResource ErrorStatusColor}" />
+
+    <FontFamily x:Key="ThemePreviewFontFamily">Segoe UI</FontFamily>
+    <FontFamily x:Key="ThemeCodeFontFamily">Cascadia Code</FontFamily>
 
 </ResourceDictionary>

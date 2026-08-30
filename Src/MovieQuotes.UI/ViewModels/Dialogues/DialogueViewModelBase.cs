@@ -39,9 +39,5 @@ public abstract partial class DialogueViewModelBase :  ViewModelBase
         this.OnClose(false);
     }
 
-    protected T GetService<T>() where T : class
-    {
-        return MovieQuotes.UI.App.Current?.Services?.GetService<T>() ??
-            throw new ArgumentException("Can not locate Services", nameof(T));
-    }
+
 }
