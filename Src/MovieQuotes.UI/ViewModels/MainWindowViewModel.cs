@@ -32,8 +32,8 @@ public partial class MainWindowViewModel : ViewModelBase
         new("add_square_regular", "Add New Movie", typeof(NewMovieViewModel)),
         new("movies_and_tv_regular", "Browse Movies", typeof(MoviesListViewModel)),
         new("search_square_regular", "Search & Playback", typeof(PlaybackViewModel)), 
-        new("document_one_page_regular", "Study Materials", typeof(BrowseStudyMaterialsViewModel)),
-        new("book_open_regular", "Learning", typeof(ActiveRecallViewModel)),
+        new("document_one_page_regular", "Study Materials", typeof(BrowseStudyMaterialsViewModel)), 
+        new("book_open_regular", "Study", typeof(StudyOverviewViewModel)), 
         new("text_font_regular", "Subtitle", typeof(SubtitleAddingViewModel)),
         new("text_font_regular", "ResyncSubtitle", typeof(ResyncSubtitleViewModel)),
         new("settings_regular", "Settings", typeof(SettingsViewModel))
@@ -68,13 +68,7 @@ public partial class MainWindowViewModel : ViewModelBase
         this.OnPropertyChanged(nameof(CurrentViewModel));
         foreach (var item in NavigationItems)
             item.IsActive = item.Matches(obj);
-        WindowTitle = $"{Title} : {CurrentViewModel.Title}";
-        CurrentViewModel.PropertyChanged += (s, e) =>
-        {
-            if (e.PropertyName == "Title")
-                WindowTitle = $"{Title} : {CurrentViewModel.Title}";
-
-        };
+        WindowTitle = $"{Title} : {CurrentViewModel.Title}";         
         if(CurrentViewModel is WatchMovieViewModel){
             NavigationMenuWidth = 0;
         }else

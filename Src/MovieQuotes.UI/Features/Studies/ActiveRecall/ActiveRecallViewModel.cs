@@ -23,12 +23,12 @@ using MovieQuotes.UI.ViewModels.Dialogues;
 public partial class ActiveRecallViewModel : PageViewModelBase
 {
     private readonly SpellingErrorAnalyzer _spellingAnalyzer;
+    private MediaService MediaService {get;}
     [ObservableProperty] SpellingAnalysis? _spellingAnalysis;
     public bool ShowResult =>
         HasChecked && SpellingAnalysis != null;
 
-    private LibVLC MainLibVLC { get; }
-    public MediaPlayer MainMediaPlayer { get; }
+
     [ObservableProperty] int _TotalPhrases;
     [ObservableProperty] StudyPhrase? _CurrentPhrase;
     [ObservableProperty] int _CurrentPhraseIndex;
@@ -79,44 +79,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         }
     }
 
-    public string? ErrorMessage
-    {
-        get
-        {
-            var error = SpellingAnalysis?
-                .Errors
-                .FirstOrDefault();
-
-            if (error == null)
-                return null;
-
-            return error.Type switch
-            {
-                SpellingErrorType.MissingLetter =>
-                    $"You missed '{error.ExpectedText}'.",
-
-                SpellingErrorType.ExtraLetter =>
-                    $"You added '{error.ActualText}'.",
-
-                SpellingErrorType.Substitution =>
-                    $"You wrote '{error.ActualText}' instead of '{error.ExpectedText}'.",
-
-                SpellingErrorType.VowelError =>
-                    $"You used '{error.ActualText}' instead of '{error.ExpectedText}'.",
-
-                SpellingErrorType.Transposition =>
-                    $"You wrote '{error.ActualText}' instead of '{error.ExpectedText}'.",
-
-                SpellingErrorType.InternalSequence =>
-                    $"You wrote '{error.ActualText}' instead of '{error.ExpectedText}'.",
-
-                SpellingErrorType.MultipleErrors =>
-                    "There are multiple spelling errors.",
-
-                _ => null
-            };
-        }
-    }
+    
 
 
 #pragma warning disable
@@ -138,16 +101,11 @@ public partial class ActiveRecallViewModel : PageViewModelBase
     }
     private readonly ILogger<ActiveRecallViewModel> logger;
 #pragma warning restore
-    public ActiveRecallViewModel(IMediator mediator, NavigationService nav) : base(mediator, nav)
+    public ActiveRecallViewModel(IMediator mediator, NavigationService nav, MediaService mediaService,ILogger<ActiveRecallViewModel> logger) : base(mediator, nav)
     {
-        MainLibVLC = new("--no-video", "--quiet");
-        MainMediaPlayer = new(MainLibVLC)
-        {
-            EnableHardwareDecoding = true,
-            Volume = 100
-        };
+        MediaService = mediaService; 
         _spellingAnalyzer = new SpellingErrorAnalyzer();
-        logger = this.GetService<ILogger<ActiveRecallViewModel>>();
+        this.logger = logger;
     }
 
 
@@ -159,7 +117,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
     [RelayCommand]
     async Task Init()
     {
-        var result = await this.mediator.Send(new GetStudiesQuery());
+        var result = await this.mediator.Send(new GetStudiesQuery(studyType: StudyType.ContextRecall));
         TotalPhrases = result.Count;
         if (result.IsError)
         {
@@ -194,13 +152,13 @@ public partial class ActiveRecallViewModel : PageViewModelBase
 
         if (!IsAnswerCorrect)
         {            
-            PlaySound("incorrect.mp3");
+            this.MediaService.PlayWrongAnswerSound();
             return;
         }
 
         // corret go next  
         var update = UpdateProgressForCurrentPhraseAsync();
-        PlaySound("correct.mp3");
+        this.MediaService.PlayCorrectAnswerSound();
         await update;
     }
     [RelayCommand]
@@ -255,8 +213,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
     {
         if (!string.IsNullOrEmpty(CurrentPhrase?.VideoPath))
         {
-            var media = new Media(MainLibVLC, CurrentPhrase.VideoPath);
-            MainMediaPlayer.Play(media);
+            this.MediaService.PlayAudio(CurrentPhrase.VideoPath);
         }
     }
     [RelayCommand]
@@ -303,28 +260,6 @@ public partial class ActiveRecallViewModel : PageViewModelBase
  
     }
 
-    private void PlaySound(string trackName)
-    {
-        //places to search for the sound
-        // 1. {CurrentDirectory}/Assets/Sounds/
-        // 2. {AppData}/MovieQuotes/Assets/Sounds/
-        List<string> searchingDir = [
-            Environment.CurrentDirectory,
-                Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "MovieQuotes")];
-        foreach (var dir in searchingDir)
-        {
-            string endPath = "Assets/Sounds/";
-            var filePath = Path.Combine(dir, endPath,trackName);
-            if (File.Exists(filePath))
-            {
-                var media = new Media(MainLibVLC, filePath);
-                logger.LogInformation($"playing media {media.Meta(MetadataType.URL)}");
-                MainMediaPlayer.Play(media);
-                break;
-            }
-        }
-    }
+    
 
 }

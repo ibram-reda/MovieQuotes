@@ -1,0 +1,369 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:MovieQuotes.UI.Features.Study"
+             x:DataType="vm:StudyOverviewViewModel"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="800"
+             x:Class="MovieQuotes.UI.Features.Study.StudyOverviewView"
+             Loaded="UserControl_Loaded">
+
+    <UserControl.Styles>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Transitions">
+                <Transitions><BrushTransition Property="Background" Duration="0:0:0.2"/></Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ActiveAccentPurpleColor}"/>
+        </Style>
+
+        <Style Selector="Button.StudyActionButton">
+            <Setter Property="Background" Value="{DynamicResource PrimaryAccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.StudyActionButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ActiveAccentPurpleColor}"/>
+        </Style>
+
+        <Style Selector="Border.StatCard">
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundColor}"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+        </Style>
+
+        <Style Selector="TextBlock.StatLabel">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextColor}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="TextBlock.StatValue">
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource HighlightPurpleTextColor}"/>
+        </Style>
+
+        <Style Selector="TextBlock.SectionTitle">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+        </Style>
+
+        <Style Selector="TextBlock.StatEmoji">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Styles>
+
+    <!-- Main Layout -->
+    <Grid RowDefinitions="Auto, Auto, *" Margin="24">
+
+        <!-- Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Margin="0,0,0,24">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="{StaticResource chart_line_regular}" FontSize="24" 
+                         Foreground="{DynamicResource HighlightPurpleTextColor}" VerticalAlignment="Center" />
+                <StackPanel Spacing="2">
+                    <TextBlock Text="Study Overview" FontSize="26" FontWeight="Bold"/>
+                    <TextBlock Text="Build momentum, one phrase at a time ✨"
+                               FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextColor}"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Refresh Button -->
+            <Button Grid.Column="2" 
+                   Command="{Binding RefreshCommand}"
+                   IsEnabled="{Binding !IsBusy}"
+                   ToolTip.Tip="Refresh">
+                <PathIcon Data="{StaticResource arrow_sync_regular}" FontSize="16"/>
+            </Button>
+        </Grid>
+
+        <!-- Error Message -->
+        <TextBlock Grid.Row="1" 
+                  Text="{Binding ErrorMessage}"
+                  Foreground="Red"
+                  IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                  Margin="0,0,0,16"/>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="0,0,12,0">
+            <StackPanel Spacing="24" >
+
+                <!-- Loading Indicator -->
+                <StackPanel IsVisible="{Binding IsBusy}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+                    <TextBlock Text="Loading study data..." 
+                              Foreground="{DynamicResource SecondaryTextColor}"
+                              FontSize="16"
+                              TextAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Main Statistics Grid -->
+                <StackPanel IsVisible="{Binding HasData}" Orientation="Horizontal" Spacing="8">
+                    <PathIcon Data="{StaticResource chart_line_regular}" FontSize="18"
+                              Foreground="{DynamicResource HighlightPurpleTextColor}"
+                              VerticalAlignment="Center"/>
+                    <TextBlock Text="Your progress at a glance" Classes="SectionTitle"/>
+                </StackPanel>
+
+                <Grid IsVisible="{Binding HasData}" 
+                     ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto"
+                     ColumnSpacing="16" RowSpacing="16">
+
+                    <!-- Total Cards Card -->
+                    <Border Grid.Row="0" Grid.Column="0" Classes="StatCard">
+                        <StackPanel Spacing="8" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="🗂️" Classes="StatEmoji"/>
+                                <TextBlock Text="Total Cards" Classes="StatLabel"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding StudyOverview.TotalCards}" Classes="StatValue"/>
+                            <TextBlock Text="active study cards" FontSize="10" Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Cards Due Today Card -->
+                    <Border Grid.Row="0" Grid.Column="1" Classes="StatCard">
+                        <StackPanel Spacing="8" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="⏰" Classes="StatEmoji"/>
+                                <TextBlock Text="Due Today" Classes="StatLabel"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding StudyOverview.CardsDueToday}" Classes="StatValue"/>
+                            <TextBlock Text="cards to review" FontSize="10" Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Success Rate Card -->
+                    <Border Grid.Row="0" Grid.Column="2" Classes="StatCard">
+                        <StackPanel Spacing="8" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="🎯" Classes="StatEmoji"/>
+                                <TextBlock Text="Success Rate" Classes="StatLabel"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding StudyOverview.SuccessRate, StringFormat='{}{0:0.0} %'}" Classes="StatValue"/>
+                            <TextBlock Text="overall accuracy" FontSize="10" Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Total Reviews Card -->
+                    <Border Grid.Row="1" Grid.Column="0" Classes="StatCard">
+                        <StackPanel Spacing="8" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="✅" Classes="StatEmoji"/>
+                                <TextBlock Text="Total Reviews" Classes="StatLabel"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding StudyOverview.TotalReviewsCompleted}" Classes="StatValue"/>
+                            <TextBlock Text="reviews completed" FontSize="10" Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Total Lapses Card -->
+                    <Border Grid.Row="1" Grid.Column="1" Classes="StatCard">
+                        <StackPanel Spacing="8" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="⚡" Classes="StatEmoji"/>
+                                <TextBlock Text="Lapses" Classes="StatLabel"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding StudyOverview.TotalLapses}" Classes="StatValue" Foreground="{DynamicResource ErrorColor}"/>
+                            <TextBlock Text="failed recalls" FontSize="10" Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Current Streak Card -->
+                    <Border Grid.Row="1" Grid.Column="2" Classes="StatCard">
+                        <StackPanel Spacing="8" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="🔥" Classes="StatEmoji"/>
+                                <TextBlock Text="Current Streak" Classes="StatLabel"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding StudyOverview.CurrentStreak}" Classes="StatValue"/>
+                            <TextBlock Text="consecutive correct" FontSize="10" Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Longest Streak Card -->
+                    <Border Grid.Row="2" Grid.Column="0" Classes="StatCard">
+                        <StackPanel Spacing="8" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="🏆" Classes="StatEmoji"/>
+                                <TextBlock Text="Longest Streak" Classes="StatLabel"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding StudyOverview.LongestStreak}" Classes="StatValue"/>
+                            <TextBlock Text="best performance" FontSize="10" Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Average Ease Factor Card -->
+                    <Border Grid.Row="2" Grid.Column="1" Classes="StatCard">
+                        <StackPanel Spacing="8" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="📈" Classes="StatEmoji"/>
+                                <TextBlock Text="Avg. Ease Factor" Classes="StatLabel"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding StudyOverview.AverageEaseFactor, StringFormat='{}{0:0.00}'}" Classes="StatValue"/>
+                            <TextBlock Text="difficulty rating" FontSize="10" Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Last Reviewed Card -->
+                    <Border Grid.Row="2" Grid.Column="2" Classes="StatCard">
+                        <StackPanel Spacing="8" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="🕒" Classes="StatEmoji"/>
+                                <TextBlock Text="Last Reviewed" Classes="StatLabel"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding StudyOverview.LastReviewedAt, StringFormat='yyyy-MM-dd HH:mm'}" 
+                                      Classes="StatValue" FontSize="16"/>
+                            <TextBlock Text="most recent review" FontSize="10" Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+
+                </Grid>
+
+                <!-- Exercise Type Statistics Section -->
+                <StackPanel IsVisible="{Binding HasData}" Spacing="12" Margin="0,16,0,0">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Data="{StaticResource book_open_regular}" FontSize="18"
+                                  Foreground="{DynamicResource HighlightPurpleTextColor}"
+                                  VerticalAlignment="Center"/>
+                        <TextBlock Text="Exercise Statistics by Type" Classes="SectionTitle"/>
+                    </StackPanel>
+                    
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto" ColumnSpacing="16" RowSpacing="16">
+                        <!-- Recognition Exercise Stats -->
+                        <Border Grid.Row="0" Grid.Column="0" Classes="StatCard">
+                            <StackPanel Spacing="16">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="🧠" Classes="StatEmoji"/>
+                                    <TextBlock Text="Recognition" FontSize="14" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource HighlightPurpleTextColor}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                                
+                                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                                    <!-- Recognition Cards -->
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Cards" FontSize="11" Foreground="{DynamicResource SecondaryTextColor}"/>
+                                        <TextBlock Text="{Binding StudyOverview.RecognitionCards}" FontSize="20" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource HighlightPurpleTextColor}"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Recognition Cards Due Today -->
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Due Today" FontSize="11" Foreground="{DynamicResource SecondaryTextColor}"/>
+                                        <TextBlock Text="{Binding StudyOverview.RecognitionCardsDueToday}" FontSize="20" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource HighlightPurpleTextColor}"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Recognition Reviews -->
+                                    <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Reviews" FontSize="11" Foreground="{DynamicResource SecondaryTextColor}"/>
+                                        <TextBlock Text="{Binding StudyOverview.RecognitionReviews}" FontSize="20" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource HighlightPurpleTextColor}"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Recognition Success Rate -->
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Success Rate" FontSize="11" Foreground="{DynamicResource SecondaryTextColor}"/>
+                                        <TextBlock Text="{Binding StudyOverview.RecognitionSuccessRate, StringFormat='{}{0:0.0} %'}" 
+                                                  FontSize="18" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource HighlightPurpleTextColor}"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Button Classes="StudyActionButton"
+                                        Command="{Binding StartRecognitionStudyCommand}"
+                                        IsVisible="{Binding HasRecognitionDue}"
+                                        HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <PathIcon Data="{StaticResource lightbulb_regular}" FontSize="16"/>
+                                        <TextBlock Text="Start Recognition" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Context Recall Exercise Stats -->
+                        <Border Grid.Row="0" Grid.Column="1" Classes="StatCard">
+                            <StackPanel Spacing="16">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="✍️" Classes="StatEmoji"/>
+                                    <TextBlock Text="Context Recall" FontSize="14" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource HighlightPurpleTextColor}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                                
+                                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                                    <!-- Context Recall Cards -->
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Cards" FontSize="11" Foreground="{DynamicResource SecondaryTextColor}"/>
+                                        <TextBlock Text="{Binding StudyOverview.ContextRecallCards}" FontSize="20" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource HighlightPurpleTextColor}"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Context Recall Cards Due Today -->
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Due Today" FontSize="11" Foreground="{DynamicResource SecondaryTextColor}"/>
+                                        <TextBlock Text="{Binding StudyOverview.ContextRecallCardsDueToday}" FontSize="20" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource HighlightPurpleTextColor}"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Context Recall Reviews -->
+                                    <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Reviews" FontSize="11" Foreground="{DynamicResource SecondaryTextColor}"/>
+                                        <TextBlock Text="{Binding StudyOverview.ContextRecallReviews}" FontSize="20" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource HighlightPurpleTextColor}"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Context Recall Success Rate -->
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Success Rate" FontSize="11" Foreground="{DynamicResource SecondaryTextColor}"/>
+                                        <TextBlock Text="{Binding StudyOverview.ContextRecallSuccessRate, StringFormat='{}{0:0.0} %'}" 
+                                                  FontSize="18" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource HighlightPurpleTextColor}"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Button Classes="StudyActionButton"
+                                        Command="{Binding StartActiveRecallStudyCommand}"
+                                        IsVisible="{Binding HasContextRecallDue}"
+                                        HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <PathIcon Data="{StaticResource text_font_regular}" FontSize="16"/>
+                                        <TextBlock Text="Start Active Recall" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+
+                <!-- No Data Message -->
+                <TextBlock IsVisible="{Binding !HasData}"
+                          Text="No study data available yet."
+                          FontSize="16"
+                          Foreground="{DynamicResource SecondaryTextColor}"
+                          TextAlignment="Center"
+                          Margin="0,40"/>
+
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+
+</UserControl>

@@ -31,6 +31,7 @@ public static class ServiceCollectionExtensions
         Services.AddSingleton<NavigationService>();
         Services.AddTransient<IDataTemplate, ViewLocator>();
         Services.AddSingleton<INotificationService, NotificationService>();
+        Services.AddSingleton<MediaService>();
         Services.AddScoped<WindowNotificationManager>(x => ((MainWindow)window).manger);
 
 
