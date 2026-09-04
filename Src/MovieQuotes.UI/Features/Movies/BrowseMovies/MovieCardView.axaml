@@ -4,9 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:MovieQuotes.UI.Features.Movies.BrowseMovies"
              x:DataType="vm:MovieCardViewModel"
-             Background="{DynamicResource SurfeceBackground}"
+             Background="Transparent"
              mc:Ignorable="d"
-             Width="200"
+             Width="210"
              x:Class="MovieQuotes.UI.Features.Movies.BrowseMovies.MovieCardView">
   <Design.DataContext>
     <vm:MovieCardViewModel MovieTitle="The Shawshank Redemption kkk kk kk kk kk kk kk "
@@ -14,27 +14,30 @@
                            Tagline="An epic journey of discovery loream epson."
                            CoverUrl="/mnt/Movies/Movies_and_series/movies/en/12 Years a Slave (2013)/Cover.jpg"/>
   </Design.DataContext>
-  <Button  
-          Background="{DynamicResource CardBackgroundColor}"
-          BorderBrush="{DynamicResource CardBackgroundColor}"
+  <Button
+          Background="{DynamicResource CardBackgroundBrush}"
+          BorderBrush="{DynamicResource PrimaryAccentBrush}"
+          BorderThickness="1"
+          CornerRadius="{StaticResource StandardCornerRadius}"
+          Padding="10"
           Command="{Binding DisplayMovieDetailsCommand}" 
           VerticalAlignment="Stretch"
           ToolTip.Tip="{Binding MovieTitle}">
 
-    <Grid RowDefinitions="225,*" VerticalAlignment="Top" >
+    <Grid RowDefinitions="230,Auto" VerticalAlignment="Top" >
       <Image Grid.Row="0" 
              Source="{Binding CoverUrl,Converter={StaticResource PathToBitmapConverter}}"
-             Stretch="Fill"/>
-      <StackPanel Grid.Row="1" Margin="0,5,0,0">
+             Stretch="UniformToFill"/>
+      <StackPanel Grid.Row="1" Margin="0,10,0,2" Spacing="4">
         <TextBlock Text="{Binding MovieTitle}"
                    FontWeight="Bold"
                    TextWrapping="Wrap"
-                   FontSize="16"
-                   MaxHeight="40"/>
+                   FontSize="15"
+                   MaxHeight="42"/>
 
         <TextBlock Text="{Binding ReleaseYear, StringFormat='Released: {0}'}"
                    FontSize="12"
-                   Foreground="{DynamicResource PrimaryTextColor}"/>
+                   Foreground="{DynamicResource SecondaryTextBrush}"/>
       </StackPanel>
     </Grid>
   </Button>

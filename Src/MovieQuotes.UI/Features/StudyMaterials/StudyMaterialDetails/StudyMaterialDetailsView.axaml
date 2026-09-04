@@ -11,84 +11,88 @@
              mc:Ignorable="d"
              d:DesignWidth="900"
              d:DesignHeight="650"
-             Background="{DynamicResource AppBackgroundColor}">
+             Background="{DynamicResource AppBackgroundBrush}">
   <UserControl.Resources>
     <converters:StudyReviewDateConverter x:Key="StudyReviewDateConverter" />
     <converters:StudyProgressTypeIconConverter x:Key="StudyProgressTypeIconConverter" />
   </UserControl.Resources>
-  <Grid RowDefinitions="Auto,*" >
-    <Grid ColumnDefinitions="*,Auto,Auto" Margin="16">
-      <TextBlock Text="Study Material Details" Classes="title" />
+  <UserControl.Styles>
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto,*" Margin="24,20">
+    <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,0,0,20">
+      <StackPanel Spacing="3">
+        <TextBlock Text="Study material details" FontSize="24" FontWeight="Bold" />
+        <TextBlock Text="Review vocabulary, learning progress, and related phrases"
+                   Foreground="{DynamicResource SecondaryTextBrush}" FontSize="13" />
+      </StackPanel>
           <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-      <Button Content="Start Learning"
+      <Button Classes="primary-action" Content="Start learning"
         Command="{Binding AddToStudyCommand}"
         IsVisible="{Binding !IsBeingStudied}"
         Margin="0,0,8,0" />
       <TextBlock Text="Already studying"
            IsVisible="{Binding IsBeingStudied}"
+           Foreground="{DynamicResource CorrectGreenBrush}"
            VerticalAlignment="Center"
            Margin="0,0,8,0" />
           </StackPanel>
-      <Button Grid.Column="2" Content="Back" Command="{Binding BackToPreviousCommand}" />
+      <Button Grid.Column="2" Classes="secondary-action" Content="Back" Command="{Binding BackToPreviousCommand}" />
     </Grid>
 
     <ScrollViewer Grid.Row="1">
-      <StackPanel Margin="16" Spacing="12" DockPanel.Dock="Top">
+      <StackPanel Spacing="20" MaxWidth="1000" HorizontalAlignment="Center">
 
-        <ItemsControl Foreground="Red" ItemsSource="{Binding ErrorMessages}" />
+        <ItemsControl Foreground="{DynamicResource ErrorRedBrush}" ItemsSource="{Binding ErrorMessages}" />
 
-        <Border IsVisible="{Binding Details}" Padding="16" 
-        Background="{DynamicResource CardBackgroundColor}" 
-        BoxShadow="0 2 4 0 #20000000"
-        CornerRadius="4">
+        <Border IsVisible="{Binding Details}" Padding="24" Classes="section-card">
           <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-                ColumnDefinitions="124,*" RowSpacing="4">
-            <TextBlock Grid.Row="0" Classes="label" Text="Content" />
+                ColumnDefinitions="140,*" RowSpacing="10" ColumnSpacing="16">
+            <TextBlock Grid.Row="0" Classes="detail-label" Text="Content" />
             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Details.Content}" TextWrapping="Wrap" />
 
-            <TextBlock Grid.Row="1" Classes="label" Text="Definition" />
+            <TextBlock Grid.Row="1" Classes="detail-label" Text="Definition" />
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Details.Definition}" TextWrapping="Wrap" />
 
-            <TextBlock Grid.Row="2" Classes="label" Text="Arabic content" />
+            <TextBlock Grid.Row="2" Classes="detail-label" Text="Arabic content" />
             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Details.ContentArabicTranslation}" FlowDirection="RightToLeft" TextWrapping="Wrap" />
 
-            <TextBlock Grid.Row="3" Classes="label" Text="Part of speech" />
+            <TextBlock Grid.Row="3" Classes="detail-label" Text="Part of speech" />
             <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Details.PartOfSpeech}" />
 
-            <TextBlock Grid.Row="4" Classes="label" Text="Origin" />
+            <TextBlock Grid.Row="4" Classes="detail-label" Text="Origin" />
             <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Details.Origin}" />
 
-            <TextBlock Grid.Row="5" Classes="label" Text="Level" />
+            <TextBlock Grid.Row="5" Classes="detail-label" Text="Level" />
             <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Details.Level}" />
 
-            <TextBlock Grid.Row="6" Classes="label" Text="Pronunciation" />
+            <TextBlock Grid.Row="6" Classes="detail-label" Text="Pronunciation" />
             <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Details.Pronunciation}" />
 
-            <TextBlock Grid.Row="7" Classes="label" Text="Synonyms" />
+            <TextBlock Grid.Row="7" Classes="detail-label" Text="Synonyms" />
             <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Details.Synonyms}" TextWrapping="Wrap" />
 
-            <TextBlock Grid.Row="8" Classes="label" Text="Examples" />
+            <TextBlock Grid.Row="8" Classes="detail-label" Text="Examples" />
             <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding Details.Examples}" TextWrapping="Wrap" />
 
-            <TextBlock Grid.Row="9" Classes="label" Text="Notes" />
+            <TextBlock Grid.Row="9" Classes="detail-label" Text="Notes" />
             <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding Details.Notes}" TextWrapping="Wrap" />
 
-            <TextBlock Grid.Row="10" Classes="label" Text="Tags" />
+            <TextBlock Grid.Row="10" Classes="detail-label" Text="Tags" />
             <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding Details.Tags}" TextWrapping="Wrap" />
 
-            <TextBlock Grid.Row="11" Classes="label" Text="Draft" />
+            <TextBlock Grid.Row="11" Classes="detail-label" Text="Draft" />
             <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding Details.IsDraft}" />
 
-            <TextBlock Grid.Row="12" Classes="label" Text="Vulgar" />
+            <TextBlock Grid.Row="12" Classes="detail-label" Text="Vulgar" />
             <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding Details.IsVulgar}" />
           </Grid>
         </Border>
 
         <StackPanel IsVisible="{Binding IsBeingStudied}" Spacing="12">
-          <TextBlock Text="Learning Progress" Classes="title" />
+          <TextBlock Text="Learning progress" FontSize="20" FontWeight="SemiBold" />
            
-          <Border IsVisible="{Binding !HasProgressRecords}" Padding="18"
-                  Background="{DynamicResource CardBackgroundColor}"
+            <Border IsVisible="{Binding !HasProgressRecords}" Padding="18" Classes="section-card"
                   BorderBrush="{DynamicResource ProgressBackgroundColor}"
                   BorderThickness="1" CornerRadius="8">
             <StackPanel Spacing="4">
@@ -105,8 +109,8 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="study:StudyProgress">
-                <Border Width="360" MinWidth="280" Padding="18" Margin="12"
-                        Background="{DynamicResource CardBackgroundColor}"
+                <Border Width="360" MinWidth="280" Padding="18" Margin="8"
+                  Classes="section-card"
                         BorderBrush="{DynamicResource ProgressBackgroundColor}"
                         BorderThickness="1" CornerRadius="8">
                   <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="12">
@@ -140,62 +144,72 @@
           </ItemsControl>
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
-          <TextBlock Text="Related Phrases" Classes="title" />
-          <TextBlock Text="{Binding Details.MaterialPhrases.Count, StringFormat='({0})'}" VerticalAlignment="Center"/>
-        </StackPanel>
-        <ItemsControl ItemsSource="{Binding Details.MaterialPhrases}">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="study:StudyMaterialPhrase">
-              <Border Padding="12" Margin="0,0,0,8" Background="{DynamicResource CardBackgroundColor}" CornerRadius="4">
-                <Grid ColumnDefinitions="20,96,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
-                  <TextBlock Grid.RowSpan="4" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Sequance, StringFormat='#{0}'}" Opacity="0.7" />
-                  <Image Grid.Column="1" Grid.RowSpan="4" Width="80" Height="60" Stretch="UniformToFill"
-                         Source="{Binding MovieCoverUrl, Converter={StaticResource PathToBitmapConverter}}" />
-                  <TextBlock  Grid.Column="2" Text="{Binding MovieTitle}" FontWeight="Bold" />
-                  <PhraseText Grid.Row="1" Grid.Column="2" Text="{Binding PhraseText}" Highlight="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).Details.Content}"/>
-                  <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding ArPhraseTranslation}" FlowDirection="RightToLeft" TextWrapping="Wrap" />
-                    <Button Grid.Column="3" Grid.RowSpan="4"
-                      Content="Unlink"
-                      VerticalAlignment="Center"
-                      Command="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).UnlinkPhraseCommand}"
-                      CommandParameter="{Binding}" />
-                </Grid>
-              </Border>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
+          <StackPanel Grid.Column="0" Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Related phrases" FontSize="20" FontWeight="SemiBold" />
+              <TextBlock Text="{Binding Details.MaterialPhrases.Count, StringFormat='({0})'}" VerticalAlignment="Center"/>
+            </StackPanel>
+            <ScrollViewer MaxHeight="420" VerticalScrollBarVisibility="Auto">
+              <ItemsControl ItemsSource="{Binding Details.MaterialPhrases}">
+                <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="study:StudyMaterialPhrase">
+                  <Border Padding="16" Margin="0,0,0,10" Classes="section-card">
+                    <Grid ColumnDefinitions="20,96,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+                      <TextBlock Grid.RowSpan="4" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Sequance, StringFormat='#{0}'}" Opacity="0.7" />
+                      <Image Grid.Column="1" Grid.RowSpan="4" Width="80" Height="60" Stretch="UniformToFill"
+                             Source="{Binding MovieCoverUrl, Converter={StaticResource PathToBitmapConverter}}" />
+                      <TextBlock Grid.Column="2" Text="{Binding MovieTitle}" FontWeight="Bold" TextWrapping="Wrap" />
+                      <PhraseText Grid.Row="1" Grid.Column="2" Text="{Binding PhraseText}" Highlight="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).Details.Content}"/>
+                      <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding ArPhraseTranslation}" FlowDirection="RightToLeft" TextWrapping="Wrap" />
+                      <Button Grid.Column="3" Grid.RowSpan="4"
+                              Classes="secondary-action"
+                              Content="Unlink"
+                              VerticalAlignment="Center"
+                              Command="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).UnlinkPhraseCommand}"
+                              CommandParameter="{Binding}" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
-          <TextBlock Text="Phrases With Matching Content" Classes="title" />
-          <TextBlock Text="{Binding MatchingPhrases.Count, StringFormat='({0})'}" VerticalAlignment="Center"/>
-        </StackPanel>
-        <ItemsControl ItemsSource="{Binding MatchingPhrases}">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="phrase:Phrase">
-              <Border Padding="12" Margin="0,0,0,8" Background="{DynamicResource CardBackgroundColor}" CornerRadius="4">
-                <Grid ColumnDefinitions="96,*,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
-                  <Image Grid.RowSpan="3" Width="80" Height="60" Stretch="UniformToFill"
-                         Source="{Binding MovieCoverUrl, Converter={StaticResource PathToBitmapConverter}}" />
-                  <TextBlock Grid.Column="1" Text="{Binding MovieName}" FontWeight="Bold" /> 
-                  <PhraseText Grid.Row="1" Grid.Column="1" Text="{Binding Text}" Highlight="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).Details.Content}"/>
-
-                  <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Sequence, StringFormat='Sequence: {0}'}" Opacity="0.7" />
-                  <Button Grid.Column="2" Grid.RowSpan="3"
-                          Content="Play"
-                          VerticalAlignment="Center"
-                          Command="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).PlayPhraseCommand}"
-                          CommandParameter="{Binding}" />
-                  <Button Grid.Column="3" Grid.RowSpan="3"
-                          Content="Add"
-                          VerticalAlignment="Center"
-                          Command="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).AddPhraseCommand}"
-                          CommandParameter="{Binding}" />
-                </Grid>
-              </Border>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
+          <StackPanel Grid.Column="1" Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Matching phrases" FontSize="20" FontWeight="SemiBold" />
+              <TextBlock Text="{Binding MatchingPhrases.Count, StringFormat='({0})'}" VerticalAlignment="Center"/>
+            </StackPanel>
+            <ScrollViewer MaxHeight="420" VerticalScrollBarVisibility="Auto">
+              <ItemsControl ItemsSource="{Binding MatchingPhrases}">
+                <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="phrase:Phrase">
+                  <Border Padding="16" Margin="0,0,0,10" Classes="section-card">
+                    <Grid ColumnDefinitions="96,*,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+                      <Image Grid.RowSpan="3" Width="80" Height="60" Stretch="UniformToFill"
+                             Source="{Binding MovieCoverUrl, Converter={StaticResource PathToBitmapConverter}}" />
+                      <TextBlock Grid.Column="1" Text="{Binding MovieName}" FontWeight="Bold" TextWrapping="Wrap" />
+                      <PhraseText Grid.Row="1" Grid.Column="1" Text="{Binding Text}" Highlight="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).Details.Content}"/>
+                      <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Sequence, StringFormat='Sequence: {0}'}" Opacity="0.7" />
+                      <Button Grid.Column="2" Grid.RowSpan="3" Classes="secondary-action"
+                              Content="Play"
+                              VerticalAlignment="Center"
+                              Command="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).PlayPhraseCommand}"
+                              CommandParameter="{Binding}" />
+                      <Button Grid.Column="3" Grid.RowSpan="3" Classes="primary-action"
+                              Content="Add"
+                              VerticalAlignment="Center"
+                              Command="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).AddPhraseCommand}"
+                              CommandParameter="{Binding}" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </StackPanel>
+        </Grid>
       </StackPanel>
     </ScrollViewer>
   </Grid>

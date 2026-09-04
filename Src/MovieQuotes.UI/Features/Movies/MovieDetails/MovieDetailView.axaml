@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:MovieQuotes.UI.Features.Movies.MovieDetails" 
+             xmlns:vm="using:MovieQuotes.UI.Features.Movies.MovieDetails"
              xmlns:controls="using:MovieQuotes.UI.Views.Controls"
              x:DataType="vm:MovieDetailViewModel"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -12,27 +12,85 @@
         <vm:MovieDetailViewModel  />
     </d:Design.DataContext>
 
-    <!--Movie Details page-->
-    <Grid >
-        <Image  Source="{Binding Backdrop,Converter={StaticResource PathToBitmapConverter}}" Stretch="UniformToFill"/>
-        <!-- Overlay Square -->
-        <Rectangle Fill="black"  Stretch="UniformToFill" Opacity="0.8"/> 
+    <UserControl.Styles>
+        <Style Selector="Button.watch-button">
+            <Setter Property="Background" Value="{DynamicResource PrimaryAccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="20,11"/>
+            <Setter Property="CornerRadius" Value="{StaticResource StandardCornerRadius}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Styles>
 
-        <Grid ColumnDefinitions="auto,*" >
+    <Grid Background="{DynamicResource AppBackgroundBrush}">
+        <Image Source="{Binding Backdrop,Converter={StaticResource PathToBitmapConverter}}"
+               Stretch="UniformToFill" Opacity="0.32"/>
+        <Rectangle Fill="{DynamicResource AppBackgroundBrush}" Opacity="0.72"/>
 
-            <Image Grid.Column="0" Margin="20" VerticalAlignment="Top"
-            Source="{Binding MoviePoster,Converter={StaticResource PathToBitmapConverter}}" 
-            Stretch="UniformToFill" Height="600"/>
-            <StackPanel Grid.Column="1" Margin="20">
-                <TextBlock Text="{Binding MovieName}" FontSize="24" FontWeight="Bold"/>
-                <TextBlock Text="{Binding Genres}" FontStyle="Italic" Margin="0,5"/>
-                <TextBlock Text="{Binding VoteAverage, StringFormat='Rating: {0:F1}'}" FontStyle="Italic" Margin="0,5"/>
-                <TextBlock Text="{Binding VoteCount, StringFormat='Votes Count: {0}'}" FontStyle="Italic" Margin="0,5"/>
-                <TextBlock Text="{Binding IsAdult, StringFormat='Adult Content: {0}'}" FontStyle="Italic" Margin="0,5"/>
-                <TextBlock Text="{Binding Overview}" TextWrapping="Wrap" Margin="0,10"/>
-                <TextBlock Text="{Binding ReleaseDate}" FontStyle="Italic" Margin="0,5"/>
-                <Button Content="Watch Movie" Command="{Binding WatchMovieCommand}" />
+        <Grid RowDefinitions="Auto,Auto" Margin="24,20">
+            <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,20">
+                <TextBlock Text="Movie details" FontSize="24" FontWeight="Bold"/>
+                <TextBlock Text="Explore the story, cast information, and playback options"
+                           Foreground="{DynamicResource SecondaryTextBrush}" FontSize="13"/>
             </StackPanel>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <Grid MaxWidth="980" HorizontalAlignment="Center" ColumnDefinitions="300,*" ColumnSpacing="28">
+                    <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}"
+                            BorderBrush="{DynamicResource PrimaryAccentBrush}" BorderThickness="1"
+                            CornerRadius="{StaticResource StandardCornerRadius}" Padding="10"
+                            VerticalAlignment="Top">
+                        <Image Source="{Binding MoviePoster,Converter={StaticResource PathToBitmapConverter}}"
+                               Stretch="Uniform" MaxHeight="450"/>
+                    </Border>
+
+                    <Border Grid.Column="1" Background="{DynamicResource CardBackgroundBrush}"
+                            BorderBrush="{DynamicResource PrimaryAccentBrush}" BorderThickness="1"
+                            CornerRadius="{StaticResource StandardCornerRadius}" Padding="28">
+                        <StackPanel Spacing="18">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="{Binding MovieName}" FontSize="30" FontWeight="Bold"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Genres}" Foreground="{DynamicResource SecondaryTextBrush}"
+                                           FontSize="14" TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="16" RowSpacing="12">
+                                <StackPanel Grid.Column="0" Spacing="3">
+                                    <TextBlock Text="Rating" Classes="detail-label"/>
+                                    <TextBlock Text="{Binding VoteAverage, StringFormat='★ {0:F1} / 10'}"
+                                               Classes="detail-value" FontWeight="SemiBold"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="3">
+                                    <TextBlock Text="Votes" Classes="detail-label"/>
+                                    <TextBlock Text="{Binding VoteCount}" Classes="detail-value"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Spacing="3">
+                                    <TextBlock Text="Release year" Classes="detail-label"/>
+                                    <TextBlock Text="{Binding ReleaseDate}" Classes="detail-value"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="1" Spacing="3">
+                                    <TextBlock Text="Content rating" Classes="detail-label"/>
+                                    <TextBlock Text="{Binding IsAdult, StringFormat='Adult content: {0}'}" Classes="detail-value"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <Border Background="{DynamicResource AppBackgroundBrush}"
+                                    CornerRadius="{StaticResource StandardCornerRadius}" Padding="16">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="Overview" Classes="detail-label"/>
+                                    <TextBlock Text="{Binding Overview}" TextWrapping="Wrap"
+                                               FontSize="15" LineHeight="22"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Button Classes="watch-button" Content="Watch movie"
+                                    Command="{Binding WatchMovieCommand}" HorizontalAlignment="Left"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </UserControl>

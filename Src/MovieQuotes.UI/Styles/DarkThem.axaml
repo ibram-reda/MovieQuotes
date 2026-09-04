@@ -229,7 +229,7 @@
     <SolidColorBrush x:Key="SecondaryTextBrush">#A1A7B3</SolidColorBrush>
     <SolidColorBrush x:Key="CorrectGreenBrush">#66BB6A</SolidColorBrush>
     <SolidColorBrush x:Key="ErrorRedBrush">#E57373</SolidColorBrush>
-    <CornerRadius x:Key="StandardCornerRadius">8</CornerRadius>
+    
 
     <FontFamily x:Key="ThemePreviewFontFamily">Segoe UI</FontFamily>
     <FontFamily x:Key="ThemeCodeFontFamily">Cascadia Code</FontFamily>

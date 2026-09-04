@@ -8,64 +8,83 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MovieQuotes.UI.Views.PlaybackView">
-  <Grid RowDefinitions="auto,auto,*,auto" Margin="10">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.muted">
+      <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
+      <Setter Property="FontSize" Value="13"/>
+    </Style>
+  </UserControl.Styles>
 
-    <Grid ColumnDefinitions="*,auto">
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24,20" RowSpacing="14">
+
+    <StackPanel Grid.Row="0" Spacing="3">
+      <TextBlock Text="Search and playback" FontSize="24" FontWeight="Bold"/>
+      <TextBlock Text="Find a phrase and review it in its movie context" Classes="muted"/>
+    </StackPanel>
+
+    <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
       <Grid.DataTemplates>
         <DataTemplate DataType="model:Phrase" >
-          <StackPanel Orientation="Horizontal" Spacing="20">
-            <TextBlock Text="{Binding MovieName}"/>
-            <TextBlock Text="{Binding Text}"/>
-            <TextBlock Text="{Binding VideoLocation}"/>
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="{Binding MovieName}" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding Text}" Classes="muted" TextTrimming="CharacterEllipsis"/>
           </StackPanel>
         </DataTemplate>
       </Grid.DataTemplates>
       <TextBox Grid.Column="0"
                Text="{Binding SearchText}"
-               Watermark="search text"
-               Padding="5">
+               PlaceholderText="Search for a phrase"
+               Padding="10,8"
+               MinHeight="38">
         <TextBox.KeyBindings>
           <KeyBinding Gesture="Enter" Command="{Binding searchCommand}"/>
         </TextBox.KeyBindings>
       </TextBox>
-        <Button Grid.Column="1"
-                Command="{Binding searchCommand}"
-                Content="search" />
+      <Button Grid.Column="1" Classes="primary-action"
+              Command="{Binding searchCommand}"
+              Content="Search" />
     </Grid>
 
-    <StackPanel Grid.Row="1" Orientation="Horizontal">
-      <TextBlock Text="{Binding CurrentPlayingIndex}"/>
-      <TextBlock Text="  of  "/>
-      <TextBlock Text="{Binding ReadyToPlay.Count}"/>
-      <TextBlock Text="{Binding SearchCount,StringFormat=' founded:{0}'}" />
-
-      <Button Content="Previous" Command="{Binding PreviousCommand}" />
-      <Button Content="Next" Command="{Binding NextCommand}" />
-      <Button Content="Create Study Material" Command="{Binding CreateStudyCommand}" />
-    </StackPanel>
-
-    <Grid Grid.Row="2">
-
-      <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}">
-        <Grid IsVisible="{Binding CurrentPlayingPhrase}"
-              VerticalAlignment="Stretch"
-              HorizontalAlignment="Stretch"
-              Margin="10"> 
-            <TextBox Text="{Binding CurrentPlayingPhrase.Text}"
-                   IsReadOnly="True"
-                   BorderBrush="Transparent"
-                   BorderThickness="0"
-                   Background="Transparent"
-                   FontSize="28"
-                   Margin="10"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Bottom"/>
-
-            <TextBlock Text="{Binding CurrentPlayingPhrase.MovieName}"/> 
+    <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}"
+            BorderBrush="{DynamicResource PrimaryAccentBrush}" BorderThickness="1"
+            CornerRadius="{StaticResource StandardCornerRadius}" Padding="10">
+      <Grid RowDefinitions="Auto,*" RowSpacing="10">
+        <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto" ColumnSpacing="10">
+          <TextBlock Text="Clip" Classes="muted" VerticalAlignment="Center"/>
+          <TextBlock Grid.Column="1" Text="{Binding CurrentPlayingIndex, StringFormat='{}{0}'}"
+                     FontWeight="SemiBold" VerticalAlignment="Center"/>
+          <TextBlock Grid.Column="2" Text="{Binding SearchCount,StringFormat='{}{0} results found'}"
+                     Classes="muted" VerticalAlignment="Center"/>
+          <Button Grid.Column="3" Classes="secondary-action" Content="Previous"
+                  Command="{Binding PreviousCommand}" />
+          <Button Grid.Column="4" Classes="secondary-action" Content="Next"
+                  Command="{Binding NextCommand}" />
+          <Button Grid.Column="5" Classes="primary-action" Content="Create study material"
+                  Command="{Binding CreateStudyCommand}" />
         </Grid>
-      </vlc:VideoView>
-    </Grid>
- 
-    
+
+        <Border Grid.Row="1" Background="Black" CornerRadius="{StaticResource StandardCornerRadius}">
+          <vlc:VideoView MediaPlayer="{Binding MainMediaPlayer}">
+            <Grid IsVisible="{Binding CurrentPlayingPhrase}"
+                  VerticalAlignment="Stretch"
+                  HorizontalAlignment="Stretch"
+                  Margin="14">
+              <Border Background="#CC000000" CornerRadius="{StaticResource StandardCornerRadius}"
+                      Padding="14" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+                <StackPanel Spacing="4">
+                  <TextBlock Text="{Binding CurrentPlayingPhrase.MovieName}"
+                             Foreground="White" FontWeight="SemiBold"/>
+                  <TextBlock Text="{Binding CurrentPlayingPhrase.Text}"
+                             Foreground="White" FontSize="20" TextWrapping="Wrap"/>
+                </StackPanel>
+              </Border>
+            </Grid>
+          </vlc:VideoView>
+        </Border>
+      </Grid>
+    </Border>
+
+    <TextBlock Grid.Row="3" Text="{Binding ReadyToPlay.Count, StringFormat='{}{0} playable clips loaded'}"
+               Classes="muted" HorizontalAlignment="Right"/>
   </Grid>
 </UserControl>

@@ -15,7 +15,8 @@
 
   <UserControl.Styles>
     <Style Selector="Border.draft">
-      <Setter Property="Background" Value="{DynamicResource ErrorStatusColor}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource ProgressNeedsWorkOrangeColor}"/>
+      <Setter Property="BorderThickness" Value="1"/>
     </Style>
     <Style Selector="TextBox.filter">
       <Setter Property="Margin" Value="0,0,8,0" />
@@ -23,23 +24,37 @@
     </Style>
     <Style Selector="TextBlock.label">
       <Setter Property="VerticalAlignment" Value="Center" />
-      <Setter Property="Margin" Value="0,0,5,0" />
+      <Setter Property="Margin" Value="0,0,6,0" />
+      <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="Button.toolbar-action">
+      <Setter Property="Padding" Value="14,8" />
+      <Setter Property="CornerRadius" Value="{StaticResource StandardCornerRadius}" />
+      <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
   </UserControl.Styles>
 
-  <Grid RowDefinitions="Auto,*,Auto" Margin="16">
-    <Border Padding="12"
-            Background="{DynamicResource CardBackgroundColor}"
-            CornerRadius="4">
-      <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="Study materials" Classes="title" VerticalAlignment="Center" />
-          <TextBlock Text="{Binding TotalCount, StringFormat='({0})'}" VerticalAlignment="Center" />
-        </StackPanel>
+  <Grid RowDefinitions="Auto,*,Auto" Margin="24,20">
+    <Border Padding="20"
+            Background="{DynamicResource CardBackgroundBrush}"
+            BorderBrush="{DynamicResource PrimaryAccentBrush}"
+            BorderThickness="1"
+            CornerRadius="{StaticResource StandardCornerRadius}">
+      <Grid RowDefinitions="Auto,Auto" RowSpacing="16">
+        <Grid ColumnDefinitions="Auto,Auto,*">
+          <StackPanel Spacing="3">
+            <TextBlock Text="Study materials" FontSize="24" FontWeight="Bold" />
+            <TextBlock Text="Build and review your personal vocabulary library"
+                       Foreground="{DynamicResource SecondaryTextBrush}" FontSize="13" />
+          </StackPanel>
+          <TextBlock Grid.Column="1" Text="{Binding TotalCount, StringFormat='{}{0} materials'}"
+                     Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Bottom" Margin="12,0,0,3" />
+        </Grid>
 
         <StackPanel Grid.Row="1" Grid.ColumnSpan="2"
                     Orientation="Horizontal"
-                    Margin="0,12,0,0">
+                    Spacing="8">
           <TextBlock Text="Movie ID" Classes="label" />
           <ComboBox Classes="filter"
                     ItemsSource="{Binding Movies}"
@@ -56,14 +71,14 @@
                                TextWrapping="Wrap"/>
                     <TextBlock Text="{Binding StudyMaterialCount}"
                                VerticalAlignment="Center"
-                               Foreground="Yellow"/>
+                               Foreground="{DynamicResource ProgressGoodColor}"/>
                   </StackPanel>
                 </StackPanel>
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>
           <TextBlock Text="Level" Classes="label" />
-          <TextBox Classes="filter" Text="{Binding LevelFilter, Mode=TwoWay}" PlaceholderText="Any level" />
+          <TextBox Classes="filter" Text="{Binding LevelFilter, Mode=TwoWay}" PlaceholderText="Any level" MinHeight="34" />
           <TextBlock Text="Part of speech" Classes="label" />
           <ComboBox Classes="filter"
                     ItemsSource="{Binding PartOfSpeechCounts}"
@@ -78,20 +93,20 @@
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>
-          <TextBox Classes="filter" Width="220"
+          <TextBox Classes="filter" Width="220" MinHeight="34"
                    Text="{Binding SearchText, Mode=TwoWay}"
                    PlaceholderText="Search materials">
             <TextBox.KeyBindings>
               <KeyBinding Gesture="Enter" Command="{Binding ApplyFiltersCommand}" />
             </TextBox.KeyBindings>
           </TextBox>
-          <Button Content="Filter" Command="{Binding ApplyFiltersCommand}" Margin="0,0,8,0" />
-          <Button Content="Clear" Command="{Binding ClearFiltersCommand}" />
+          <Button Classes="toolbar-action primary-action" Content="Apply filters" Command="{Binding ApplyFiltersCommand}" />
+          <Button Classes="toolbar-action secondary-action" Content="Clear" Command="{Binding ClearFiltersCommand}" />
         </StackPanel>
       </Grid>
     </Border>
 
-    <ScrollViewer Grid.Row="1" Margin="0,12,0,0">
+    <ScrollViewer Grid.Row="1" Margin="0,20,0,0" VerticalScrollBarVisibility="Auto">
       <ItemsControl ItemsSource="{Binding Materials}">
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate>
@@ -100,12 +115,14 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
           <DataTemplate>
-            <Border Width="330"
-                    Margin="0,0,12,12"
-                    Padding="14"
+                <Border Width="340"
+                  Margin="0,0,16,16"
+                  Padding="18"
                     Classes.draft="{Binding IsDraft}"
-                    Background="{DynamicResource CardBackgroundColor}"
-                    CornerRadius="4">
+                  Background="{DynamicResource CardBackgroundBrush}"
+                  BorderBrush="{DynamicResource PrimaryAccentBrush}"
+                  BorderThickness="1"
+                  CornerRadius="{StaticResource StandardCornerRadius}">
               <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
                 <Grid ColumnDefinitions="*,auto" >
                        <TextBlock Text="{Binding Origin}"
@@ -118,12 +135,15 @@
                            FontSize="18"
                            FontWeight="Bold"
                            TextWrapping="Wrap" />
-                        <TextBlock Grid.Column="1" Text="{Binding Level}" />
+                        <Border Grid.Column="1" Background="{DynamicResource AppBackgroundBrush}"
+                                CornerRadius="10" Padding="8,3">
+                          <TextBlock Text="{Binding Level}" Foreground="{DynamicResource SecondaryTextBrush}" />
+                        </Border>
                         
                 </Grid>
                 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center" Margin="0,10,0,0">
-                  <TextBlock Text="{Binding PartOfSpeech}" Foreground="{DynamicResource SecondaryTextColor}" VerticalAlignment="Center" />
+                  <TextBlock Text="{Binding PartOfSpeech}" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding ContentArabicTranslation}"
                           FlowDirection="RightToLeft"
                           VerticalAlignment="Top"
@@ -136,7 +156,7 @@
                            Margin="0,6,0,0"
                            TextWrapping="Wrap" />
 
-                <GridSplitter Grid.Row="3" BorderThickness="1" BorderBrush="{DynamicResource SecondaryTextColor}" Height="1" />
+                <GridSplitter Grid.Row="3" BorderThickness="1" BorderBrush="{DynamicResource SecondaryTextBrush}" Height="1" />
 
                 <PhraseText Grid.Row="4"
                             Text="{Binding SrcPhrase}"
@@ -147,16 +167,16 @@
                 
                 <!--Button Arrea-->
                 <Grid Grid.Row="5" ColumnDefinitions="auto,auto,*,auto" VerticalAlignment="Bottom">
-                  <Button Grid.Column="0"
+                  <Button Grid.Column="0" Classes="secondary-action"
                       Command="{Binding $parent[ItemsControl].((vm:BrowseStudyMaterialsViewModel)DataContext).EditMaterialCommand}"
                           CommandParameter="{Binding}">
                     <PathIcon Data="{StaticResource edit_regular}" />
                   </Button>
 
-                    <Button Grid.Column="1"
+                    <Button Grid.Column="1" Classes="secondary-action"
                       Command="{Binding $parent[ItemsControl].((vm:BrowseStudyMaterialsViewModel)DataContext).ShowMaterialDetailsCommand}"
                       CommandParameter="{Binding}"
-                      Content="Details" />
+                      Content="View details" />
 
                   <Button Grid.Column="3" ></Button>
 
@@ -177,7 +197,7 @@
                                   TotalCount="{Binding TotalCount}"
                                   PageSize="{Binding ResultPerPage}"
                                   PageChangedCommand="{Binding GoToPageCommand}" />
-      <TextBlock Grid.Column="2" Background="Green"
+      <TextBlock Grid.Column="2" Foreground="{DynamicResource SecondaryTextBrush}"
                  Text="{Binding Materials.Count, StringFormat='Showing {0}'}"
                  VerticalAlignment="Center"
                  Margin="12,0,0,0" />
