@@ -92,7 +92,8 @@ public class StudyMaterial
         string pronunciation = "",
         bool isVulgar=false)
     {
-        return new StudyMaterial
+        var phrase = StudyMaterialPhrase.Create(0, phraseId, 1, arPhraseTranslation);
+        var newStudyMaterial = new StudyMaterial
         {
             PhraseId = phraseId,
             PartOfSpeech = partOfSpeach,
@@ -109,6 +110,8 @@ public class StudyMaterial
             Pronunciation = pronunciation?.Trim(),
             IsVulgar=isVulgar,
         };
+        newStudyMaterial.Phrases.Add(phrase);
+        return newStudyMaterial;
     }
 
 

@@ -30,6 +30,12 @@ internal class AddStudyMaterialToLearningCommandHandler : IRequestHandler<AddStu
             return result;
         }
 
+        if(studyMaterial.IsDraft)
+        {
+            result.AddError(ErrorCode.InvalidInput, "Study material {0} is a draft and cannot be added to learning.", request.StudyMaterialId);
+            return result;
+        }
+
         if (studyMaterial.StudyCards.Count > 0)
         {
             result.AddError(ErrorCode.InvalidInput, "Study material {0} is already in learning.", request.StudyMaterialId);

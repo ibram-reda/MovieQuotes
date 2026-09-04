@@ -29,7 +29,9 @@ internal class UnlinkPhraseFromStudyMaterialCommandHandler : IRequestHandler<Unl
             var removed = await unitOfWork.StudyMaterials.RemovePhraseAsync(request.StudyMaterialId, request.PhraseId);
             if (!removed)
             {
-                result.AddError(ErrorCode.NotFound, "The phrase relationship was not found.");
+
+                result.AddError(ErrorCode.UpdateError, "Failed to unlink the phrase from the study material.");
+                result.AddError(ErrorCode.UpdateError, "Either the phrase does not exist in the study material or it is the main phrase #1 and cannot be removed.");
                 return result;
             }
 

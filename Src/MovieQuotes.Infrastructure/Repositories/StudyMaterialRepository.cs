@@ -26,6 +26,10 @@ public class StudyMaterialRepository : GenericRepository<StudyMaterial>, IStudyM
         if (materialPhrase is null)
             return false;
 
+        // prevent removing the first phrase in the study material, as it is considered the main phrase.
+        if(materialPhrase.Sequance == 1)
+            return false;
+
         _context.Set<StudyMaterialPhrase>().Remove(materialPhrase);
         return true;
     }
