@@ -39,7 +39,12 @@ public partial class ActiveRecallView : UserControl
             vm.InitCommand.Execute(null);
             vm.PropertyChanged += (s, e) =>
             {
-                
+                if (e.PropertyName == nameof(vm.CurrentPhrase))
+                {
+
+                    var TextBox = this.FindControl<TextBox>("AnswerInputTextBox");
+                    TextBox?.Focus();
+                }
                 if (e.PropertyName == nameof(vm.SpellingAnalysis))
                 {
                     RenderAnswer(vm.SpellingAnalysis?.Characters ?? new List<SpellingCharacter>());

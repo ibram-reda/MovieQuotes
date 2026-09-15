@@ -229,4 +229,6 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         await ApplyFiltersCommand.ExecuteAsync(null);
         
     }
+
+    
 }

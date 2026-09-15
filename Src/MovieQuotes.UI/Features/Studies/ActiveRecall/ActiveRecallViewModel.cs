@@ -23,7 +23,7 @@ using MovieQuotes.UI.ViewModels.Dialogues;
 public partial class ActiveRecallViewModel : PageViewModelBase
 {
     private readonly SpellingErrorAnalyzer _spellingAnalyzer;
-    private MediaService MediaService {get;}
+    private MediaService MediaService { get; }
     [ObservableProperty] SpellingAnalysis? _spellingAnalysis;
     public bool ShowResult =>
         HasChecked && SpellingAnalysis != null;
@@ -79,7 +79,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         }
     }
 
-    
+
 
 
 #pragma warning disable
@@ -101,9 +101,9 @@ public partial class ActiveRecallViewModel : PageViewModelBase
     }
     private readonly ILogger<ActiveRecallViewModel> logger;
 #pragma warning restore
-    public ActiveRecallViewModel(IMediator mediator, NavigationService nav, MediaService mediaService,ILogger<ActiveRecallViewModel> logger) : base(mediator, nav)
+    public ActiveRecallViewModel(IMediator mediator, NavigationService nav, MediaService mediaService, ILogger<ActiveRecallViewModel> logger) : base(mediator, nav)
     {
-        MediaService = mediaService; 
+        MediaService = mediaService;
         _spellingAnalyzer = new SpellingErrorAnalyzer();
         this.logger = logger;
     }
@@ -112,7 +112,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
 
     public override string Title => "Active Recall";
 
-    
+
 
     [RelayCommand]
     async Task Init()
@@ -125,7 +125,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
             return;
         }
         Phrases.Clear();
-        foreach (var phrase in result.Payload ??[])
+        foreach (var phrase in result.Payload ?? [])
         {
             Phrases.Add(phrase);
         }
@@ -151,14 +151,15 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         IsAnswerCorrect = analysis.IsCorrect;
 
         if (!IsAnswerCorrect)
-        {            
-            this.MediaService.PlayWrongAnswerSound();
+        {
+            this.MediaService?.PlayWrongAnswerSound();
+            _wrongAnswerAttemptsByPhrase++;
             return;
         }
 
         // corret go next  
         var update = UpdateProgressForCurrentPhraseAsync();
-        this.MediaService.PlayCorrectAnswerSound();
+        this.MediaService?.PlayCorrectAnswerSound();
         await update;
     }
     [RelayCommand]
@@ -170,16 +171,18 @@ public partial class ActiveRecallViewModel : PageViewModelBase
 
     [RelayCommand]
     async Task ShowNextPhrase()
-    {       
+    {
         IsAnswerVisible = false;
         AnswerInput = string.Empty;
         if (!IsAnswerCorrect)
         {
             // if the previouse answer is not correct redo the same qustion
-            Reset();
+            IsAnswerVisible = false;
+            AnswerInput = string.Empty;
+            HasChecked = false;
+            IsHintVisible = false;
             OnPropertyChanged(nameof(CurrentPhrase));
             PlayAudio();
-            _wrongAnswerAttemptsByPhrase++;
             return;
         }
         if (CurrentPhraseIndex < Phrases.Count - 1)
@@ -190,9 +193,13 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         else
         {
             // Handle end of phrases, e.g., show a message or reset
-            CurrentPhraseIndex = 0;
-            CurrentPhrase = Phrases[CurrentPhraseIndex];
-            _wrongAnswerAttemptsByPhrase = 0;
+            // await this.nav.NavigateToAsync<StudySummaryViewModel>(new StudySummaryViewModel.StudySummaryParameters
+            // {
+            //     TotalPhrases = TotalPhrases,
+            //     CorrectAnswers = Phrases.Count(p => p.Progress?.LastReviewQuality is ReviewQuality.Perfect or ReviewQuality.Correct),
+            //     IncorrectAnswers = Phrases.Count(p => p.Progress?.LastReviewQuality is ReviewQuality.Difficult or ReviewQuality.CompleteFailure)
+            // });
+            throw new NotImplementedException("Study summary view is not implemented yet.");
         }
 
     }
@@ -224,6 +231,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
 
     void Reset()
     {
+        _wrongAnswerAttemptsByPhrase = 0;
         IsAnswerVisible = false;
         AnswerInput = string.Empty;
         IsHintVisible = false;
@@ -237,7 +245,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         if (CurrentPhrase is null || CurrentPhrase.ProgressId <= 0)
             return;
 
-        
+
         var reviewQuality = GetReviewQuality(_wrongAnswerAttemptsByPhrase);
         var result = await mediator.Send(new UpdateStudyProgressQuery(CurrentPhrase.ProgressId, (int)reviewQuality));
 
@@ -247,19 +255,19 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         }
     }
 
-    private static ReviewQuality GetReviewQuality( int wrongAttempts)
+    private static ReviewQuality GetReviewQuality(int wrongAttempts)
     {
-         
-            return wrongAttempts switch
-            {
-                0 => ReviewQuality.Perfect,
-                1 => ReviewQuality.Correct,
-                2 => ReviewQuality.Difficult,
-                _ => ReviewQuality.CompleteFailure
-            }; 
- 
+
+        return wrongAttempts switch
+        {
+            0 => ReviewQuality.Perfect,
+            1 => ReviewQuality.Correct,
+            2 => ReviewQuality.Difficult,
+            _ => ReviewQuality.CompleteFailure
+        };
+
     }
 
-    
+
 
 }

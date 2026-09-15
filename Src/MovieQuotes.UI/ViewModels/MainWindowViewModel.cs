@@ -20,12 +20,12 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     private const double ExpandedNavigationWidth = 220;
     private const double CollapsedNavigationWidth = 70;
-
+    private readonly SettingsService settings;
     [ObservableProperty] private bool _RenderNavigationBar = true;
     [ObservableProperty] private bool _isNavigationMenuOpen = true;
     [ObservableProperty] private double _navigationMenuWidth = ExpandedNavigationWidth;
     [ObservableProperty] private string _WindowTitle = "";
-    [ObservableProperty] bool _isDarkMode = true;
+    [ObservableProperty] bool _isDarkMode ;
 
     public IReadOnlyList<NavigationItem> NavigationItems { get; } =
     [
@@ -41,10 +41,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     partial void OnIsDarkModeChanged(bool value)
     {
-        if (Application.Current is { } app)
-        {
-            app.RequestedThemeVariant = value ? ThemeVariant.Dark : ThemeVariant.Light;
-        }
+       var t = settings.SetDarkMode(value); 
     }
 
     partial void OnIsNavigationMenuOpenChanged(bool value)
@@ -61,6 +58,8 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         NavigationService.CurrentPageChanged += OnCurrentViewModelChanged;
         NavigationService.NavigateTo<MoviesListViewModel>();
+        this.settings = this.GetService<SettingsService>();
+        IsDarkMode = settings.Current.IsDarkMode;
     }
 
     private void OnCurrentViewModelChanged(PageViewModelBase obj)

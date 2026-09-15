@@ -18,15 +18,28 @@ using MovieQuotes.UI.Views;
 using Avalonia.Controls.Notifications;
 using Microsoft.Extensions.Configuration;
 using MovieQuotes.Application.Features.Movies.Services;
+using System.IO;
+using System;
+using MovieQuotes.Application.Common.Models;
+using MovieQuotes.AI;
 
 public static class ServiceCollectionExtensions
 {
     public static void AddCommonServices(this IServiceCollection Services, Window window)
     {
+        var settingsDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "MovieQuotes");
+        var settingsFilePath = Path.Combine(settingsDirectory, "appsettings.json");
         var configuration = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        .AddJsonFile(settingsFilePath, optional: false, reloadOnChange: true)
         .AddUserSecrets<Program>()
         .Build();
+        // Add SettingsService
+        Services.AddSingleton<SettingsService>(sp =>
+        { 
+            return new SettingsService(settingsFilePath, configuration);
+        });
         Services.AddSingleton<IFilesService>(x => new FilesService(window));
         Services.AddSingleton<NavigationService>();
         Services.AddTransient<IDataTemplate, ViewLocator>();
@@ -46,26 +59,46 @@ public static class ServiceCollectionExtensions
         Services.AddScoped<IMovieQUnitOfWork, MovieQUnitOfWork>();
         Services.AddScoped<IStudySessionRepository, StudySessionRepository>();
 
-        Services.AddLogging(); 
+        Services.AddLogging();
 
         // add database
         var cs = configuration.GetConnectionString("DefaultConnection");
         var hangfire = configuration.GetConnectionString("HangfireConnection");
         var TmdbApiKey = configuration["TmdbApiKey"];
-        Services.AddSingleton(new TmdbService(TmdbApiKey));
         Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs), ServiceLifetime.Transient);
 
         Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
 
-         // Add Hangfire services
+        // Add Hangfire services
         Services.AddHangfire(hangfireConfig => hangfireConfig
             .UseSimpleAssemblyNameTypeSerializer()
             .UseRecommendedSerializerSettings()
             .UseStorage(new MySqlStorage(hangfire, new MySqlStorageOptions
             {
-                
+
             })));
 
         Services.AddHangfireServer();
+
+        
+
+        Services.AddSingleton<AppSettings>(sp =>
+        {
+            var settingsService = sp.GetRequiredService<SettingsService>();
+            return settingsService.Current.ToAppSettings();
+        });
+
+        Services.AddSingleton<LLMService>(sp =>
+        {
+            var appSettings = sp.GetRequiredService<AppSettings>();
+            return new LLMService(appSettings.OllamaApiUrl, appSettings.OllamaModelName);
+        });
+
+        Services.AddSingleton<TmdbService>(sp =>
+        {
+            var appSettings = sp.GetRequiredService<AppSettings>();
+            return new TmdbService(appSettings.TmdbApiKey);
+        });
+
     }
 }

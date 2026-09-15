@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
+using MovieQuotes.Application.Features.AI.GenerateAISuggestionForMaterials;
 using MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Application.Features.Movies.CommandsHandlers;
 using MovieQuotes.Application.Features.SubtitleFiles.Commands;
@@ -32,12 +33,7 @@ partial class ResyncSubtitleViewModel : PageViewModelBase
     [RelayCommand]
     private async Task Resync()
     {
-        var cmd = new SubtitleResyncCommand()
-        {
-            SubtitleFilePath = this.Path,
-            OutPutFileName = this.OutFileName,
-            TimeShift = this.TimeShiftInMS
-        };
+        var cmd = new GenerateAISuggestionForMaterialsCommand();
         IsBusy = true;
         var result = await this.mediator.Send(cmd);
         IsBusy = false;

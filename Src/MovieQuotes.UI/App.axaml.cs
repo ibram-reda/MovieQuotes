@@ -5,9 +5,11 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using Hangfire;
 using Microsoft.Extensions.DependencyInjection;
 using MovieQuotes.UI.Extensions;
+using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using MovieQuotes.UI.Views;
 
@@ -20,11 +22,11 @@ public partial class App : Application
     }
 
     public override void OnFrameworkInitializationCompleted()
-    {      
+    {
 
         // Register all the services needed for the application to run
         var collection = new ServiceCollection();
-        
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow();
@@ -33,7 +35,12 @@ public partial class App : Application
             // Creates a ServiceProvider containing services from the provided IServiceCollection
             Services = collection.BuildServiceProvider();
 
-            // set the dataContext
+
+            // // Get the SettingsService from the service provider
+            var settingsService = Services.GetRequiredService<SettingsService>();
+            RequestedThemeVariant = settingsService.Current.IsDarkMode ? ThemeVariant.Dark : ThemeVariant.Light;
+
+            // set the dataContext 
             desktop.MainWindow.DataContext = Services.GetRequiredService<MainWindowViewModel>();
             // run hangfire server
             var backgroundJobServerOptions = new BackgroundJobServerOptions
@@ -42,10 +49,7 @@ public partial class App : Application
                 Queues = new[] { "default" } // Specify the queues to listen to
             };
             var backgroundJobServer = new BackgroundJobServer(backgroundJobServerOptions, Services.GetRequiredService<JobStorage>());
-            
-        } 
-        
-
+        }
         base.OnFrameworkInitializationCompleted();
     }
 

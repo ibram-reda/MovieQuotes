@@ -222,7 +222,20 @@ public class StudyMaterial
         this.IsVulgar = isVulgar;
         ModifiedDate = DateTime.Now;
     }
+    
+    public void AddTag(string tag)
+    {
+        if (string.IsNullOrWhiteSpace(tag))
+            return;
 
+        var tagsList = string.IsNullOrWhiteSpace(Tags) ? new List<string>() : Tags.Split(',').Select(t => t.Trim()).ToList();
+        if (!tagsList.Contains(tag))
+        {
+            tagsList.Add(tag);
+            Tags = string.Join(",", tagsList);
+            ModifiedDate = DateTime.Now;
+        }
+    }
 
     static string PutDashInStartingLines(string text)
     {

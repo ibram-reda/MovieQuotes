@@ -12,10 +12,25 @@ public class StudyMaterialRepository : GenericRepository<StudyMaterial>, IStudyM
     {
     }
 
+    public Task<List<StudyMaterial>> GetAllStudyMaterialsWithPhraseAsync(CancellationToken cancellationToken)
+    {
+        return _dbSet.Include(m => m.Phrase)
+            .ToListAsync(cancellationToken);
+    }
+
     public override Task<StudyMaterial?> GetByIdAsync(int id)
     {
         return _dbSet.Include(m => m.StudyCards)
         .ThenInclude(c=>c.Progresses).FirstOrDefaultAsync(m => m.Id == id);
+    }
+
+    
+
+    public Task<List<StudyMaterial>> GetDraftStudyMaterialsWithoutAITagsAsync(CancellationToken cancellationToken)
+    {
+        return _dbSet.Where(m => m.IsDraft && m.Tags!.Contains("AI") == false)
+            .Include(m => m.Phrase)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<bool> RemovePhraseAsync(int studyMaterialId, int phraseId)

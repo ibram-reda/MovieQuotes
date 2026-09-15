@@ -4,8 +4,144 @@
              xmlns:vm="using:MovieQuotes.UI.Features.Settings"
              x:DataType="vm:SettingsViewModel"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1080"
              x:Class="MovieQuotes.UI.Features.Settings.SettingsView">
 
-   Comming Soon ...
+   <UserControl.Styles>
+      <Style Selector="TextBlock.settings-label">
+         <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
+         <Setter Property="FontSize" Value="12" />
+      </Style>
+      <Style Selector="TextBlock.settings-help">
+         <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
+         <Setter Property="FontSize" Value="11" />
+         <Setter Property="TextWrapping" Value="Wrap" />
+      </Style>
+      <Style Selector="TextBox.settings-input">
+         <Setter Property="MinHeight" Value="38" />
+         <Setter Property="Padding" Value="10,8" />
+      </Style>
+      <Style Selector="NumericUpDown.settings-input">
+         <Setter Property="Height" Value="38" />
+         <Setter Property="Padding" Value="8" />
+      </Style>
+      <Style Selector="Button.folder-action">
+         <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAccentBrush}" />
+         <Setter Property="BorderThickness" Value="1" />
+         <Setter Property="CornerRadius" Value="{StaticResource StandardCornerRadius}" />
+         <Setter Property="Padding" Value="14,8" />
+      </Style>
+   </UserControl.Styles>
+
+   <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="24,20" Spacing="20" MinWidth="680" MaxWidth="960" HorizontalAlignment="Center">
+         
+         <StackPanel Spacing="3">
+            <TextBlock Text="Settings" FontSize="24" FontWeight="Bold" />
+            <TextBlock Text="Configure your library, display, and service connections"
+                       Foreground="{DynamicResource SecondaryTextBrush}" FontSize="13" />
+         </StackPanel>
+         
+         <Border Classes="section-card" Padding="20">
+            <StackPanel Spacing="12">
+               <TextBlock Text="Library and Cache" FontSize="16" FontWeight="SemiBold"/>
+               
+               <StackPanel Spacing="4">
+                  <TextBlock Text="Movies library path" Classes="settings-label"/>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                       <TextBox Classes="settings-input"
+                           Text="{Binding Settings.Current.MoviesLibraryPath}"
+                           PlaceholderText="Enter path to movies library"/>
+                       <Button Grid.Column="1" Classes="folder-action" Content="Browse"
+                          Command="{Binding ChooseMoviesLibraryFolderCommand}" />
+                    </Grid>
+               </StackPanel>
+               
+               <StackPanel Spacing="4">
+                  <TextBlock Text="Video cache folder" Classes="settings-label"/>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                       <TextBox Classes="settings-input"
+                           Text="{Binding Settings.Current.VideoCacheFolderPath}"
+                           PlaceholderText="Enter video cache folder path"/>
+                       <Button Grid.Column="1" Classes="folder-action" Content="Browse"
+                          Command="{Binding ChooseVideoCacheFolderCommand}" />
+                    </Grid>
+               </StackPanel>
+            </StackPanel>
+         </Border>
+         
+         <Border Classes="section-card" Padding="20">
+            <StackPanel Spacing="12">
+               <TextBlock Text="Display" FontSize="16" FontWeight="SemiBold"/>
+               
+               <CheckBox IsChecked="{Binding Settings.Current.IsDarkMode}" Content="Enable dark mode" FontSize="12"/>
+               
+               <StackPanel Spacing="4">
+                  <TextBlock Text="Subtitle font size" Classes="settings-label"/>
+                  <StackPanel Orientation="Horizontal" Spacing="10">
+                     <NumericUpDown Classes="settings-input"
+                                    Value="{Binding Settings.Current.SubtitleFontSize}"
+                                    Minimum="8"
+                                    Maximum="48"
+                                    Increment="1"
+                                    Width="100" />
+                     <TextBlock Text="px" VerticalAlignment="Center" FontSize="12"/>
+                  </StackPanel>
+               </StackPanel>
+            </StackPanel>
+         </Border>
+         
+         <Border Classes="section-card" Padding="20">
+            <StackPanel Spacing="12">
+               <TextBlock Text="API Configuration" FontSize="16" FontWeight="SemiBold"/>
+               
+               <StackPanel Spacing="4">
+                  <TextBlock Text="TMDB API key" Classes="settings-label"/>
+                  <TextBox Classes="settings-input" PasswordChar="*"
+                           Text="{Binding Settings.Current.TmdbApiKey}"
+                           PlaceholderText="Enter your TMDB API key"/>
+                  
+                  <TextBlock Text="Get your API key from themoviedb.org/settings/api"
+                             Classes="settings-help"/>
+               </StackPanel>
+               
+               <StackPanel Spacing="4">
+                  <TextBlock Text="Database connection string" Classes="settings-label"/>
+                  <TextBox Classes="settings-input"
+                           Text="{Binding Settings.Current.ConnectionString}"
+                           PlaceholderText="Enter database connection string"
+                           AcceptsReturn="False"/>
+               </StackPanel>
+            </StackPanel>
+         </Border>
+
+         <Border Classes="section-card" Padding="20">
+            <StackPanel Spacing="12">
+               <TextBlock Text="LLM Configuration" FontSize="16" FontWeight="SemiBold"/>
+
+               <StackPanel Spacing="4">
+                  <TextBlock Text="Ollama API URL" Classes="settings-label"/>
+                  <TextBox Classes="settings-input"
+                           Text="{Binding Settings.Current.OllamaApiUrl}"
+                           PlaceholderText="Enter Ollama API URL"/>
+               </StackPanel>
+
+               <StackPanel Spacing="4">
+                  <TextBlock Text="Ollama model name" Classes="settings-label"/>
+                  <TextBox Classes="settings-input"
+                           Text="{Binding Settings.Current.OllamaModelName}"
+                           PlaceholderText="Enter Ollama model name"/>
+               </StackPanel>
+            </StackPanel>
+         </Border>
+         
+         <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+            <Button Classes="primary-action" Content="Save settings"
+                    Command="{Binding SaveSettingsCommand}"
+                    Padding="18,10" FontWeight="SemiBold"/>
+         </StackPanel>
+      </StackPanel>
+   </ScrollViewer>
 </UserControl>
