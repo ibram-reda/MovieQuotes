@@ -15,7 +15,10 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.Study;
+using MovieQuotes.Application.Features.StudyMaterials;
 using MovieQuotes.Domain.Models;
+using MovieQuotes.UI.Features.StudyMaterials.EditStudyMaterial;
+using MovieQuotes.UI.Features.Subtitles.EditeSubtitlePhrase;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using MovieQuotes.UI.ViewModels.Dialogues;
@@ -204,12 +207,59 @@ public partial class ActiveRecallViewModel : PageViewModelBase
 
     }
 
+    [RelayCommand]
+    private void EditMaterial()
+    {
+        if (CurrentPhrase is null)
+            return;
+
+        var dialogue = new EditStudyMaterialViewModel(CurrentPhrase.MaterialId);
+        dialogue.OnSaved += async (isSaved, result) =>
+        {
+            if (isSaved && result.Payload is Application.Features.StudyMaterials.StudyMaterial material)
+            {
+                // Refflect on UI
+                CurrentPhrase.Content = material.Content;
+                CurrentPhrase.Definition = material.Definition;
+                var EditedPhrase = CurrentPhrase;
+                CurrentPhrase = null;
+                OnPropertyChanged(nameof(CurrentPhrase));
+                CurrentPhrase = EditedPhrase;
+                OnPropertyChanged(nameof(CurrentPhrase));
+            }
+            this.ShowEditDialog = false;
+        };
+        this.Dialogue = dialogue;
+        this.ShowEditDialog = true;
+    }
+
+    [RelayCommand]
+    private void EditeSubtitlePhrase()
+    {
+        if (CurrentPhrase is null)
+            return;
+
+        var dialouge = new EditeSubtitlePhraseViewModel(CurrentPhrase.PhraseId);
+        dialouge.OnPhraseEdited += (phrase) =>
+        {
+            CurrentPhrase.PhraseText = phrase.Text;
+            this.ShowEditDialog = false;
+            var EditedPhrase = CurrentPhrase;
+            CurrentPhrase = null;
+            OnPropertyChanged(nameof(CurrentPhrase));
+            CurrentPhrase = EditedPhrase;
+            OnPropertyChanged(nameof(CurrentPhrase));
+        };
+        this.Dialogue = dialouge;
+        this.ShowEditDialog = true;
+    }
+
     partial void OnCurrentPhraseChanged(StudyPhrase? value)
     {
         string hiddenContent = new string(value?.Content?.Select(c =>
             char.IsAsciiLetter(c) ? '_' : c
         ).ToArray());
-        QuestionText = value?.PhraseText?.Replace("\n", " ").Replace(value.Content ?? "", hiddenContent) ?? string.Empty;
+        QuestionText = value?.PhraseText?.Replace("\n", " ").Replace(value.Content ?? "", hiddenContent, StringComparison.OrdinalIgnoreCase) ?? string.Empty;
         AnswerText = value?.Content ?? string.Empty;
         Reset();
         PlayAudio();

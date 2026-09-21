@@ -9,4 +9,6 @@ public class AppSettings
     // LLM Configuration
     public string OllamaApiUrl { get; set; } = string.Empty;
     public string OllamaModelName { get; set; } = string.Empty;
+
+    public string VideoCashPath {get;set;} = string.Empty;
 }

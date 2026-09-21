@@ -98,11 +98,11 @@ public class SubtitlePhrase
     /// method returns <see langword="null"/>.</remarks>
     /// <returns>The video clip actual path, or <see langword="null"/> if the original path is empty
     /// or consists only of whitespace.</returns>
-    public string? GetVideoClipPath()
+    public string? GetVideoClipPath(string CashPath)
     {
         if (string.IsNullOrWhiteSpace(this.VideoClipPath))
             return null;
-        return this.VideoClipPath.Replace(Constants.CashTemplate, Constants.CashPath);
+        return this.VideoClipPath.Replace(Constants.CashTemplate, CashPath);
     }
 
     /// <summary>
@@ -112,11 +112,11 @@ public class SubtitlePhrase
     /// resets the property to <see langword="null"/>. If the file does not exist or <see cref="VideoClipPath"/> is null
     /// or whitespace, the method returns <see langword="false"/>.</remarks>
     /// <returns><see langword="true"/> if the video clip file was successfully deleted; otherwise, <see langword="false"/>.</returns>
-    public bool DeleteVideoClip()
+    public bool DeleteVideoClip(string CashPath)
     {
         if (string.IsNullOrWhiteSpace(this.VideoClipPath))
             return false;
-        var actualPath = this.GetVideoClipPath();
+        var actualPath = this.GetVideoClipPath(CashPath);
         if (File.Exists(actualPath))
             File.Delete(actualPath);
         this.VideoClipPath = null; // reset the video clip path to force recreation

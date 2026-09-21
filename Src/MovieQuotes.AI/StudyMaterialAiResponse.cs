@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace MovieQuotes.AI;
 public sealed record AiGenerationResult<T>(
     bool Success,
@@ -28,4 +30,7 @@ public sealed class StudyMaterialAiResponse
     public string? Notes { get; set; }
 
     public List<string> Tags { get; set; } = [];
+
+    [JsonIgnore] public string? ExamplesString => string.Join('\n',Examples);
+    [JsonIgnore] public string? SynonymsString => string.Join('\n',Synonyms);
 }

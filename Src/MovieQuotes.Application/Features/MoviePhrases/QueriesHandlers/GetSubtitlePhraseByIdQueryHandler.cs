@@ -18,9 +18,12 @@ using System.Threading.Tasks;
 internal class GetSubtitlePhraseByIdQueryHandler : IRequestHandler<GetSubtitlePhraseByIdQuery, OperationResult<Phrase>>
 {
     private readonly IMovieQUnitOfWork unitOfWork;
-    public GetSubtitlePhraseByIdQueryHandler(IMovieQUnitOfWork unitOfWork)
+    private readonly AppSettings settings;
+
+    public GetSubtitlePhraseByIdQueryHandler(IMovieQUnitOfWork unitOfWork,AppSettings settings)
     {
         this.unitOfWork = unitOfWork;
+        this.settings = settings;
     }
     public async Task<OperationResult<Phrase>> Handle(GetSubtitlePhraseByIdQuery request, CancellationToken cancellationToken)
     {
@@ -32,7 +35,7 @@ internal class GetSubtitlePhraseByIdQueryHandler : IRequestHandler<GetSubtitlePh
             return result;
         }
 
-        result.Payload = phraseEntity.ToPhrase();
+        result.Payload = phraseEntity.ToPhrase(settings.VideoCashPath);
 
         return result;
     }

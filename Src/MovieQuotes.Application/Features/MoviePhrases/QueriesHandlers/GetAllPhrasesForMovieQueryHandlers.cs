@@ -18,10 +18,12 @@ using System.Threading.Tasks;
 internal class GetAllPhrasesForMovieQueryHandlers : IRequestHandler<GetAllPhrasesForMovieQuery, OperationResult<List<Phrase>>>
 {
     private readonly IMovieQUnitOfWork unitOfWork;
+    private readonly AppSettings settings;
 
-    public GetAllPhrasesForMovieQueryHandlers(IMovieQUnitOfWork unitOfWork)
+    public GetAllPhrasesForMovieQueryHandlers(IMovieQUnitOfWork unitOfWork,AppSettings settings)
     {
         this.unitOfWork = unitOfWork;
+        this.settings = settings;
     }
 
     public async Task<OperationResult<List<Phrase>>> Handle(GetAllPhrasesForMovieQuery request, CancellationToken cancellationToken)
@@ -38,7 +40,7 @@ internal class GetAllPhrasesForMovieQueryHandlers : IRequestHandler<GetAllPhrase
 
         var load = src
             .OrderBy(a => a.StartTime)
-            .Select(a => a.ToPhrase());
+            .Select(a => a.ToPhrase(settings.VideoCashPath));
 
         result.Payload = request.Language switch
         {

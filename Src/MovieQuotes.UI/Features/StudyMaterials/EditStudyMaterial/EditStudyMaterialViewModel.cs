@@ -3,8 +3,9 @@ namespace MovieQuotes.UI.Features.StudyMaterials.EditStudyMaterial;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
+using MovieQuotes.AI;
 using MovieQuotes.Application.Common.Models;
-using MovieQuotes.Application.Features.StudyMaterials; 
+using MovieQuotes.Application.Features.StudyMaterials;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
@@ -16,8 +17,9 @@ public partial class EditStudyMaterialViewModel : DialogueViewModelBase
     public override string Title => "Edit Study Material";
     public event Action<bool, OperationResult<StudyMaterial>>? OnSaved;
 
-    public int StudyId { get; }
-    
+    private int StudyId = 0;
+    private StudyMaterial? _StudyMaterial = null;
+    private readonly LLMService lLMService;
 
     [ObservableProperty] string content = string.Empty;
     [ObservableProperty] string arPhraseTranslation = string.Empty;
@@ -33,6 +35,8 @@ public partial class EditStudyMaterialViewModel : DialogueViewModelBase
     [ObservableProperty] string pronunciation = string.Empty;
     [ObservableProperty] bool isVulgar;
 
+    [ObservableProperty] StudyMaterialAiResponse? _AiMaterial = null;
+
     public string[] AllowedPartOfSpeech { get; } =
         ["noun", "adjective", "verb", "idiom", "phrasal verb", "phrase", "exclamation", "conjunction", "adverb"];
 
@@ -40,8 +44,47 @@ public partial class EditStudyMaterialViewModel : DialogueViewModelBase
     public EditStudyMaterialViewModel()
     {
     }
+    public EditStudyMaterialViewModel(int id)
+    {
+        this.StudyId = id;
+        this.lLMService = this.GetService<LLMService>();
+    }
 
     public EditStudyMaterialViewModel(StudyMaterial studyMaterial)
+    {
+        this.StudyId = studyMaterial.Id;
+        _StudyMaterial = studyMaterial;
+        this.lLMService = this.GetService<LLMService>();
+
+    }
+
+    public override async Task InitAsync(object? initValue)
+    {
+        if (_StudyMaterial is null)
+        {
+            var result = await mediator.Send(new GetStudyMaterialQuery(StudyId));
+            if (result.IsSuccess)
+            {
+                _StudyMaterial = result.Payload;
+            }
+        }
+        if (_StudyMaterial is null)
+        {
+            throw new Exception("Can not init data");
+        }
+        Populate(_StudyMaterial);
+
+        try
+        {
+            
+        this.AiMaterial = await lLMService.GenerateAISuggestionForStudyMaterial(_StudyMaterial.Id,_StudyMaterial.SrcPhrase,_StudyMaterial.Content);
+        }catch(Exception ex)
+        {
+            this.ErrorMessages.Add(ex.Message);
+        }
+    }
+
+    private void Populate(StudyMaterial studyMaterial)
     {
         StudyId = studyMaterial.Id;
         Content = studyMaterial.Content ?? string.Empty;

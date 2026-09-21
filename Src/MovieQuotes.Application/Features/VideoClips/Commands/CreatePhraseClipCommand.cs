@@ -6,22 +6,9 @@ using MovieQuotes.Application.Common.Models;
 
 internal class CreatePhraseClipCommand : IRequest<OperationResult<string>>
 {
-    public CreatePhraseClipCommand(int phraseId,string movieName, int sequence, string movieLocation, TimeSpan startTime, TimeSpan duration)
+    public CreatePhraseClipCommand(int phraseId)
     {
-        PhraseId = phraseId;
-        MovieName = movieName;
-        Sequence = sequence;
-        MovieLocation = movieLocation;
-        StartTime = startTime;
-        Duration = duration;
+        PhraseId = phraseId; 
     }
     public int PhraseId { get; }
-    public string MovieName { get; }
-
-    public int Sequence { get; }
-
-    public string MovieLocation { get; }
-    public TimeSpan StartTime { get; }
-    public TimeSpan Duration { get; }
-
 }

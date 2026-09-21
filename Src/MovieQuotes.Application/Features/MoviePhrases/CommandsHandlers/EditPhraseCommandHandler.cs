@@ -14,10 +14,12 @@ using System.Threading.Tasks;
 internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, OperationResult<Phrase>>
 {
     private readonly IMovieQUnitOfWork unitOfWork;
+    private readonly AppSettings settings;
 
-    public EditPhraseCommandHandler(IMovieQUnitOfWork unitOfWork)
+    public EditPhraseCommandHandler(IMovieQUnitOfWork unitOfWork,AppSettings settings)
     {
         this.unitOfWork = unitOfWork;
+        this.settings = settings;
     }
     public async Task<OperationResult<Phrase>> Handle(EditPhraseCommand request, CancellationToken cancellationToken)
     {
@@ -38,8 +40,8 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
 
         if (durationEdited)
         {
-            phrase.DeleteVideoClip(); // Delete the existing video clip if the duration has changed 
-            await phrase.GenerateVideoClipAsync(Constants.CashPath); // Generate a new video clip with the updated duration
+            phrase.DeleteVideoClip(settings.VideoCashPath); // Delete the existing video clip if the duration has changed 
+            await phrase.GenerateVideoClipAsync(settings.VideoCashPath); // Generate a new video clip with the updated duration
         }
 
         if (textEdit | durationEdited)
@@ -48,7 +50,7 @@ internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, Ope
             await unitOfWork.SaveAsync();
         }
 
-        result.Payload = phrase.ToPhrase();
+        result.Payload = phrase.ToPhrase(settings.VideoCashPath);
 
         return result;
     }

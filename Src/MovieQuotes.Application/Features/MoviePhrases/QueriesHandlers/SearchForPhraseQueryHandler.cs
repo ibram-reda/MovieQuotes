@@ -17,11 +17,13 @@ public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery,
 {
     private readonly IMovieQUnitOfWork unitOfWork;
     private readonly ILogger<SearchForPhraseQueryHandler> logger;
+    private readonly AppSettings settings;
 
-    public SearchForPhraseQueryHandler(IMovieQUnitOfWork unitOfWork, ILogger<SearchForPhraseQueryHandler> logger)
+    public SearchForPhraseQueryHandler(IMovieQUnitOfWork unitOfWork, ILogger<SearchForPhraseQueryHandler> logger,AppSettings settings)
     {
         this.unitOfWork = unitOfWork;
         this.logger = logger;
+        this.settings = settings;
     }
     public async Task<OperationPageResult<Phrase>> Handle(SearchForPhraseQuery request, CancellationToken cancellationToken)
     {
@@ -36,7 +38,7 @@ public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery,
         var query = unitOfWork.SubtitlePhrases.Query
             .Where(a => a.Text.Contains(request.SearchText))
             .Include(a => a.Movie)
-            .Select(a => a.ToPhrase());
+            .Select(a => a.ToPhrase(settings.VideoCashPath));
 
         var totalCount = await query.CountAsync(cancellationToken);
         var itemCountToSkip = (int)(request.ResultPerPage * request.PageNumber);

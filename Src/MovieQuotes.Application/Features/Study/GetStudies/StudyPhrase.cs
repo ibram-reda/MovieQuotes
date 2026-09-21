@@ -2,6 +2,8 @@ namespace MovieQuotes.Application.Features.Study;
 
 public class StudyPhrase
 {
+    public int PhraseId {get; set;}
+    public int MaterialId {get;set;}
     public int ProgressId {get;set;}
     public int StudyCardId { get; set; }
 

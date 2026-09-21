@@ -20,7 +20,7 @@ public class StudyMaterialRepository : GenericRepository<StudyMaterial>, IStudyM
 
     public override Task<StudyMaterial?> GetByIdAsync(int id)
     {
-        return _dbSet.Include(m => m.StudyCards)
+        return _dbSet.Include(m=>m.Phrase).Include(m => m.StudyCards)
         .ThenInclude(c=>c.Progresses).FirstOrDefaultAsync(m => m.Id == id);
     }
 

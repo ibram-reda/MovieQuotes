@@ -62,7 +62,7 @@ public static class ServiceCollectionExtensions
         Services.AddLogging();
 
         // add database
-        var cs = configuration.GetConnectionString("DefaultConnection");
+        var cs = configuration["ConnectionString"];
         var hangfire = configuration.GetConnectionString("HangfireConnection");
         var TmdbApiKey = configuration["TmdbApiKey"];
         Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs), ServiceLifetime.Transient);

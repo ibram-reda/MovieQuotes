@@ -10,7 +10,7 @@ public sealed class ApplicationSettings
     // User preferences
     public string MoviesLibraryPath { get; set; } = string.Empty;
     public string VideoCacheFolderPath { get; set; } = string.Empty;
-    public double SubtitleFontSize { get; set; } = 24;
+    public int SubtitleFontSize { get; set; } = 24;
     public bool IsDarkMode { get; set; } = true;
 
     public string AppDataFolderPath { get; set; } 
@@ -35,7 +35,8 @@ public sealed class ApplicationSettings
             TmdbApiKey = this.TmdbApiKey,
             ConnectionString = this.ConnectionString,
             OllamaApiUrl = this.OllamaApiUrl,
-            OllamaModelName = this.OllamaModelName
+            OllamaModelName = this.OllamaModelName,
+            VideoCashPath = this.VideoCacheFolderPath,
         };
     }
 }

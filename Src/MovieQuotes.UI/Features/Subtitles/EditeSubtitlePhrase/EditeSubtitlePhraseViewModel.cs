@@ -8,10 +8,11 @@ using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
+using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
 using System.Threading.Tasks;
 
-public partial class EditeSubtitlePhraseViewModel : ViewModelBase
+public partial class EditeSubtitlePhraseViewModel : DialogueViewModelBase
 {
     public override string Title => "Edite Subtitle Phrase";
 
@@ -27,14 +28,8 @@ public partial class EditeSubtitlePhraseViewModel : ViewModelBase
     {
     }
 
-    public EditeSubtitlePhraseViewModel(int PhraseId):base(null,null)
-    {
-        this.mediator = GetService<IMediator>();
-        this.NavigationService = GetService<NavigationService>();
-        this.PhraseId = PhraseId;
-    }
-    public EditeSubtitlePhraseViewModel(IMediator mediator, NavigationService nav) : base(mediator, nav)
-    {
+    public EditeSubtitlePhraseViewModel(int PhraseId)
+    { 
         this.PhraseId = PhraseId;
     }
 

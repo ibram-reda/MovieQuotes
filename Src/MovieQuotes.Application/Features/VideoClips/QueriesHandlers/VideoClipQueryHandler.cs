@@ -8,20 +8,18 @@ using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.VideoClips.Commands;
 using MovieQuotes.Application.Features.VideoClips.CommandsHandlers;
 using MovieQuotes.Application.Features.VideoClips.Queries;
-using MovieQuotes.Domain.Interfaces;
+using MovieQuotes.Domain.Interfaces; 
 
-internal class VideoClipQueryHandler : IRequestHandler<VideoClipQuery, OperationResult<string>>
-{
-    private readonly IMovieQUnitOfWork unitOfWork;
-    public VideoClipQueryHandler(IMovieQUnitOfWork unitOfWork)
-    {
-        this.unitOfWork = unitOfWork;
-    }
+internal class VideoClipQueryHandler(IMovieQUnitOfWork unitOfWork, AppSettings settings) : IRequestHandler<VideoClipQuery, OperationResult<string>>
+{ 
 
     public async Task<OperationResult<string>> Handle(VideoClipQuery request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<string>();
-        Phrase? phrase = await GetPhraseFromDBAsync(request, cancellationToken);
+        var phrase = unitOfWork.SubtitlePhrases.Query
+            .Include(a => a.Movie)
+            .Where(a => a.Id == request.PhraseId) 
+            .FirstOrDefault();
 
         if (phrase is null)
         {
@@ -29,38 +27,19 @@ internal class VideoClipQueryHandler : IRequestHandler<VideoClipQuery, Operation
             return result;
         }
 
-        var cmd = new CreatePhraseClipCommand(phrase.Id,phrase.MovieName,phrase.Sequence,phrase.MoviePath,phrase.StartTime,phrase.Duration);
-        var handler = new CreatePhraseClipCommandHandler(unitOfWork);
-        var rst = await handler.Handle(cmd, cancellationToken);
-        if (rst.IsError)
-            result.AddErrorRange(rst.Errors);
-        else
-            result.Payload = rst.Payload;
+        if (!string.IsNullOrEmpty(phrase.VideoClipPath) && File.Exists(phrase.VideoClipPath))
+        {
+            result.Payload = phrase.GetVideoClipPath(settings.VideoCashPath);
+            return result;
+        }
+        
+        await phrase.GenerateVideoClipAsync(settings.VideoCashPath); 
+        // save result in database for the next time
+        await unitOfWork.SubtitlePhrases.UpdateAsync(phrase);
+        await unitOfWork.SaveAsync();
+        result.Payload = phrase.GetVideoClipPath(settings.VideoCashPath);
 
         return result;
     }
 
-    private async Task<Phrase?> GetPhraseFromDBAsync(VideoClipQuery request, CancellationToken token)
-    {
-        var dbQuery = unitOfWork.SubtitlePhrases.Query
-                            .Select(a => new Phrase()
-                            {
-                                Id = a.Id,
-                                Sequence = a.Sequence,
-                                MovieName = a.Movie!.Title,
-                                MoviePath = Path.Combine( a.Movie.BaseFolderDir, a.Movie.FolderName, a.Movie.VideoFilePath ?? string.Empty),
-                                VideoLocation = a.VideoClipPath!,
-                                Duration = a.Duration,
-                                StartTime = a.StartTime,
-                                EndTime = a.EndTime,
-                            });
-
-        dbQuery = request.CanUseId switch
-        {
-            true => dbQuery.Where(a => a.Id == request.PhraseId),
-            false => dbQuery.Where(a => a.MovieName == request.MovieName && a.Sequence == request.Sequence),
-        };
-
-        return await dbQuery.FirstOrDefaultAsync(token);
-    }
 }

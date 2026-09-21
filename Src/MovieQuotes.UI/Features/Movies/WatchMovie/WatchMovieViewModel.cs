@@ -9,6 +9,7 @@ using MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.Movies.Queries;
 using MovieQuotes.UI.Features.StudyMaterials.CreateStudyMaterial;
+using MovieQuotes.UI.Models;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using System;
@@ -26,7 +27,7 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
     {
     }
 
-    public WatchMovieViewModel(IMediator mediator, NavigationService nav) : base(mediator, nav)
+    public WatchMovieViewModel(IMediator mediator, NavigationService nav, SettingsService settings) : base(mediator, nav)
     {
         MainLibVLC = new();
         MainMediaPlayer = new(MainLibVLC)
@@ -40,6 +41,8 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
         MainMediaPlayer.PositionChanged += MainMediaPlayer_PositionChanged;
         MainMediaPlayer.Forward += (_, _) => this.ResyncCurrentPhrase();
         MainMediaPlayer.Backward += (_, _) => this.ResyncCurrentPhrase();
+
+        FontSize = settings.Current.SubtitleFontSize;
 
     }
 
@@ -83,6 +86,7 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
     public SubtitleEntry? CurrentArPhrase => this.ArSubtitleManager?.CurrentSubtitle;
     SubtitleManager? ArSubtitleManager = null;
 
+    public int FontSize{ get; } = 24;
     private long currentTime = 0;
 
     public long CurrentTime

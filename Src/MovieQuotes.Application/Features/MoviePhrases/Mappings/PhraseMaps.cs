@@ -5,19 +5,16 @@ using MovieQuotes.Domain.Models;
 
 internal static class PhraseMaps
 {
-    internal static Phrase ToPhrase(this SubtitlePhrase src)
+    internal static Phrase ToPhrase(this SubtitlePhrase src,string CashPath)
     {
         return new Phrase
         {
-            Id = src.Id,
-            Sequence = src.Sequence,
+            Id = src.Id, 
             Text = src.Text, 
             StartTime = src.StartTime,
-            EndTime = src.EndTime,
-            Duration = src.Duration,
-            MovieName = src.Movie?.Title ?? string.Empty,
-            MoviePath = Path.Combine(src.Movie?.BaseFolderDir??"",src.Movie?.FolderName??""),
-            VideoLocation = src.GetVideoClipPath() ?? string.Empty,
+            EndTime = src.EndTime, 
+            MovieName = src.Movie?.Title ?? string.Empty, 
+            VideoLocation = src.GetVideoClipPath(CashPath) ?? string.Empty,
             MovieCoverUrl = src.Movie?.GetCoverUrl()??""
         };
     }

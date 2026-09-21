@@ -51,7 +51,7 @@
         <TextBlock Grid.Row="2"
                    Foreground="Orange"
                    HorizontalAlignment="Center"
-                   FontSize="24"
+                   FontSize="{Binding FontSize}"
                    FontWeight="Bold"
                    Text="{Binding CurrentPhrase.Text}"/>
 

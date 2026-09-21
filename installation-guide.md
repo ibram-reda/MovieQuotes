@@ -1,7 +1,34 @@
 ## Linux
 this steps works fine for ubuntu linux 24.04 first we need to prepare a database, and optain connection string  to it 
 
-### 1. Database preperation
+### 1. install VLC and ffmpeg
+`MovieQuotes` use [Vlc] as vedio player and use ffmpeg to cut and generate vedio clips
+```bash
+sudo apt update
+sudo apt install -y vlc libvlc-dev ffmpeg
+```
+ 
+
+### 2. install .NET sdk
+to [install .Net] in your system
+```bash
+sudo add-apt-repository ppa:dotnet/backports
+```
+```bash
+sudo apt-get update && \
+  sudo apt-get install -y dotnet-sdk-9.0
+```
+check if every thing is fine
+```bash
+dotnet --list-sdks
+```
+this app use entity framework to work with database so we need to [install entity framework tools] 
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+
+### 3. Database preperation
 the follwoing line will install mysql in your system
 ```bash
 sudo apt update
@@ -22,85 +49,54 @@ now we need to set password for our root user, we will need this in our connecti
 ```bash
 mysql -u root
 ```
-and Change the root password
+and create database and user
 ```sql
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'NewPassword';
+CREATE DATABASE MovieQuotesDb;
+
+CREATE USER 'moviequotes'@'localhost' IDENTIFIED BY 'YourPassword';
+
+GRANT ALL PRIVILEGES ON MovieQuotesDb.* TO 'moviequotes'@'localhost';
+
 FLUSH PRIVILEGES;
 ```
-Replace `NewPassword` with your desired password. after finsh type `Exit` to return
+Replace `YourPassword` with your desired password. after finsh type `Exit` to return
 
 your connection string now is ready is like the follwoing 
 ```
-Server=localhost;Database=MovieQuotesDb;uid=root;pwd=<your root password here>;
+Server=localhost;Database=MovieQuotesDb;User=moviequotes;Password=<your password>;
 ```
 update your connection string in AppSetting in [api project][5] and in the [UI Project][4]
 
-### 2. install .NET sdk
-to [install .Net] in your system
-```bash
-sudo add-apt-repository ppa:dotnet/backports
-```
-```bash
-sudo apt-get update && \
-  sudo apt-get install -y dotnet-sdk-9.0
-```
-check if every thing is fine
-```bash
-dotnet --list-sdks
-```
-
-### 3. Manage User Secrets and Third-Party API Keys (Optional)
-
-*MovieQuotes* integrates with [TMDB](https://www.themoviedb.org) to fetch movie metadata when creating a movie instance, including posters, backdrops, genres, and the TMDB ID. 
-
-Because the TMDB API key has usage quotas and rate limits, it is not included in the repository. You can create your own API key from TMDB and store it locally using .NET User Secrets.
-
-Navigate to the UI project:
-
-```bash
-cd ./src/MovieQuotes.UI
-```
-
-Add your TMDB API key:
-
-```bash
-dotnet user-secrets set "TmdbApiKey" "<your-api-key>"
-```
-
-You should also configure your database connection string the same way:
-
-```bash
-dotnet user-secrets set "ConnectionStrings:Default" "Server=myServer;Database=MovieQuotesDb;"
-```
-
-**Note** *MovieQuotes* will still work without a TMDB API key, but in that case you will need to provide all movie data manually instead of having it fetched automatically from TMDB.
-
-### 4. install VLC and ffmpeg
-this app 'MovieQuotes' use [Vlc] as vedio player
-```bash
-sudo apt install libvlc-dev
-sudo apt install vlc
-```
-and use ffmpeg to cut and generate vedio clips
-```bash 
-sudo apt install ffmpeg
-```
-
-### 5. Create the database
-this app use entity framework to work with database so we need to [install entity framework tools] 
-```bash
-dotnet tool install --global dotnet-ef
-```
+### 4. Create the database Tables
 Navigate your Terminal to the location `./Src/MovieQuotes.Infrastructure` and update the database it will create the database and it's tables
 ```bash
 cd ./src/MovieQuotes.Infrastructure/
 dotnet ef database update -s ../MovieQuotes.Api/MovieQuotes.Api.csproj
 ```
 
-### 6. Set the Cash Folder location
-in [Domain Constants](./Src/MovieQuotes.Domain/Models/Constants.cs#L5) and [Application Constants](./Src/MovieQuotes.Application/Features/Constants.cs#L5) File change the `CashPath` Constant to a location on your system to generate short video clips on it. 
+### 5. Settings and configuration
+add appsettings.json to `~/.config/MovieQuotes/appsettings.json`
+```json
+{
+"MoviesLibraryPath":"<Movie Library Path>",
+"VideoCacheFolderPath":"<Video Cash Path>",
+"SubtitleFontSize":45,
+"IsDarkMode":true,
+"AppDataFolderPath":"<DataFolder Path>",
+"TmdbApiKey":"<your TmdApiKey>",
+"ConnectionString":"<connection String>",
+"OllamaApiUrl":"http://localhost:11434",
+"OllamaModelName":"qwen3.5:9b"}
+```
+`VideoCacheFolderPath`: a location on your system to generate short video clips on it
 
-### 7. run the application
+*MovieQuotes* integrates with [TMDB](https://www.themoviedb.org) to fetch movie metadata when creating a movie instance, including posters, backdrops, genres, and the TMDB ID. 
+
+Because the TMDB API key has usage quotas and rate limits, it is not included in the repository. You can create your own API key from TMDB and store it in settings page.
+
+**Note** *MovieQuotes* will still work without a TMDB API key, but in that case you will need to provide all movie data manually instead of having it fetched automatically from TMDB.
+
+### 6. run the application
 navigate your terminal to the uI project
 ```bash
 cd ./src/MovieQuotes.UI
@@ -110,8 +106,8 @@ and Build and run the appliation
 dotnet run
 ```
 
-### 8. populate with data and movies
-download your vedios from internet or from anywhere but we need 3 basic file ber each movie we need Photo called `cover.jpg` we need vedio `<yourmovieName>.mp4` and subtitle file `<yourMovieName>.en.srt` locate your movies in folder structure like the  following - you can have optional more file like `info.json` file that contains IMDBID and description of the movie
+### 7. populate with data and movies
+download your vedios/Movies from internet or from anywhere but we need 3 basic file ber each movie we need Photo called `cover.jpg` we need vedio `<yourmovieName>.mp4` and subtitle file `<yourMovieName>.en.srt` locate your movies in folder structure like the  following - you can have optional more file like `info.json` file that contains IMDBID and description of the movie
 
 ```
 <root folder>
@@ -142,7 +138,9 @@ you can automaticlly get this data in the application in the home view click the
 
 
 ## Addtional information
-if you like to work with other RDBMS rather than mysql just sutep it and get the connection strings add it update your connection string in AppSetting in [api project][5] and in the [UI Project][4]
+MovieQuotes currently uses MySQL. Other relational databases may be possible because the data layer uses EF Core, but additional provider/configuration changes may be required.
+
+and get the connection strings add it update your connection string in AppSetting in [api project][5] and in the [UI Project][4]
 
 get the correct [enity framework database providers] nuget package i use mysql 
 ```

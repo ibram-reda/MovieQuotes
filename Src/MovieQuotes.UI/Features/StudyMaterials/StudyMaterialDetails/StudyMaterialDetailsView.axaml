@@ -191,7 +191,6 @@
                              Source="{Binding MovieCoverUrl, Converter={StaticResource PathToBitmapConverter}}" />
                       <TextBlock Grid.Column="1" Text="{Binding MovieName}" FontWeight="Bold" TextWrapping="Wrap" />
                       <PhraseText Grid.Row="1" Grid.Column="1" Text="{Binding Text}" Highlight="{Binding $parent[ItemsControl].((vm:StudyMaterialDetailsViewModel)DataContext).Details.Content}"/>
-                      <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Sequence, StringFormat='Sequence: {0}'}" Opacity="0.7" />
                       <Button Grid.Column="2" Grid.RowSpan="3" Classes="secondary-action"
                               Content="Play"
                               VerticalAlignment="Center"

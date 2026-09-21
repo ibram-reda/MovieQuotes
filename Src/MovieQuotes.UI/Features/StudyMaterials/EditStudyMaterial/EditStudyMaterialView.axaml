@@ -7,7 +7,8 @@
              x:DataType="vm:EditStudyMaterialViewModel"
              mc:Ignorable="d"
              d:DesignWidth="700"
-             d:DesignHeight="700">
+             d:DesignHeight="700"
+             Loaded="EditStudtyView_Loaded">
 
   <UserControl.Styles>
     <Style Selector="TextBox">
@@ -41,53 +42,78 @@
       </Grid>
 
       <Border Background="{DynamicResource CardBackgroundBrush}"
-          BorderBrush="{DynamicResource PrimaryAccentBrush}"
-          BorderThickness="1"
-          CornerRadius="{StaticResource StandardCornerRadius}"
-          Padding="24">
+              BorderBrush="{DynamicResource PrimaryAccentBrush}"
+              BorderThickness="1"
+              CornerRadius="{StaticResource StandardCornerRadius}"
+              Padding="24">
         <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-          ColumnDefinitions="Auto,*"
-          ColumnSpacing="18" RowSpacing="12">
-        <TextBlock Grid.Row="0" Classes="label" Text="Content" />
-        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Content, Mode=TwoWay}" />
+              ColumnDefinitions="Auto,*"
+              ColumnSpacing="18" RowSpacing="12">
+          <TextBlock Grid.Row="0" Classes="label" Text="Content" />
+          <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Content, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="1" Classes="label" Text="Definition" />
-        <TextBox Grid.Row="1" Grid.Column="1" AcceptsReturn="True" Text="{Binding Definition, Mode=TwoWay}" />
+          <TextBlock Grid.Row="1" Classes="label" Text="Definition" />
+          <TextBox Grid.Row="1" Grid.Column="1" AcceptsReturn="True" 
+          PlaceholderText="{Binding AiMaterial.Definition}"
+          Text="{Binding Definition, Mode=TwoWay}"
+          KeyDown="AcceptAiSuggetion" />
 
-        <TextBlock Grid.Row="2" Classes="label" Text="Part of speech" />
-        <ComboBox Grid.Row="2" Grid.Column="1"
-                  ItemsSource="{Binding AllowedPartOfSpeech}"
-                  SelectedItem="{Binding PartOfSpeech, Mode=TwoWay}" />
+          <TextBlock Grid.Row="2" Classes="label" Text="Part of speech" />
+          <ComboBox Grid.Row="2" Grid.Column="1"
+                    ItemsSource="{Binding AllowedPartOfSpeech}"
+                    SelectedItem="{Binding PartOfSpeech, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="3" Classes="label" Text="Arabic content" />
-        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ContentArabicTranslation, Mode=TwoWay}" />
+          <TextBlock Grid.Row="3" Classes="label" Text="Arabic content" />
+          <TextBox Grid.Row="3" Grid.Column="1"
+                   PlaceholderText="{Binding AiMaterial.ContentArabicTranslation}"
+                   Text="{Binding ContentArabicTranslation, Mode=TwoWay}"
+                   KeyDown="AcceptAiSuggetion"/>
 
-        <TextBlock Grid.Row="4" Classes="label" Text="Arabic phrase" />
-        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ArPhraseTranslation, Mode=TwoWay}" />
+          <TextBlock Grid.Row="4" Classes="label" Text="Arabic phrase" />
+          <TextBox Grid.Row="4" Grid.Column="1"
+                   PlaceholderText="{Binding AiMaterial.ArPhraseTranslation}"
+                   Text="{Binding ArPhraseTranslation, Mode=TwoWay}"
+                   KeyDown="AcceptAiSuggetion" />
 
-        <TextBlock Grid.Row="5" Classes="label" Text="Origin" />
-        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Origin, Mode=TwoWay}" />
+          <TextBlock Grid.Row="5" Classes="label" Text="Origin" />
+          <TextBox Grid.Row="5" Grid.Column="1"
+                   PlaceholderText="{Binding AiMaterial.Origin}"
+                   Text="{Binding Origin, Mode=TwoWay}"
+                   KeyDown="AcceptAiSuggetion"/>
 
-        <TextBlock Grid.Row="6" Classes="label" Text="Synonyms" />
-        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Synonyms, Mode=TwoWay}" />
+          <TextBlock Grid.Row="6" Classes="label" Text="Synonyms" />
+          <TextBox Grid.Row="6" Grid.Column="1"
+                   PlaceholderText="{Binding AiMaterial.SynonymsString}"
+                   Text="{Binding Synonyms, Mode=TwoWay}"
+                   KeyDown="AcceptAiSuggetion"/>
 
-        <TextBlock Grid.Row="7" Classes="label" Text="Examples" />
-        <TextBox Grid.Row="7" Grid.Column="1" AcceptsReturn="True" Text="{Binding Examples, Mode=TwoWay}" />
+          <TextBlock Grid.Row="7" Classes="label" Text="Examples" />
+          <TextBox Grid.Row="7" Grid.Column="1" AcceptsReturn="True"
+                   PlaceholderText="{Binding AiMaterial.ExamplesString}"
+                   Text="{Binding Examples, Mode=TwoWay}"
+                   KeyDown="AcceptAiSuggetion"/>
 
-        <TextBlock Grid.Row="8" Classes="label" Text="Notes" />
-        <TextBox Grid.Row="8" Grid.Column="1" AcceptsReturn="True" Text="{Binding Notes, Mode=TwoWay}" />
+          <TextBlock Grid.Row="8" Classes="label" Text="Notes" />
+          <TextBox Grid.Row="8" Grid.Column="1" AcceptsReturn="True"
+                   PlaceholderText="{Binding AiMaterial.Notes}"
+                   Text="{Binding Notes, Mode=TwoWay}"
+                    KeyDown="AcceptAiSuggetion"/>
 
-        <TextBlock Grid.Row="9" Classes="label" Text="Level" />
-        <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Level, Mode=TwoWay}" />
+          <TextBlock Grid.Row="9" Classes="label" Text="Level" />
+          <TextBox Grid.Row="9" Grid.Column="1"
+                   PlaceholderText="{Binding AiMaterial.Level}"
+                   Text="{Binding Level, Mode=TwoWay}"
+                   KeyDown="AcceptAiSuggetion"/>
 
-        <TextBlock Grid.Row="10" Classes="label" Text="Pronunciation" />
-        <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding Pronunciation, Mode=TwoWay}" />
+          <TextBlock Grid.Row="10" Classes="label" Text="Pronunciation" />
+          <TextBox Grid.Row="10" Grid.Column="1"
+                   Text="{Binding Pronunciation, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="11" Classes="label" Text="Draft" />
-        <CheckBox Grid.Row="11" Grid.Column="1" IsChecked="{Binding IsDraft, Mode=TwoWay}" />
+          <TextBlock Grid.Row="11" Classes="label" Text="Draft" />
+          <CheckBox Grid.Row="11" Grid.Column="1" IsChecked="{Binding IsDraft, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="12" Classes="label" Text="Vulgar" />
-        <CheckBox Grid.Row="12" Grid.Column="1" IsChecked="{Binding IsVulgar, Mode=TwoWay}" />
+          <TextBlock Grid.Row="12" Classes="label" Text="Vulgar" />
+          <CheckBox Grid.Row="12" Grid.Column="1" IsChecked="{Binding IsVulgar, Mode=TwoWay}" />
         </Grid>
       </Border>
 

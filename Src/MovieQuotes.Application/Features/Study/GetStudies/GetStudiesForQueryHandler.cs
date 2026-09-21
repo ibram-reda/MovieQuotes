@@ -12,10 +12,12 @@ using System.Threading.Tasks;
 internal class GetStudiesQueryHandler : IRequestHandler<GetStudiesQuery, OperationPageResult<StudyPhrase>>
 {
     private readonly MovieQuotesDbContext dbContext;
+    private readonly AppSettings settings;
 
-    public GetStudiesQueryHandler(MovieQuotesDbContext dbContext)
+    public GetStudiesQueryHandler(MovieQuotesDbContext dbContext, AppSettings settings)
     {
         this.dbContext = dbContext;
+        this.settings = settings;
     }
 
     public async Task<OperationPageResult<StudyPhrase>> Handle(GetStudiesQuery request, CancellationToken cancellationToken)
@@ -39,16 +41,18 @@ internal class GetStudiesQueryHandler : IRequestHandler<GetStudiesQuery, Operati
                           .Where(p => p.Card.IsActive)
                           .Select(progress => new StudyPhrase
                           {
+                              PhraseId = progress.Card.StudyMaterial.PhraseId,
+                              MaterialId = progress.Card.StudyMaterialId,
+                              StudyCardId = progress.Card.Id,
                               ProgressId = progress.Id,
                               StudyType = progress.Card.StudyMaterial.PartOfSpeech,
-                              StudyCardId = progress.Card.Id,
                               PhraseText = progress.Card.StudyMaterial.Phrase!.Text,
                               Content = progress.Card.StudyMaterial.Content,
                               Origin = progress.Card.StudyMaterial.Origin,
                               Definition = progress.Card.StudyMaterial.Definition,
                               Synonyms = progress.Card.StudyMaterial.Synonyms,
                               Examples = progress.Card.StudyMaterial.Examples,
-                              VideoPath = progress.Card.StudyMaterial.Phrase.GetVideoClipPath() ?? ""
+                              VideoPath = progress.Card.StudyMaterial.Phrase.GetVideoClipPath(settings.VideoCashPath) ?? ""
                           });
 
         var totalCount = await qry.CountAsync();
