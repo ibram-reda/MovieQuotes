@@ -3,6 +3,9 @@
 using MediatR;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Models;
+using MovieQuotes.Subtitles.Abstractions;
+using MovieQuotes.Subtitles.Srt;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -19,9 +22,25 @@ internal static class SubtitleManager
             return result;
         }
 
-        using var stream = new StreamReader(filePath, encoding ?? Encoding.UTF8);
+        using var stream = File.OpenRead(filePath);
 
-        result.Payload = (await SrtReader.GetPhrasesFromStreamAsync(stream)).AsQueryable();
+        ISubtitleParser parser = new SrtSubtitleParser();
+
+        var subtitles = await parser.Parse(stream);
+
+        // check for doplicate index
+        var douplication = subtitles.GroupBy(m => m.Index).Where(group => group.Count() > 1);
+        if (douplication.Any())
+        {
+            result.AddError(Enums.ErrorCode.ValidationError,"UnValide Subtitles File {0}",filePath);
+            foreach(var index in douplication.Select(a=>a.Key))
+                result.AddError(Enums.ErrorCode.ValidationError, "Douplicate Sequance {0}", index);
+        }
+
+
+        result.Payload = subtitles.Select(s =>
+        SubtitlePhrase.CreateSubtitlePhrase(s.Index, s.Start, s.End, s.Text))
+        .AsQueryable();
 
         return result;
     }

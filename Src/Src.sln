@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieQuotes.Infrastructure"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieQuotes.AI", "MovieQuotes.AI\MovieQuotes.AI.csproj", "{41CAB04D-E124-4056-920A-A98FEB96AE86}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieQuotes.Subtitles", "MovieQuotes.Subtitles\MovieQuotes.Subtitles.csproj", "{23A879BA-D519-42F5-A81A-AA46883C06DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,18 @@ Global
 		{41CAB04D-E124-4056-920A-A98FEB96AE86}.Release|x64.Build.0 = Release|Any CPU
 		{41CAB04D-E124-4056-920A-A98FEB96AE86}.Release|x86.ActiveCfg = Release|Any CPU
 		{41CAB04D-E124-4056-920A-A98FEB96AE86}.Release|x86.Build.0 = Release|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Debug|x64.Build.0 = Debug|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Debug|x86.Build.0 = Debug|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Release|x64.ActiveCfg = Release|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Release|x64.Build.0 = Release|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Release|x86.ActiveCfg = Release|Any CPU
+		{23A879BA-D519-42F5-A81A-AA46883C06DD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

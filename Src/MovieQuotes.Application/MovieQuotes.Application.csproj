@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../MovieQuotes.AI/MovieQuotes.AI.csproj" />
+    <ProjectReference Include="../MovieQuotes.Subtitles/MovieQuotes.Subtitles.csproj" />
     <ProjectReference Include="..\MovieQuotes.Domain\MovieQuotes.Domain.csproj" />
     <ProjectReference Include="..\MovieQuotes.Infrastructure\MovieQuotes.Infrastructure.csproj" />
   </ItemGroup>
