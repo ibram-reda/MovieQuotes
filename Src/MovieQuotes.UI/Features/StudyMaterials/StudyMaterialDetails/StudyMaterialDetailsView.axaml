@@ -20,7 +20,7 @@
   </UserControl.Styles>
 
   <Grid RowDefinitions="Auto,*" Margin="24,20">
-    <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,0,0,20">
+    <Grid ColumnDefinitions="*,Auto,Auto,Auto" Margin="0,0,0,20">
       <StackPanel Spacing="3">
         <TextBlock Text="Study material details" FontSize="24" FontWeight="Bold" />
         <TextBlock Text="Review vocabulary, learning progress, and related phrases"
@@ -37,7 +37,8 @@
            VerticalAlignment="Center"
            Margin="0,0,8,0" />
           </StackPanel>
-      <Button Grid.Column="2" Classes="secondary-action" Content="Back" Command="{Binding BackToPreviousCommand}" />
+      <Button Grid.Column="2" Classes="danger-action" Content="Delete" Command="{Binding DeleteCommand}" Margin="0,0,8,0" />
+      <Button Grid.Column="3" Classes="secondary-action" Content="Back" Command="{Binding BackToPreviousCommand}" />
     </Grid>
 
     <ScrollViewer Grid.Row="1">

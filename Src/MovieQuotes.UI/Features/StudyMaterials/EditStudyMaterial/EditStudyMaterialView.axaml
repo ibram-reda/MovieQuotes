@@ -61,7 +61,8 @@
           <TextBlock Grid.Row="2" Classes="label" Text="Part of speech" />
           <ComboBox Grid.Row="2" Grid.Column="1"
                     ItemsSource="{Binding AllowedPartOfSpeech}"
-                    SelectedItem="{Binding PartOfSpeech, Mode=TwoWay}" />
+                    SelectedItem="{Binding PartOfSpeech, Mode=TwoWay}"
+                    PlaceholderText="{Binding AiMaterial.PartOfSpeech}" />
 
           <TextBlock Grid.Row="3" Classes="label" Text="Arabic content" />
           <TextBox Grid.Row="3" Grid.Column="1"

@@ -8,8 +8,10 @@ using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.StudyMaterials;
 using MovieQuotes.Application.Features.VideoClips.Queries;
+using MovieQuotes.UI.Features.StudyMaterials.BrowseStudyMaterials;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
+using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -31,6 +33,7 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AddToStudyCommand))]
     private bool isBeingStudied;
+    private readonly INotificationService notificationService;
 
     public bool HasProgressRecords => Details?.Progresses.Count > 0;
 
@@ -41,11 +44,12 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
     {
     }
 
-    public StudyMaterialDetailsViewModel(IMediator mediator, NavigationService navigation)
+    public StudyMaterialDetailsViewModel(IMediator mediator, NavigationService navigation,INotificationService notificationService)
         : base(mediator, navigation)
     {
         MainLibVLC = new("--no-video");
         MainMediaPlayer = new(MainLibVLC);
+        this.notificationService = notificationService;
     }
 
     public override async Task InitAsync(object? initValue)
@@ -109,6 +113,52 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
 
     private bool CanAddToStudy()
         => !this.IsBusy && this.Details != null && !this.Details.IsCurrentlyLerning;
+
+    [RelayCommand]
+    private async Task Delete()
+    {
+        if (Details is null || Details.Id <= 0)
+            return;
+
+        var confirmationDialogue = new ConfirmationViewModel(
+            "Delete study material?",
+            $"Are you sure you want to delete '{Details.Content}' material? This action cannot be undone.");
+        confirmationDialogue.DialogueClosed += async (_, args) =>
+        {
+            if (args.IsClosedSuccessfully)
+            {
+                await DeleteMaterialAsync(); 
+            }
+                this.ShowEditDialog = false;
+        };
+
+        this.Dialogue = confirmationDialogue;
+        this.ShowEditDialog = true;
+    }
+
+    private async Task DeleteMaterialAsync()
+    {
+        if (Details is null || Details.Id <= 0)
+            return;
+
+        IsBusy = true;
+        try
+        {
+            var result = await mediator.Send(new DeleteStudyMaterialCommand(Details.Id));
+            if (result.IsError)
+            {
+                HandleErrors(result.Errors);
+                return;
+            }
+            this.notificationService.ShowSuccess("Deleted!","Your Material Have Been Deleted");
+            NavigationService.GoBack();
+            
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 
     [RelayCommand]
     private async Task AddPhrase(Phrase phrase)

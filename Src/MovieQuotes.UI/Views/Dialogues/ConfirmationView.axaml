@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MovieQuotes.UI.ViewModels.Dialogues"
+             x:Class="MovieQuotes.UI.Views.Dialogues.ConfirmationView"
+             x:DataType="vm:ConfirmationViewModel">
+    <Border Padding="24"
+            MinWidth="360"
+            Background="{DynamicResource CardBackgroundBrush}"
+            BorderBrush="{DynamicResource PrimaryAccentBrush}"
+            BorderThickness="1"
+            CornerRadius="{StaticResource StandardCornerRadius}"
+            >
+        <StackPanel Spacing="18">
+            <TextBlock Text="{Binding Title}"
+                       FontSize="20"
+                       FontWeight="SemiBold" />
+            <TextBlock Text="{Binding Message}"
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource SecondaryTextBrush}" />
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8">
+                <Button Content="No"
+                        Classes="secondary-action"
+                        Command="{Binding DeclineCommand}" />
+                <Button Content="Yes, delete"
+                        Classes="danger-action"
+                        Command="{Binding ConfirmCommand}" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

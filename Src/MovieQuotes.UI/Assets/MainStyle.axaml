@@ -78,6 +78,14 @@
     <Setter Property="FontWeight" Value="SemiBold" />
   </Style>
 
+  <Style Selector="Button.danger-action">
+    <Setter Property="Background" Value="{DynamicResource ErrorRedBrush}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="Padding" Value="16,9" />
+    <Setter Property="CornerRadius" Value="{StaticResource StandardCornerRadius}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
   <Style Selector="Button.secondary-action">
     <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
