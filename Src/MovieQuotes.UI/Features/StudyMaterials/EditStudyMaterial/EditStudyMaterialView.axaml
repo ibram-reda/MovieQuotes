@@ -86,6 +86,7 @@
           <TextBox Grid.Row="6" Grid.Column="1"
                    PlaceholderText="{Binding AiMaterial.SynonymsString}"
                    Text="{Binding Synonyms, Mode=TwoWay}"
+                   AcceptsReturn="True"
                    KeyDown="AcceptAiSuggetion"/>
 
           <TextBlock Grid.Row="7" Classes="label" Text="Examples" />

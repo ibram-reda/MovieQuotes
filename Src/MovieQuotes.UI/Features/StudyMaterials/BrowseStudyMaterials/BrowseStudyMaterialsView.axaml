@@ -13,6 +13,7 @@
              d:DesignHeight="650"
              Loaded="BrowseStudyMaterialsView_Loaded">
 
+  <!-- Page-specific styles for draft cards, filters, labels, and toolbar actions. -->
   <UserControl.Styles>
     <Style Selector="Border.draft">
       <Setter Property="BorderBrush" Value="{DynamicResource ProgressNeedsWorkOrangeColor}"/>
@@ -28,6 +29,10 @@
       <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
       <Setter Property="FontSize" Value="12" />
     </Style>
+    <Style Selector="CheckBox.filter-toggle">
+      <Setter Property="Margin" Value="0,0,8,0" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
     <Style Selector="Button.toolbar-action">
       <Setter Property="Padding" Value="14,8" />
       <Setter Property="CornerRadius" Value="{StaticResource StandardCornerRadius}" />
@@ -35,13 +40,16 @@
     </Style>
   </UserControl.Styles>
 
+  <!-- Main page layout: filter header, material results, and pagination footer. -->
   <Grid RowDefinitions="Auto,*,Auto" Margin="24,20">
+    <!-- Page header and filter controls. -->
     <Border Padding="20"
             Background="{DynamicResource CardBackgroundBrush}"
             BorderBrush="{DynamicResource PrimaryAccentBrush}"
             BorderThickness="1"
             CornerRadius="{StaticResource StandardCornerRadius}">
       <Grid RowDefinitions="Auto,Auto" RowSpacing="16">
+        <!-- Page title and total result count. -->
         <Grid ColumnDefinitions="Auto,Auto,*">
           <StackPanel Spacing="3">
             <TextBlock Text="Study materials" FontSize="24" FontWeight="Bold" />
@@ -52,25 +60,28 @@
                      Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Bottom" Margin="12,0,0,3" />
         </Grid>
 
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="2"
-                    Orientation="Horizontal"
-                    Spacing="8">
+        <!-- Filters wrap onto multiple lines on narrow screens. -->
+        <WrapPanel Grid.Row="1" Grid.ColumnSpan="2"
+             Orientation="Horizontal"
+             ItemSpacing="8"
+             LineSpacing="8">
           <TextBlock Text="Movie ID" Classes="label" />
           <ComboBox Classes="filter"
                     ItemsSource="{Binding Movies}"
-                    SelectedItem="{Binding SelectedMovie, Mode=TwoWay}"
+                    SelectedItem="{Binding SelectedMovie, Mode=TwoWay}" 
                     PlaceholderText="Any movie">
             <ComboBox.ItemTemplate>
               <DataTemplate x:DataType="movieModels:MovieWithStudyMaterialCount">
                 <StackPanel>
                   <StackPanel Orientation="Horizontal" >
-                    <Image Width="30" Source="{Binding CoverUrl,Converter={StaticResource PathToBitmapConverter}}"/>
+                    <Image Width="30" IsVisible="{Binding Id}" Source="{Binding CoverUrl,Converter={StaticResource PathToBitmapConverter}}"/>
                     <TextBlock Text="{Binding Title}"
                                Width="200"
                                VerticalAlignment="Center"
                                TextWrapping="Wrap"/>
                     <TextBlock Text="{Binding StudyMaterialCount}"
                                VerticalAlignment="Center"
+                               IsVisible="{Binding Id}"
                                Foreground="{DynamicResource ProgressGoodColor}"/>
                   </StackPanel>
                 </StackPanel>
@@ -78,21 +89,52 @@
             </ComboBox.ItemTemplate>
           </ComboBox>
           <TextBlock Text="Level" Classes="label" />
-          <TextBox Classes="filter" Text="{Binding LevelFilter, Mode=TwoWay}" PlaceholderText="Any level" MinHeight="34" />
+          <ComboBox Classes="filter"
+                    ItemsSource="{Binding Levels}"
+                    SelectedItem="{Binding SelectedLevel, Mode=TwoWay}"
+                    PlaceholderText="Any level">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="studyModels:LevelFilter">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <TextBlock Text="{Binding Level}" />
+                  <TextBlock IsVisible="{Binding Count}" Text="{Binding Count, StringFormat='({0})'}" Opacity="0.7" />
+                </StackPanel>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
           <TextBlock Text="Part of speech" Classes="label" />
           <ComboBox Classes="filter"
                     ItemsSource="{Binding PartOfSpeechCounts}"
-                    SelectedItem="{Binding SelectedPartOfSpeech, Mode=TwoWay}"
+                    SelectedItem="{Binding SelectedPartOfSpeech, Mode=TwoWay}" 
                     PlaceholderText="Any type">
             <ComboBox.ItemTemplate>
               <DataTemplate x:DataType="studyModels:PartOfSpeechCountDto">
                 <StackPanel Orientation="Horizontal" Spacing="6">
                   <TextBlock Text="{Binding PartOfSpeech}" />
-                  <TextBlock Text="{Binding Count, StringFormat='({0})'}" Opacity="0.7" />
+                  <TextBlock IsVisible="{Binding Count}" Text="{Binding Count, StringFormat='({0})'}" Opacity="0.7" />
                 </StackPanel>
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>
+          <TextBlock Text="Order by" Classes="label" />
+          <ComboBox Classes="filter"
+                    ItemsSource="{Binding SortOptions}"
+                    SelectedItem="{Binding SortOrder, Mode=TwoWay}"
+                    SelectedIndex="0">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:StudyMaterialSortOption">
+                <TextBlock Text="{Binding Label}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <CheckBox Content="Draft only"
+                    Classes="filter-toggle"
+                    IsChecked="{Binding DraftOnly, Mode=TwoWay}"
+                    />
+          <CheckBox Content="Vulgar only"
+                    Classes="filter-toggle"
+                    IsChecked="{Binding VulgarOnly, Mode=TwoWay}"
+                    />
           <TextBox Classes="filter" Width="220" MinHeight="34"
                    Text="{Binding SearchText, Mode=TwoWay}"
                    PlaceholderText="Search materials">
@@ -102,10 +144,11 @@
           </TextBox>
           <Button Classes="toolbar-action primary-action" Content="Apply filters" Command="{Binding ApplyFiltersCommand}" />
           <Button Classes="toolbar-action secondary-action" Content="Clear" Command="{Binding ClearFiltersCommand}" />
-        </StackPanel>
+        </WrapPanel>
       </Grid>
     </Border>
 
+    <!-- Scrollable study-material result cards. -->
     <ScrollViewer Grid.Row="1" Margin="0,20,0,0" VerticalScrollBarVisibility="Auto">
       <ItemsControl ItemsSource="{Binding Materials}">
         <ItemsControl.ItemsPanel>
@@ -115,6 +158,7 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
           <DataTemplate>
+            <!-- Individual study-material card. -->
             <Border Width="340"
                     Margin="0,0,16,16"
                     Padding="18"
@@ -124,6 +168,7 @@
                     BorderThickness="1"
                     CornerRadius="{StaticResource StandardCornerRadius}">
               <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
+                <!-- Material title and level badge. -->
                 <Grid ColumnDefinitions="*,auto" >
                   <TextBlock Text="{Binding Origin}"
                              FontSize="18"
@@ -142,6 +187,7 @@
 
                 </Grid>
 
+                <!-- Part of speech and translation. -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center" Margin="0,10,0,0">
                   <TextBlock Text="{Binding PartOfSpeech}" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" />
                   <TextBlock Text="{Binding ContentArabicTranslation}"
@@ -151,6 +197,7 @@
                              TextWrapping="Wrap" />
                 </StackPanel>
 
+                <!-- Definition and source phrase. -->
                 <TextBlock Grid.Row="2"
                            Text="{Binding Definition}"
                            Margin="0,6,0,0"
@@ -165,7 +212,7 @@
                             Opacity="0.8"
                             />
 
-                <!--Button Arrea-->
+                <!-- Card actions: edit, view details, and delete. -->
                 <Grid Grid.Row="5" ColumnDefinitions="auto,auto,*,auto" VerticalAlignment="Bottom">
                   <Button Grid.Column="0" Classes="secondary-action"
                           Command="{Binding $parent[ItemsControl].((vm:BrowseStudyMaterialsViewModel)DataContext).EditMaterialCommand}"
@@ -194,6 +241,7 @@
       </ItemsControl>
     </ScrollViewer>
 
+    <!-- Pagination and visible-item count. -->
     <Grid Grid.Row="2"
           ColumnDefinitions="Auto,*,Auto"
           Margin="0,12,0,0">

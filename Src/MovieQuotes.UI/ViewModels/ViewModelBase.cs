@@ -66,4 +66,17 @@ public abstract partial class ViewModelBase : ObservableObject
         foreach(var err in errors)
             this.ErrorMessages.Add(err.Message);
     }
+
+    public void HandHandleErrors(Exception exception)
+    {
+        // add inner messages
+        var innerEx = exception;
+        var maxCount = 5;
+        while(innerEx != null & --maxCount>0)
+        {
+            this.ErrorMessages.Add(innerEx.Message);
+            innerEx = innerEx.InnerException;
+            
+        }
+    }
 }

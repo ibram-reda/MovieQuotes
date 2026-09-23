@@ -36,11 +36,17 @@ internal class GetStudyMaterialsQueryHandler : IRequestHandler<GetStudyMaterials
         if (request.MovieId > 0)
             query = query.Where(material => material.Phrase!.MovieId == request.MovieId);
 
-        if (!string.IsNullOrWhiteSpace(request.Level))
+        if (!request.Level?.Equals("Any Level",StringComparison.OrdinalIgnoreCase)??true)
             query = query.Where(material => material.Level == request.Level);
 
-        if (!string.IsNullOrWhiteSpace(request.PartOfSpeech))
+        if (!request.PartOfSpeech?.Equals("Any Type",StringComparison.OrdinalIgnoreCase)??true)
             query = query.Where(material => material.PartOfSpeech == request.PartOfSpeech);
+
+        if (request.DraftOnly)
+            query = query.Where(material => material.IsDraft);
+
+        if (request.VulgarOnly)
+            query = query.Where(material => material.IsVulgar);
 
         if (!string.IsNullOrWhiteSpace(request.SearchText))
         {
@@ -65,9 +71,20 @@ internal class GetStudyMaterialsQueryHandler : IRequestHandler<GetStudyMaterials
             return result;
         }
 
-        var materials = await query
-            .OrderByDescending(material => material.ModifiedDate)
-            .ThenByDescending(material => material.Id)
+        var orderedQuery = request.SortOrder switch
+        {
+            StudyMaterialSortOrder.CreatedDate => query
+                .OrderByDescending(material => material.CreatedDate)
+                .ThenByDescending(material => material.Id),
+            StudyMaterialSortOrder.Alphabetical => query
+                .OrderBy(material => material.Content.Trim() ?? material.Origin ?? string.Empty)
+                .ThenByDescending(material => material.Id),
+            _ => query
+                .OrderByDescending(material => material.ModifiedDate)
+                .ThenByDescending(material => material.Id)
+        };
+
+        var materials = await orderedQuery
             .Skip(itemCountToSkip)
             .Take((int)request.ResultPerPage)
             .Include(a=>a.Phrase)

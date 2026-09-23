@@ -9,6 +9,7 @@ using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.StudyMaterials;
 using MovieQuotes.Application.Features.VideoClips.Queries;
 using MovieQuotes.UI.Features.StudyMaterials.BrowseStudyMaterials;
+using MovieQuotes.UI.Features.StudyMaterials.EditStudyMaterial;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using MovieQuotes.UI.ViewModels.Dialogues;
@@ -113,6 +114,28 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
 
     private bool CanAddToStudy()
         => !this.IsBusy && this.Details != null && !this.Details.IsCurrentlyLerning;
+
+    [RelayCommand]
+    private void Edit()
+    {
+        if (Details is null || Details.Id <= 0)
+            return;
+
+        var dialogue = new EditStudyMaterialViewModel(Details.Id);
+        dialogue.OnSaved += async (isSaved, _) =>
+        {
+            if (isSaved)
+            {
+                await LoadDetailsAsync(Details.Id);
+                await SearchMatchingPhrasesAsync(Details.Content);
+            }
+
+            ShowEditDialog = false;
+        };
+
+        Dialogue = dialogue;
+        ShowEditDialog = true;
+    }
 
     [RelayCommand]
     private async Task Delete()

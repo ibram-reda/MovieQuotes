@@ -5,32 +5,53 @@ using CommunityToolkit.Mvvm.Input;
 using MediatR;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.Application.Features.StudyMaterials;
+using MovieQuotes.Application.Features.StudyMaterials; 
 using MovieQuotes.UI.Features.StudyMaterials.EditStudyMaterial;
 using MovieQuotes.UI.Features.StudyMaterials.StudyMaterialDetails;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using MovieQuotes.UI.ViewModels.Dialogues;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
+
+public sealed record StudyMaterialSortOption(StudyMaterialSortOrder Value, string Label);
 
 public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
 {
     public ObservableCollection<StudyMaterial> Materials { get; } = [];
     public ObservableCollection<MovieWithStudyMaterialCount> Movies { get; } = [];
+    public ObservableCollection<LevelFilter> Levels { get; } = [];
     public ObservableCollection<PartOfSpeechCountDto> PartOfSpeechCounts { get; } = [];
+    public IReadOnlyList<StudyMaterialSortOption> SortOptions { get; } =
+    [
+        new(StudyMaterialSortOrder.ModifiedDate, "Modified date"),
+        new(StudyMaterialSortOrder.CreatedDate, "Created date"),
+        new(StudyMaterialSortOrder.Alphabetical, "Alphabetical")
+    ];
 
     [ObservableProperty]
     private MovieWithStudyMaterialCount? selectedMovie;
 
     [ObservableProperty]
-    private string levelFilter = string.Empty;
+    private LevelFilter? selectedLevel;
 
     [ObservableProperty]
     private PartOfSpeechCountDto? selectedPartOfSpeech;
 
     [ObservableProperty]
     private string searchText = string.Empty;
+
+    [ObservableProperty]
+    private bool draftOnly;
+
+    [ObservableProperty]
+    private bool vulgarOnly;
+
+    [ObservableProperty]
+    private StudyMaterialSortOption sortOrder = new(StudyMaterialSortOrder.ModifiedDate, "Modified date");
 
     [ObservableProperty]
     private int totalCount;
@@ -41,6 +62,7 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
     [ObservableProperty]
     private uint resultPerPage = 20;
     private readonly INotificationService notificationService;
+    private bool isInitialized;
 
     public override string Title => "Browse Study Materials";
 
@@ -81,7 +103,7 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         });
     }
 
-    public BrowseStudyMaterialsViewModel(IMediator mediator, NavigationService navigation,INotificationService notificationService)
+    public BrowseStudyMaterialsViewModel(IMediator mediator, NavigationService navigation, INotificationService notificationService)
         : base(mediator, navigation)
     {
         this.notificationService = notificationService;
@@ -89,12 +111,16 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
 
     public override async Task InitAsync(object? initValue)
     {
-        await this.LoadMaterials();
-        await this.LoadMovies();
-        await this.LoadPartOfSpeechCounts();
+        if (!isInitialized)
+        {
+            await this.LoadMovies();
+            await this.LoadLevels();
+            await this.LoadPartOfSpeechCounts();
+            isInitialized = true;
+        }
+        await this.ApplyFilters();
     }
-
-    [RelayCommand]
+ 
     private async Task LoadMovies()
     {
         var query = new GetMoviesWithStudyMaterialQuery();
@@ -107,11 +133,28 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         }
 
         Movies.Clear();
+        var totalMovie = new MovieWithStudyMaterialCount(){Title="Any Movies"};
+        Movies.Add(totalMovie);
         foreach (var movie in result.Payload ?? [])
-            Movies.Add(movie);
+            Movies.Add(movie); 
+        SelectedMovie = totalMovie;
     }
 
-    [RelayCommand]
+    private async Task LoadLevels()
+    {
+        var result = await mediator.Send(new GetStudyMaterialLevelsQuery());
+
+        if (result.IsError)
+        {
+            HandleErrors(result.Errors);
+            return;
+        }
+
+        Levels.Clear();
+        foreach (var level in result.Payload ?? [])
+            Levels.Add(level);
+    }
+ 
     private async Task LoadPartOfSpeechCounts(int movieId = 0)
     {
         var query = new GetPartOfSpeechCountsQuery(movieId);
@@ -124,14 +167,11 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         }
 
         PartOfSpeechCounts.Clear();
+        var total = new PartOfSpeechCountDto(){ PartOfSpeech="Any type"};
+        PartOfSpeechCounts.Add(total);
         foreach (var partOfSpeech in result.Payload ?? [])
-            PartOfSpeechCounts.Add(partOfSpeech);
-    }
-
-    [RelayCommand]
-    private async Task LoadMaterials()
-    {
-        await LoadMaterialsAsync(CurrentPageNumber);
+            PartOfSpeechCounts.Add(partOfSpeech); 
+        SelectedPartOfSpeech=total; 
     }
 
     [RelayCommand]
@@ -171,7 +211,10 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
                     return;
                 }
                 else
-                this.notificationService.ShowSuccess("Deleted!", "Your Material Have Been Deleted"); 
+                {
+                    this.notificationService.ShowSuccess("Deleted!", "Your Material Have Been Deleted");
+                    await ApplyFiltersCommand.ExecuteAsync(null);
+                }
             }
             this.ShowEditDialog = false;
         };
@@ -197,9 +240,12 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
             var query = new GetStudyMaterialsQuery
             {
                 MovieId = SelectedMovie?.Id ?? 0,
-                Level = LevelFilter,
+                Level = SelectedLevel?.Level ?? string.Empty,
                 PartOfSpeech = SelectedPartOfSpeech?.PartOfSpeech,
                 SearchText = SearchText,
+                DraftOnly = DraftOnly,
+                VulgarOnly = VulgarOnly,
+                SortOrder = SortOrder.Value,
                 PageNumber = pageNumber,
                 ResultPerPage = ResultPerPage
             };
@@ -246,20 +292,13 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
     [RelayCommand]
     private async Task ClearFilters()
     {
-        SelectedMovie = null;
-        LevelFilter = string.Empty;
-        SelectedPartOfSpeech = null;
+        SelectedMovie = Movies.FirstOrDefault();
+        SelectedLevel = Levels.FirstOrDefault();
+        SelectedPartOfSpeech = PartOfSpeechCounts.FirstOrDefault();
         SearchText = string.Empty;
+        DraftOnly = false;
+        VulgarOnly = false;
         await ApplyFilters();
-    }
-
-    partial void OnSelectedMovieChanged(MovieWithStudyMaterialCount? value)
-    => OnSelectedMovieChangedAsync(value);
-    async void OnSelectedMovieChangedAsync(MovieWithStudyMaterialCount? movie)
-    {
-        await LoadPartOfSpeechCountsCommand.ExecuteAsync(movie?.Id ?? 0);
-        await ApplyFiltersCommand.ExecuteAsync(null);
-
     }
 
 

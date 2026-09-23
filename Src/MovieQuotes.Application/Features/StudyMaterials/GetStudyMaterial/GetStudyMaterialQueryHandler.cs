@@ -50,6 +50,8 @@ internal class GetStudyMaterialQueryHandler : IRequestHandler<GetStudyMaterialQu
             PartOfSpeech = material.PartOfSpeech,
             Content = material.Content,
             ContentArabicTranslation = material.ContentArabicTranslation,
+            SrcPhrase = material.Phrase?.Text,
+            ArPhraseTranslation = material.ArPhraseTranslation,
             Origin = material.Origin,
             Definition = material.Definition,
             IsDraft = material.IsDraft,
