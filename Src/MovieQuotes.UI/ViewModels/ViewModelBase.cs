@@ -67,7 +67,7 @@ public abstract partial class ViewModelBase : ObservableObject
             this.ErrorMessages.Add(err.Message);
     }
 
-    public void HandHandleErrors(Exception exception)
+    public void HandleErrors(Exception exception)
     {
         // add inner messages
         var innerEx = exception;

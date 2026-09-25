@@ -11,6 +11,9 @@
         <StackPanel Orientation="Horizontal" Spacing="10" Margin="10">
           <Button Classes="saveBtn" Content="Save"/>
           <Button Classes="cancelBtn" Content="Cancel"/>
+          <Button Classes="icon-only">
+            <PathIcon Data="{StaticResource speaker_regular}" />
+          </Button>
         </StackPanel>
       </StackPanel>
     </Border>
@@ -175,6 +178,15 @@
     <Setter Property="Cursor" Value="Hand"/>
   </Style>
 
+  <Style Selector="Button.icon-only">
+    <Setter Property="Width" Value="20"/>
+    <Setter Property="Height" Value="20"/>
+    <Setter Property="Background" Value="Transparent"/> 
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="Cursor" Value="Hand"/>
+  </Style>
   <Style Selector="Button.contentbtn">
     <Setter Property="Background" Value="Transparent"/>
     <Setter Property="Margin" Value="5"/>

@@ -10,6 +10,7 @@ public class StudyMaterial
     public string? Definition { get; set; }
     public string? ArPhraseTranslation { get; set; }
     public string? SrcPhrase { get; set; }
+    public int SrcPhraseId {get;set;}
 
     public bool IsDraft { get; set; }
     public string Examples { get; set; } = string.Empty;

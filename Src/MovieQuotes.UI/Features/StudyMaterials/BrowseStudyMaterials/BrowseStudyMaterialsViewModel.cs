@@ -5,7 +5,8 @@ using CommunityToolkit.Mvvm.Input;
 using MediatR;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.Application.Features.StudyMaterials; 
+using MovieQuotes.Application.Features.StudyMaterials;
+using MovieQuotes.Application.Features.VideoClips.Queries;
 using MovieQuotes.UI.Features.StudyMaterials.EditStudyMaterial;
 using MovieQuotes.UI.Features.StudyMaterials.StudyMaterialDetails;
 using MovieQuotes.UI.Services;
@@ -62,6 +63,7 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
     [ObservableProperty]
     private uint resultPerPage = 20;
     private readonly INotificationService notificationService;
+    private readonly MediaService mediaService;
     private bool isInitialized;
 
     public override string Title => "Browse Study Materials";
@@ -103,24 +105,24 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         });
     }
 
-    public BrowseStudyMaterialsViewModel(IMediator mediator, NavigationService navigation, INotificationService notificationService)
+    public BrowseStudyMaterialsViewModel(IMediator mediator, NavigationService navigation, INotificationService notificationService, MediaService mediaService)
         : base(mediator, navigation)
     {
         this.notificationService = notificationService;
+        this.mediaService = mediaService;
     }
 
     public override async Task InitAsync(object? initValue)
     {
-        if (!isInitialized)
-        {
-            await this.LoadMovies();
-            await this.LoadLevels();
-            await this.LoadPartOfSpeechCounts();
-            isInitialized = true;
-        }
-        await this.ApplyFilters();
+        if (isInitialized) return;
+
+        await this.LoadMovies();
+        await this.LoadLevels();
+        await this.LoadPartOfSpeechCounts();
+        await this.ClearFilters();
+        isInitialized = true;
     }
- 
+
     private async Task LoadMovies()
     {
         var query = new GetMoviesWithStudyMaterialQuery();
@@ -133,10 +135,10 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         }
 
         Movies.Clear();
-        var totalMovie = new MovieWithStudyMaterialCount(){Title="Any Movies"};
+        var totalMovie = new MovieWithStudyMaterialCount() { Title = "Any Movies" };
         Movies.Add(totalMovie);
         foreach (var movie in result.Payload ?? [])
-            Movies.Add(movie); 
+            Movies.Add(movie);
         SelectedMovie = totalMovie;
     }
 
@@ -154,7 +156,7 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         foreach (var level in result.Payload ?? [])
             Levels.Add(level);
     }
- 
+
     private async Task LoadPartOfSpeechCounts(int movieId = 0)
     {
         var query = new GetPartOfSpeechCountsQuery(movieId);
@@ -167,11 +169,11 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         }
 
         PartOfSpeechCounts.Clear();
-        var total = new PartOfSpeechCountDto(){ PartOfSpeech="Any type"};
+        var total = new PartOfSpeechCountDto() { PartOfSpeech = "Any type" };
         PartOfSpeechCounts.Add(total);
         foreach (var partOfSpeech in result.Payload ?? [])
-            PartOfSpeechCounts.Add(partOfSpeech); 
-        SelectedPartOfSpeech=total; 
+            PartOfSpeechCounts.Add(partOfSpeech);
+        SelectedPartOfSpeech = total;
     }
 
     [RelayCommand]
@@ -191,36 +193,23 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         this.ShowEditDialog = true;
     }
 
-    [RelayCommand]
-    private void DeleteMaterial(StudyMaterial material)
+    [RelayCommand(AllowConcurrentExecutions = true)]
+    private async Task PlayMaterial(StudyMaterial material)
     {
-        if (material is null)
+        if (material.SrcPhraseId <= 0)
             return;
 
-        var confirmationDialogue = new ConfirmationViewModel(
-            "Delete study material?",
-            $"Are you sure you want to delete '{material.Content}' material? This action cannot be undone.");
-        confirmationDialogue.DialogueClosed += async (_, args) =>
-        {
-            if (args.IsClosedSuccessfully)
-            {
-                var result = await mediator.Send(new DeleteStudyMaterialCommand(material.Id));
-                if (result.IsError)
-                {
-                    HandleErrors(result.Errors);
-                    return;
-                }
-                else
-                {
-                    this.notificationService.ShowSuccess("Deleted!", "Your Material Have Been Deleted");
-                    await ApplyFiltersCommand.ExecuteAsync(null);
-                }
-            }
-            this.ShowEditDialog = false;
-        };
 
-        this.Dialogue = confirmationDialogue;
-        this.ShowEditDialog = true;
+        var qury = new VideoClipQuery(material.SrcPhraseId);
+        var res = await this.mediator.Send(qury);
+        if (res.IsError)
+        {
+            this.HandleErrors(res.Errors);
+            return;
+        }
+
+        this.mediaService?.PlayAudio(res.Payload ?? "");
+
     }
 
     [RelayCommand]

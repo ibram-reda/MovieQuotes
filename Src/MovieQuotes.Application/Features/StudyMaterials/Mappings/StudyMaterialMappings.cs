@@ -7,6 +7,7 @@ internal static class StudyMaterialMappings
         return new StudyMaterial
         {
             Id = source.Id,
+            SrcPhraseId = source.Phrase!.Id,
             PartOfSpeech = source.PartOfSpeech,
             Content = source.Content,
             ContentArabicTranslation = source.ContentArabicTranslation,

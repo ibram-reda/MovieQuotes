@@ -221,6 +221,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
                 // Refflect on UI
                 CurrentPhrase.Content = material.Content;
                 CurrentPhrase.Definition = material.Definition;
+                CurrentPhrase.Examples = material.Examples;
                 var EditedPhrase = CurrentPhrase;
                 CurrentPhrase = null;
                 OnPropertyChanged(nameof(CurrentPhrase));
@@ -256,13 +257,38 @@ public partial class ActiveRecallViewModel : PageViewModelBase
 
     partial void OnCurrentPhraseChanged(StudyPhrase? value)
     {
+        if(value is null) return;
         string hiddenContent = new string(value?.Content?.Select(c =>
             char.IsAsciiLetter(c) ? '_' : c
         ).ToArray());
-        QuestionText = value?.PhraseText?.Replace("\n", " ").Replace(value.Content ?? "", hiddenContent, StringComparison.OrdinalIgnoreCase) ?? string.Empty;
+        var phrase = GetCleanPhrases(value?.PhraseText);
+        QuestionText = phrase.Replace(value.Content ?? "", hiddenContent, StringComparison.OrdinalIgnoreCase) ?? string.Empty;
         AnswerText = value?.Content ?? string.Empty;
         Reset();
         PlayAudio();
+    }
+
+    /// <summary>
+    /// Cleans subtitle text by combining multiple lines into a single phrase.
+    /// If the subtitle contains dialogue lines prefixed with a hyphen,
+    /// the original text is preserved to maintain speaker separation.
+    /// </summary>
+    /// <param name="subtitleText">The subtitle text to clean.</param>
+    /// <returns>
+    /// The cleaned subtitle text, or the original text when speaker-separated
+    /// dialogue lines are detected.
+    /// </returns>
+    string GetCleanPhrases(string subtitleText)
+    {
+        if (string.IsNullOrWhiteSpace(subtitleText))
+            return string.Empty;
+
+        var phrases = subtitleText.Split('\n');
+
+        if (phrases.Any(p => p.TrimStart().StartsWith("-")))
+            return subtitleText;
+
+        return string.Join(" ", phrases.Select(p => p.Trim()));
     }
 
     [RelayCommand]
