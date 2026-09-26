@@ -6,6 +6,8 @@ using MovieQuotes.Infrastructure;
 using MovieQuotes.Infrastructure.Data;
 using MovieQuotes.Domain.Interfaces;
 using MovieQuotes.Application.Features.Movies.Services;
+using MovieQuotes.Application.Common.Models;
+using MovieQuotes.AI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,14 +22,14 @@ builder.Services.AddCors(options =>
                                               "https://localhost:4200");
                       });
 });
- 
+
 var cs = builder.Configuration.GetConnectionString("DefaultConnection");
 var hangfire = builder.Configuration.GetConnectionString("HangfireConnection");
 builder.Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs));
 
 builder.Services.AddScoped<IMovieQUnitOfWork, MovieQUnitOfWork>();
 var TmdbApiKey = builder.Configuration["TmdbApiKey"];
-builder.Services.AddSingleton(new TmdbService(TmdbApiKey??""));
+builder.Services.AddSingleton(new TmdbService(TmdbApiKey ?? ""));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
 // Add Hangfire services
@@ -37,7 +39,7 @@ builder.Services.AddHangfire(configuration => configuration
     .UseRecommendedSerializerSettings()
     .UseStorage(new MySqlStorage(hangfire, new MySqlStorageOptions
     {
-         
+
     })));
 
 builder.Services.AddHangfireServer();
@@ -45,6 +47,13 @@ builder.Services.AddHangfireServer();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<AppSettings>();
+
+builder.Services.AddSingleton<LLMService>(sp =>
+ {
+     return new LLMService("", "");
+ });
 
 
 
@@ -59,7 +68,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHangfireDashboard("/hangfire", new DashboardOptions ());
+app.UseHangfireDashboard("/hangfire", new DashboardOptions());
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
