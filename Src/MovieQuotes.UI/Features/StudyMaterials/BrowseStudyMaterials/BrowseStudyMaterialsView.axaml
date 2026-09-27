@@ -19,6 +19,13 @@
       <Setter Property="BorderBrush" Value="{DynamicResource ProgressNeedsWorkOrangeColor}"/>
       <Setter Property="BorderThickness" Value="1"/>
     </Style>
+
+    <Style Selector="Border.badge"> 
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="Padding" Value="8,3"/> 
+      <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}"/>
+    </Style>
+
     <Style Selector="TextBox.filter">
       <Setter Property="Margin" Value="0,0,8,0" />
       <Setter Property="MinWidth" Value="150" />
@@ -62,13 +69,13 @@
 
         <!-- Filters wrap onto multiple lines on narrow screens. -->
         <WrapPanel Grid.Row="1" Grid.ColumnSpan="2"
-             Orientation="Horizontal"
-             ItemSpacing="8"
-             LineSpacing="8">
+                   Orientation="Horizontal"
+                   ItemSpacing="8"
+                   LineSpacing="8">
           <TextBlock Text="Movie ID" Classes="label" />
           <ComboBox Classes="filter"
                     ItemsSource="{Binding Movies}"
-                    SelectedItem="{Binding SelectedMovie, Mode=TwoWay}" 
+                    SelectedItem="{Binding SelectedMovie, Mode=TwoWay}"
                     PlaceholderText="Any movie">
             <ComboBox.ItemTemplate>
               <DataTemplate x:DataType="movieModels:MovieWithStudyMaterialCount">
@@ -105,7 +112,7 @@
           <TextBlock Text="Part of speech" Classes="label" />
           <ComboBox Classes="filter"
                     ItemsSource="{Binding PartOfSpeechCounts}"
-                    SelectedItem="{Binding SelectedPartOfSpeech, Mode=TwoWay}" 
+                    SelectedItem="{Binding SelectedPartOfSpeech, Mode=TwoWay}"
                     PlaceholderText="Any type">
             <ComboBox.ItemTemplate>
               <DataTemplate x:DataType="studyModels:PartOfSpeechCountDto">
@@ -180,10 +187,22 @@
                              FontSize="18"
                              FontWeight="Bold"
                              TextWrapping="Wrap" />
-                  <Border Grid.Column="1" Background="{DynamicResource AppBackgroundBrush}"
-                          CornerRadius="10" Padding="8,3">
-                    <TextBlock Text="{Binding Level}" Foreground="{DynamicResource SecondaryTextBrush}" />
-                  </Border>
+
+
+                  <!--badges list-->
+
+                  <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+
+                    <Border  Classes="draft badge" IsVisible="{Binding IsDraft}"  >
+                      <TextBlock Text="Draft" Foreground="{DynamicResource SecondaryTextBrush}" />
+                    </Border>
+
+                    <Border  Background="{DynamicResource AppBackgroundBrush}" Classes="badge">
+                      <TextBlock Text="{Binding Level}" Foreground="{DynamicResource SecondaryTextBrush}" />
+                    </Border>
+
+                  </StackPanel>
+
 
                 </Grid>
 
