@@ -1,47 +1,87 @@
-# Movie Quotes
-in this project i will try to make personal copy of [playphrase.me][1] and see how it could be work.
+# 🎬 MovieQuotes
 
-i will use this copy of application to improve my languages and learning English/German languages (search for idioms or some specific word in movies)
+> **Where Movies Teach You to Speak**
 
-## Screen Shoot from app
+MovieQuotes is a language-learning application that helps you **expand and memorize your vocabulary through movies**.
 
-![movie list](./Images/01_MovieList.png)
+Instead of learning words and expressions in isolation, MovieQuotes lets you discover them in **real movie dialogue and context**, turn them into study materials, and practice them using **active recall**.
 
-![some movie playing](./Images/04_MovieDetails2.png)
+MovieQuotes currently focuses on **English**, with the goal of supporting **multiple languages** in the future.
 
-![some movie playing](./Images/04_MovieDetails_AddNewVocabulary.png)
+## Screenshots
 
-![search for phrase](./Images/05_SearchForPhrase.png)
+### Home
 
-![add new movie to the database](./Images/02_InsertNewMovieData.png)
+![MovieQuotes Home](docs/images/home.png)
 
-## Main Idea
-in this application there is two main section 
-1. **population section**: we provide a video file (.mp4) along it's subtitle file (.srt) and the application will save them to database.   
-2. **Search section**: search for phrase/word in our database and then play it on the screen.
-3. **watch section**: Watch the movie and save clips that have new terms and revision it latter.
+### Search
+![Search for word](docs/images/search.png)
+### Study Materials
 
-## Installation
-this application can work on any platform windows,linux,macos, and also can work with any DBMS i provide a [full detailed instruction to run it on Ubunto Linux 24.04](./installation-guide.md) with Mysql as a database
-1. we need to setup a connection string 
-   ```
-   Server=localhost;Database=MovieQuotesDb;uid=root;pwd=root;
-   ```
-2. update your connection string in AppSetting in [api project][5] and in the [UI Project][4]
-3. open Terminal and install [Entity Framework Core tools][3]  `dotnet tool install --global dotnet-ef`
-4. Navigate your Terminal to the location `.\Src\MovieQuotes.Infrastructure\` and write the following command
-   ```
-   dotnet ef database update -s ..\MovieQuotes.Api\MovieQuotes.Api.csproj
-   ```
-5. Run the desktop application and populate the database
-   ```
-   dotnet run --project .\Src\MovieQuotes.UI\MovieQuotes.UI.csproj
-   ```
+![Study Materials](docs/images/study-materials.png)
 
+### Active Recall
 
+![Active Recall](docs/images/active-recall.png)
 
-[1]:  https://playphrase.me
-[2]: https://avaloniaui.net/
-[3]: https://learn.microsoft.com/en-gb/ef/core/cli/dotnet#installing-the-tools
-[4]: https://github.com/ibram-reda/MovieQuotes/blob/c998380d594a228ee3aeaaeaae2c1e8d6ecedd36/Src/MovieQuotes.UI/Extensions/ServiceCollectionExtensions.cs#L34
-[5]: https://github.com/ibram-reda/MovieQuotes/blob/c998380d594a228ee3aeaaeaae2c1e8d6ecedd36/Src/MovieQuotes.Api/appsettings.json#L11
+## How It Works
+
+MovieQuotes is built around a simple idea:
+
+> **Learn vocabulary from movies as it is actually used.**
+
+Instead of starting with a vocabulary list, MovieQuotes starts with **movies and their dialogue**.
+
+### The Learning Workflow
+
+```text
+        🎬 Watch a Movie
+              │
+              ▼
+      💬 Discover Dialogue
+              │
+              ▼
+       🔎 Find Useful Words
+        & Expressions
+              │
+              ▼
+       📚 Create Study
+          Material
+              │
+              ▼
+       🤖 Enrich & Understand
+              │
+              ▼
+       🧠 Practice Active Recall
+              │
+              ▼
+        🔁 Review & Remember
+```
+
+### 1. Discover
+
+Watch movies and encounter words, expressions, idioms, and phrasal verbs that you want to learn.
+
+### 2. Capture
+
+Find the relevant phrase in the movie's subtitles and save it as study material.
+
+This keeps the vocabulary connected to the **movie, dialogue, and context** in which you discovered it.
+
+### 3. Enrich
+
+Add the information you need to understand and learn the vocabulary, such as its meaning, translation, pronunciation, examples, synonyms, and language level.
+
+MovieQuotes also provides an **AI assistant** that can suggest this information and help you build your study material faster.
+
+### 4. Practice Active Recall
+
+Use the Study page to actively retrieve the meaning and usage of your vocabulary instead of simply rereading it.
+
+MovieQuotes currently provides different study exercises, including **Recognition** and **Context Recall**.
+
+### 5. Review & Remember
+
+MovieQuotes uses a **spaced repetition algorithm** to determine when study materials should be reviewed.
+
+Your review history and answers influence future reviews, helping you focus on vocabulary that needs more practice while gradually strengthening what you already know.
