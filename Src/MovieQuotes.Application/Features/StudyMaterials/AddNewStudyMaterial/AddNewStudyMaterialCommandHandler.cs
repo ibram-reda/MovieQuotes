@@ -1,5 +1,6 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
 using MediatR;
+using MovieQuotes.AI;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Interfaces;
@@ -7,10 +8,12 @@ using MovieQuotes.Domain.Interfaces;
 internal class AddNewStudyMaterialCommandHandler : IRequestHandler<AddNewStudyMaterialCommand, OperationResult<StudyMaterial>>
 {
     private readonly IMovieQUnitOfWork unitOfWork;
+    private readonly LLMService lLMService;
 
-    public AddNewStudyMaterialCommandHandler(IMovieQUnitOfWork unitOfWork)
+    public AddNewStudyMaterialCommandHandler(IMovieQUnitOfWork unitOfWork,LLMService lLMService)
     {
         this.unitOfWork = unitOfWork;
+        this.lLMService = lLMService;
     }
 
     public async Task<OperationResult<StudyMaterial>> Handle(AddNewStudyMaterialCommand request, CancellationToken cancellationToken)
@@ -45,6 +48,9 @@ internal class AddNewStudyMaterialCommandHandler : IRequestHandler<AddNewStudyMa
 
             await unitOfWork.StudyMaterials.AddAsync(studyMaterial);
             await unitOfWork.SaveAsync(cancellationToken);
+
+            // add AI Suggiton in background
+            var t = Task.Run(async ()=>await lLMService.GenerateAISuggestionForStudyMaterial(studyMaterial.Id,studyMaterial.Phrase?.Text,studyMaterial?.Content));
 
             result.Payload = studyMaterial.ToStudyMaterial();
         }
