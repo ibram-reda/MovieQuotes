@@ -1,7 +1,5 @@
 ﻿namespace MovieQuotes.UI.Extensions;
 
-using Hangfire;
-using Hangfire.MySql;
 using Avalonia.Controls;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +20,7 @@ using System.IO;
 using System;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.AI;
+using MovieQuotes.Application.Features.Movies.Jobs;
 
 public static class ServiceCollectionExtensions
 {
@@ -62,24 +61,11 @@ public static class ServiceCollectionExtensions
         Services.AddLogging();
 
         // add database
-        var cs = configuration["ConnectionString"];
-        var hangfire = configuration.GetConnectionString("HangfireConnection");
+        var cs = configuration["ConnectionString"]; 
         var TmdbApiKey = configuration["TmdbApiKey"];
         Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs), ServiceLifetime.Transient);
 
         Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
-
-        // Add Hangfire services
-        Services.AddHangfire(hangfireConfig => hangfireConfig
-            .UseSimpleAssemblyNameTypeSerializer()
-            .UseRecommendedSerializerSettings()
-            .UseStorage(new MySqlStorage(hangfire, new MySqlStorageOptions
-            {
-
-            })));
-
-        Services.AddHangfireServer();
-
         
 
         Services.AddSingleton<AppSettings>(sp =>
@@ -98,6 +84,14 @@ public static class ServiceCollectionExtensions
         {
             var appSettings = sp.GetRequiredService<AppSettings>();
             return new TmdbService(appSettings.TmdbApiKey);
+        });
+
+        Services.AddSingleton<MovieMetadataJob>(sp =>
+        {
+            var tmdbService = sp.GetRequiredService<TmdbService>();
+            var movieQUnitOfWork = sp.GetRequiredService<IMovieQUnitOfWork>();
+            var logger = sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<MovieMetadataJob>>();
+            return new MovieMetadataJob(movieQUnitOfWork, tmdbService, logger);
         });
 
     }

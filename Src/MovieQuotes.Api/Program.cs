@@ -1,5 +1,3 @@
-using Hangfire;
-using Hangfire.MySql;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Infrastructure;
@@ -32,17 +30,7 @@ var TmdbApiKey = builder.Configuration["TmdbApiKey"];
 builder.Services.AddSingleton(new TmdbService(TmdbApiKey ?? ""));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
-// Add Hangfire services
-builder.Services.AddHangfire(configuration => configuration
-    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-    .UseSimpleAssemblyNameTypeSerializer()
-    .UseRecommendedSerializerSettings()
-    .UseStorage(new MySqlStorage(hangfire, new MySqlStorageOptions
-    {
 
-    })));
-
-builder.Services.AddHangfireServer();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -67,8 +55,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHangfireDashboard("/hangfire", new DashboardOptions());
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

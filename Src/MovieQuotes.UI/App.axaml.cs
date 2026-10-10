@@ -5,8 +5,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Avalonia.Styling;
-using Hangfire;
+using Avalonia.Styling; 
 using Microsoft.Extensions.DependencyInjection;
 using MovieQuotes.UI.Extensions;
 using MovieQuotes.UI.Services;
@@ -42,13 +41,7 @@ public partial class App : Application
 
             // set the dataContext 
             desktop.MainWindow.DataContext = Services.GetRequiredService<MainWindowViewModel>();
-            // run hangfire server
-            var backgroundJobServerOptions = new BackgroundJobServerOptions
-            {
-                WorkerCount = 1, // Set the number of worker threads (adjust as needed)
-                Queues = new[] { "default" } // Specify the queues to listen to
-            };
-            var backgroundJobServer = new BackgroundJobServer(backgroundJobServerOptions, Services.GetRequiredService<JobStorage>());
+            
         }
         base.OnFrameworkInitializationCompleted();
     }

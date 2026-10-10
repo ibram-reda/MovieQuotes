@@ -11,22 +11,21 @@ using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Services;
 using MovieQuotes.Domain.Exception;
 using MovieQuotes.Domain.Models;
-using MovieQuotes.Domain.Interfaces;
-using Hangfire;
+using MovieQuotes.Domain.Interfaces; 
 using MovieQuotes.Application.Features.Movies.Jobs;
 
 public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, OperationResult<MovieInfo>>
 {
     private readonly IMovieQUnitOfWork movieQUnitOfWork;
     private readonly TmdbService tmdbService;
-    private readonly IBackgroundJobClient backgroundJobClient;
+    private readonly MovieMetadataJob movieMetadataJob;
     private readonly ILogger<CreateMovieCommandHandler> logger;
 
-    public CreateMovieCommandHandler(IMovieQUnitOfWork movieQUnitOfWork, TmdbService tmdbService, IBackgroundJobClient backgroundJobClient,ILogger<CreateMovieCommandHandler> logger)
+    public CreateMovieCommandHandler(IMovieQUnitOfWork movieQUnitOfWork, TmdbService tmdbService, MovieMetadataJob movieMetadataJob,ILogger<CreateMovieCommandHandler> logger)
     {
         this.movieQUnitOfWork = movieQUnitOfWork;
         this.tmdbService = tmdbService;
-        this.backgroundJobClient = backgroundJobClient;
+        this.movieMetadataJob = movieMetadataJob;
         this.logger = logger;
     }
     public async Task<OperationResult<MovieInfo>> Handle(CreateMovieCommand request, CancellationToken cancellationToken)
@@ -60,7 +59,10 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
 
 
         // Fetch TMDb data and update the movie with the fetched data
-        backgroundJobClient.Enqueue<MovieMetadataJob>(x =>  x.ProcessAsync(movie.Id));
+        var t = Task.Run(async () =>
+        {
+            await movieMetadataJob.ProcessAsync(movie.Id);
+        });
         this.logger.LogInformation($"Metadata job enqueued for movie '{movie.Title}' (ID: {movie.Id}).");
 
         result.Payload = movie.ToMovieInfo();

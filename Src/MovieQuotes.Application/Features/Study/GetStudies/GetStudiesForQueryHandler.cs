@@ -1,7 +1,6 @@
 namespace MovieQuotes.Application.Features.Study;
 
 using MediatR;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Models;
