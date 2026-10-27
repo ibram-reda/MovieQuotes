@@ -3,6 +3,7 @@
 public class Phrase
 {
     public int Id { get; set; }
+    public int MovieId{get; set;}
     public string Text { get; set; } = string.Empty;
     public string MovieName { get; set; } = string.Empty;
     public string VideoLocation { get; set; } = string.Empty;

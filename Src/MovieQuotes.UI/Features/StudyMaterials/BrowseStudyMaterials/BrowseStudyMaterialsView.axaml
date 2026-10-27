@@ -191,7 +191,10 @@
 
                   <!--badges list-->
 
-                  <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                  <WrapPanel Grid.Column="1" Orientation="Horizontal" 
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            ItemSpacing="6">
 
                     <Border  Classes="draft badge" IsVisible="{Binding IsDraft}"  >
                       <TextBlock Text="Draft" Foreground="{DynamicResource SecondaryTextBrush}" />
@@ -201,7 +204,7 @@
                       <TextBlock Text="{Binding Level}" Foreground="{DynamicResource SecondaryTextBrush}" />
                     </Border>
 
-                  </StackPanel>
+                  </WrapPanel>
 
 
                 </Grid>

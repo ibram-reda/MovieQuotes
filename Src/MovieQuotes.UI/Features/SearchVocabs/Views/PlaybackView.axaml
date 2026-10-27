@@ -56,8 +56,10 @@
           <TextBlock Grid.Column="2" Text="{Binding SearchCount,StringFormat='{}{0} results found'}"
                      Classes="muted" VerticalAlignment="Center"/>
           <Button Grid.Column="3" Classes="secondary-action" Content="Previous"
+                  HotKey="Left"
                   Command="{Binding PreviousCommand}" />
           <Button Grid.Column="4" Classes="secondary-action" Content="Next"
+                  HotKey="Right"
                   Command="{Binding NextCommand}" />
           <Button Grid.Column="5" Classes="primary-action" Content="Create study material"
                   Command="{Binding CreateStudyCommand}" />
@@ -72,10 +74,16 @@
               <Border Background="#CC000000" CornerRadius="{StaticResource StandardCornerRadius}"
                       Padding="14" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
                 <StackPanel Spacing="4">
-                  <TextBlock Text="{Binding CurrentPlayingPhrase.MovieName}"
-                             Foreground="White" FontWeight="SemiBold"/>
-                  <TextBlock Text="{Binding CurrentPlayingPhrase.Text}"
-                             Foreground="White" FontSize="20" TextWrapping="Wrap"/>
+                  <Button Classes="link" Padding="0" Background="Transparent"
+                      Command="{Binding GoMoviePageCommand}" 
+                      CommandParameter="{Binding CurrentPlayingPhrase.MovieId}">
+                    <TextBlock Text="{Binding CurrentPlayingPhrase.MovieName}"
+                               Foreground="White" FontWeight="SemiBold"/>
+                  </Button>
+                  <PhraseText Text="{Binding CurrentPlayingPhrase.Text}"
+                              Highlight="{Binding SearchText}"
+                              HighlightForeground="Yellow"
+                             Foreground="White" FontSize="20"/>
                 </StackPanel>
               </Border>
             </Grid>

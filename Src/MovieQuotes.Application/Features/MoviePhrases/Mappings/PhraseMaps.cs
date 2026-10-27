@@ -13,6 +13,7 @@ internal static class PhraseMaps
             Text = src.Text, 
             StartTime = src.StartTime,
             EndTime = src.EndTime, 
+            MovieId = src.Movie?.Id ?? 0,
             MovieName = src.Movie?.Title ?? string.Empty, 
             VideoLocation = src.GetVideoClipPath(CashPath) ?? string.Empty,
             MovieCoverUrl = src.Movie?.GetCoverUrl()??""
