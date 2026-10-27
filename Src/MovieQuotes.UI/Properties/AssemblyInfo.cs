@@ -4,3 +4,4 @@ using Avalonia.Metadata;
 [assembly: InternalsVisibleTo("MovieQuotes.UI.Tests")] 
 
 [assembly: XmlnsDefinition("https://github.com/avaloniaui", "MovieQuotes.UI.Views.Controls")]
+[assembly: XmlnsDefinition("https://github.com/avaloniaui", "MovieQuotes.UI.Controls")]

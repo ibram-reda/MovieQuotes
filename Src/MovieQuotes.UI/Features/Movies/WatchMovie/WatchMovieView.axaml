@@ -48,11 +48,10 @@
           </ScrollViewer>
         </Panel>
 
-        <TextBlock Grid.Row="2"
+        <SubtitleControl Grid.Row="2"
                    Foreground="Orange"
                    HorizontalAlignment="Center"
-                   FontSize="{Binding FontSize}"
-                   FontWeight="Bold"
+                   FontSize="{Binding FontSize}" 
                    Text="{Binding CurrentPhrase.Text}"/>
 
 

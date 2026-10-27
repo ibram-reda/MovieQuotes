@@ -4,12 +4,12 @@ using MovieQuotes.Subtitles.Srt;
 
 namespace MovieQuotes.Subtitles.Tests.Srt;
 
-public sealed class SrtSubtitleParserTests
+public sealed class SrtSubtitleReadrTests
 {
-    private readonly SrtSubtitleParser _parser = new();
+    private readonly SrtSubtitleReader _Reader = new();
 
     [Fact]
-    public async Task Parse_ValidSubtitle_ReturnsSubtitle()
+    public async Task Read_ValidSubtitle_ReturnsSubtitle()
     {
         const string content =
             """
@@ -18,7 +18,7 @@ public sealed class SrtSubtitleParserTests
             Hello, how are you?
             """;
 
-        var result = await Parse(content);
+        var result = await Read(content);
 
         var subtitle = Assert.Single(result);
 
@@ -29,7 +29,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_MultipleSubtitles_ReturnsAllSubtitles()
+    public async Task Read_MultipleSubtitles_ReturnsAllSubtitles()
     {
         const string content =
             """
@@ -42,7 +42,7 @@ public sealed class SrtSubtitleParserTests
             How are you?
             """;
 
-        var result = await Parse(content);
+        var result = await Read(content);
 
         Assert.Equal(2, result.Count);
 
@@ -54,7 +54,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_MultilineSubtitle_PreservesLines()
+    public async Task Read_MultilineSubtitle_PreservesLines()
     {
         const string content =
             """
@@ -64,7 +64,7 @@ public sealed class SrtSubtitleParserTests
             How are you?
             """;
 
-        var result = await Parse(content);
+        var result = await Read(content);
 
         var subtitle = Assert.Single(result);
 
@@ -74,7 +74,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_MixedEmptyandNonEmptyEnteries_parsesCorrectly()
+    public async Task Read_MixedEmptyandNonEmptyEnteries_ReadsCorrectly()
     {
         const string content =
             """
@@ -91,7 +91,7 @@ public sealed class SrtSubtitleParserTests
             Life's not fair, is it?
             """;
 
-        var result = await Parse(content);
+        var result = await Read(content);
 
         Assert.Equal(3,result.Count);
         Assert.Equal("<i>♪ The circle of life ♪</i>",result[0].Text);
@@ -100,7 +100,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_CrlfLineEndings_ParsesCorrectly()
+    public async Task Read_CrlfLineEndings_ReadsCorrectly()
     {
         const string content =
             "1\r\n" +
@@ -111,7 +111,7 @@ public sealed class SrtSubtitleParserTests
             "00:00:04,000 --> 00:00:06,000\r\n" +
             "World.\r\n";
 
-        var result = await Parse(content);
+        var result = await Read(content);
 
         Assert.Equal(2, result.Count);
 
@@ -120,7 +120,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_LfLineEndings_ParsesCorrectly()
+    public async Task Read_LfLineEndings_ReadsCorrectly()
     {
         const string content =
             "1\n" +
@@ -130,29 +130,29 @@ public sealed class SrtSubtitleParserTests
             "00:00:04,000 --> 00:00:06,000\n" +
             "World.\n";
 
-        var result = await Parse(content);
+        var result = await Read(content);
 
         Assert.Equal(2, result.Count);
     }
 
     [Fact]
-    public async Task Parse_EmptyContent_ReturnsEmptyList()
+    public async Task Read_EmptyContent_ReturnsEmptyList()
     {
-        var result = await Parse(string.Empty);
+        var result = await Read(string.Empty);
 
         Assert.Empty(result);
     }
 
     [Fact]
-    public async Task Parse_WhitespaceContent_ReturnsEmptyList()
+    public async Task Read_WhitespaceContent_ReturnsEmptyList()
     {
-        var result = await Parse("   \r\n\r\n   ");
+        var result = await Read("   \r\n\r\n   ");
 
         Assert.Empty(result);
     }
 
     [Fact]
-    public async Task Parse_ExtraBlankLinesBetweenSubtitles_ParsesCorrectly()
+    public async Task Read_ExtraBlankLinesBetweenSubtitles_ReadsCorrectly()
     {
         const string content =
             """
@@ -172,13 +172,13 @@ public sealed class SrtSubtitleParserTests
             
             """;
 
-        var result = await Parse(content);
+        var result = await Read(content);
 
         Assert.Equal(2, result.Count);
     }
 
     [Fact]
-    public async Task Parse_DotMilliseconds_ParsesCorrectly()
+    public async Task Read_DotMilliseconds_ReadsCorrectly()
     {
         const string content =
             """
@@ -187,7 +187,7 @@ public sealed class SrtSubtitleParserTests
             Hello.
             """;
 
-        var result = await Parse(content);
+        var result = await Read(content);
 
         var subtitle = Assert.Single(result);
 
@@ -201,7 +201,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_HourLessThanTen_ParsesCorrectly()
+    public async Task Read_HourLessThanTen_ReadsCorrectly()
     {
         const string content =
             """
@@ -210,7 +210,7 @@ public sealed class SrtSubtitleParserTests
             Hello.
             """;
 
-        var result = await Parse(content);
+        var result = await Read(content);
 
         var subtitle = Assert.Single(result);
 
@@ -224,7 +224,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_MissingTimestamp_ThrowsFormatException()
+    public async Task Read_MissingTimestamp_ThrowsFormatException()
     {
         const string content =
             """
@@ -232,7 +232,7 @@ public sealed class SrtSubtitleParserTests
             """;
 
         var exception = await Assert.ThrowsAsync<FormatException>(
-            async () => await Parse(content));
+            async () => await Read(content));
 
         Assert.Contains(
             "missing its timestamp",
@@ -240,7 +240,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_InvalidIndex_ThrowsFormatException()
+    public async Task Read_InvalidIndex_ThrowsFormatException()
     {
         const string content =
             """
@@ -250,7 +250,7 @@ public sealed class SrtSubtitleParserTests
             """;
 
         var exception = await Assert.ThrowsAsync<FormatException>(
-            async () => await Parse(content));
+            async () => await Read(content));
 
         Assert.Contains(
             "Invalid subtitle index",
@@ -258,7 +258,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_InvalidTimestamp_ThrowsFormatException()
+    public async Task Read_InvalidTimestamp_ThrowsFormatException()
     {
         const string content =
             """
@@ -268,7 +268,7 @@ public sealed class SrtSubtitleParserTests
             """;
 
         var exception = await Assert.ThrowsAsync<FormatException>(
-            async () => await Parse(content));
+            async () => await Read(content));
 
         Assert.Contains(
             "invalid timestamp",
@@ -277,7 +277,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_MissingTimestampSeparator_ThrowsFormatException()
+    public async Task Read_MissingTimestampSeparator_ThrowsFormatException()
     {
         const string content =
             """
@@ -287,7 +287,7 @@ public sealed class SrtSubtitleParserTests
             """;
 
         var exception = await Assert.ThrowsAsync<FormatException>(
-            async () => await Parse(content));
+            async () => await Read(content));
 
         Assert.Contains(
             "invalid timestamp line",
@@ -296,7 +296,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_EndBeforeStart_ThrowsFormatException()
+    public async Task Read_EndBeforeStart_ThrowsFormatException()
     {
         const string content =
             """
@@ -306,7 +306,7 @@ public sealed class SrtSubtitleParserTests
             """;
 
         var exception =await Assert.ThrowsAsync<FormatException>(
-            async () => await Parse(content));
+            async () => await Read(content));
 
         Assert.Contains(
             "end time before its start time",
@@ -314,7 +314,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_PreservesSubtitleText()
+    public async Task Read_PreservesSubtitleText()
     {
         const string content =
             """
@@ -323,7 +323,7 @@ public sealed class SrtSubtitleParserTests
             Hello,   how are you?
             """;
 
-        var result = await Parse(content);
+        var result = await Read(content);
 
         var subtitle = Assert.Single(result);
 
@@ -333,7 +333,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_SubtitleContainingArrow_PreservesText()
+    public async Task Read_SubtitleContainingArrow_PreservesText()
     {
         const string content =
             """
@@ -342,7 +342,7 @@ public sealed class SrtSubtitleParserTests
             I said --> something.
             """;
 
-        var result = await Parse(content);
+        var result = await Read(content);
 
         var subtitle = Assert.Single(result);
 
@@ -352,7 +352,7 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_Utf8Bom_ParsesCorrectly()
+    public async Task Read_Utf8Bom_ReadsCorrectly()
     {
         const string content =
             """
@@ -367,7 +367,7 @@ public sealed class SrtSubtitleParserTests
 
         using var stream = new MemoryStream(bytes);
 
-        var result = await _parser.Parse(stream);
+        var result = await _Reader.Read(stream);
 
         var subtitle = Assert.Single(result);
 
@@ -376,17 +376,17 @@ public sealed class SrtSubtitleParserTests
     }
 
     [Fact]
-    public async Task Parse_NullStream_ThrowsArgumentNullException()
+    public async Task Read_NullStream_ThrowsArgumentNullException()
     {
         await Assert.ThrowsAsync<ArgumentNullException>(
-            async () => await _parser.Parse(null!));
+            async () => await _Reader.Read(null!));
     }
 
-    private async Task<IReadOnlyList<SubtitleEntry>> Parse(string content)
+    private async Task<IReadOnlyList<SubtitleEntry>> Read(string content)
     {
         using var stream = new MemoryStream(
             Encoding.UTF8.GetBytes(content));
 
-        return await _parser.Parse(stream);
+        return await _Reader.Read(stream);
     }
 }

@@ -24,9 +24,9 @@ internal static class SubtitleManager
 
         using var stream = File.OpenRead(filePath);
 
-        ISubtitleParser parser = new SrtSubtitleParser();
+        ISubtitleReader Reader = new SrtSubtitleReader();
 
-        var subtitles = await parser.Parse(stream);
+        var subtitles = await Reader.Read(stream);
 
         // check for doplicate index
         var douplication = subtitles.GroupBy(m => m.Index).Where(group => group.Count() > 1);

@@ -84,6 +84,7 @@
                               Highlight="{Binding SearchText}"
                               HighlightForeground="Yellow"
                              Foreground="White" FontSize="20"/>
+                  <SubtitleControl Text="{Binding CurrentPlayingPhrase.Text}" TextAlignment="Left" />
                 </StackPanel>
               </Border>
             </Grid>

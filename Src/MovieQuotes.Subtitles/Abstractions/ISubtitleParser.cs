@@ -1,8 +1,8 @@
-using MovieQuotes.Subtitles.Models;
-
 namespace MovieQuotes.Subtitles.Abstractions;
+
+using MovieQuotes.Subtitles.Models;
 
 public interface ISubtitleParser
 {
-    Task<IReadOnlyList<SubtitleEntry>> Parse(Stream stream);
+    SubtitleDocument Parse(string subtitleText);
 }
