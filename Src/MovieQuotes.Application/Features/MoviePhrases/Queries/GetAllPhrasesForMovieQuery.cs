@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.MoviePhrases.Queries;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 
@@ -10,7 +8,7 @@ public enum Language
     en
 };
 
-public class GetAllPhrasesForMovieQuery : IRequest<OperationResult<List<Phrase>>>
+public class GetAllPhrasesForMovieQuery
 {
     public int MovieId { get; set; }
 

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.Application.Features.Study;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.UI.Services;
@@ -43,6 +42,8 @@ public partial class RecognitionViewModel : PageViewModelBase
     private string? errorMessage;
 
     private readonly MediaService mediaService;
+    private readonly GetStudiesQueryHandler getStudiesHandler;
+    private readonly UpdateStudyProgressCommandHandler updateStudyProgressHandler;
 
     public ObservableCollection<string> AnswerOptions { get; } = new();
 
@@ -57,10 +58,16 @@ public partial class RecognitionViewModel : PageViewModelBase
             throw new Exception("this is allowed in designMode only");
     }
 
-    public RecognitionViewModel(IMediator mediator, NavigationService navigationService, MediaService mediaService)
-        : base(mediator, navigationService)
+    public RecognitionViewModel(
+        GetStudiesQueryHandler getStudiesHandler,
+        UpdateStudyProgressCommandHandler updateStudyProgressHandler,
+        NavigationService navigationService,
+        MediaService mediaService)
+        : base(navigationService)
     {
         this.mediaService = mediaService;
+        this.getStudiesHandler = getStudiesHandler;
+        this.updateStudyProgressHandler = updateStudyProgressHandler;
     }
 
     public async override Task InitAsync(object? parameter = null)
@@ -85,7 +92,7 @@ public partial class RecognitionViewModel : PageViewModelBase
             SelectedAnswer = null;
 
             var query = new GetStudiesQuery(StudyType.Recognition);
-            var result = await mediator.Send(query);
+            var result = await getStudiesHandler.Handle(query, CancellationToken.None);
 
             if (result.IsSuccess && result.Payload != null)
             {
@@ -240,9 +247,9 @@ public partial class RecognitionViewModel : PageViewModelBase
 
             if (CurrentPhrase.ProgressId > 0)
             {
-                var result = await mediator.Send(new UpdateStudyProgressQuery(
-                    CurrentPhrase.ProgressId,
-                    (int)reviewQuality));
+                var result = await updateStudyProgressHandler.Handle(
+                    new UpdateStudyProgressCommand(CurrentPhrase.ProgressId, (int)reviewQuality),
+                    CancellationToken.None);
 
                 if (result.IsError)
                 {

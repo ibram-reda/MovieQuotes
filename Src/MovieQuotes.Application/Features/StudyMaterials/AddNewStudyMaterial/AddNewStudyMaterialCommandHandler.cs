@@ -1,11 +1,10 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-using MediatR;
 using MovieQuotes.AI;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Interfaces;
 
-internal class AddNewStudyMaterialCommandHandler : IRequestHandler<AddNewStudyMaterialCommand, OperationResult<StudyMaterial>>
+public class AddNewStudyMaterialCommandHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
     private readonly LLMService lLMService;

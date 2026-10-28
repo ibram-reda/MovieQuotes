@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="13.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="../MovieQuotes.AI/MovieQuotes.AI.csproj" />
     <ProjectReference Include="../MovieQuotes.Subtitles/MovieQuotes.Subtitles.csproj" />
     <ProjectReference Include="..\MovieQuotes.Domain\MovieQuotes.Domain.csproj" />

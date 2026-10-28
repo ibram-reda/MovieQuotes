@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.MoviePhrases.CommandsHandlers;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.MoviePhrases.CommandsHandlers;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
@@ -11,7 +9,7 @@ using MovieQuotes.Domain.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
 
-internal class EditPhraseCommandHandler : IRequestHandler<EditPhraseCommand, OperationResult<Phrase>>
+public class EditPhraseCommandHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
     private readonly AppSettings settings;

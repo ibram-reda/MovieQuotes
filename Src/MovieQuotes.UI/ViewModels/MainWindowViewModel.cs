@@ -2,7 +2,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.UI.Features.Movies.BrowseMovies;
 using MovieQuotes.UI.Features.Movies.CreateMovie; 
 using MovieQuotes.UI.Services;
@@ -54,7 +53,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
     }
 
-    public MainWindowViewModel(IMediator mediator, NavigationService nav) : base(mediator, nav)
+    public MainWindowViewModel(NavigationService nav) : base(nav)
     {
         NavigationService.CurrentPageChanged += OnCurrentViewModelChanged;
         NavigationService.NavigateTo<MoviesListViewModel>();

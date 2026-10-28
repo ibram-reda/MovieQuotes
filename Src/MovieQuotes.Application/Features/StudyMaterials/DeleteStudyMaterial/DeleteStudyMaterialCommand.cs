@@ -1,9 +1,7 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-
-using MediatR;
 using MovieQuotes.Application.Common.Models;
 
-public class DeleteStudyMaterialCommand : IRequest<OperationResult<bool>>
+public class DeleteStudyMaterialCommand
 {
     public DeleteStudyMaterialCommand(int studyMaterialId)
     {

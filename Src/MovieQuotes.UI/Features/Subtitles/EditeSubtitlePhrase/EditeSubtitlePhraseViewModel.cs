@@ -2,10 +2,11 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
+using MovieQuotes.Application.Features.MoviePhrases.CommandsHandlers;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
+using MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using MovieQuotes.UI.ViewModels.Dialogues;
@@ -14,6 +15,8 @@ using System.Threading.Tasks;
 
 public partial class EditeSubtitlePhraseViewModel : DialogueViewModelBase
 {
+    private readonly GetSubtitlePhraseByIdQueryHandler getSubtitlePhraseHandler;
+    private readonly EditPhraseCommandHandler editPhraseHandler;
     public override string Title => "Edite Subtitle Phrase";
 
     public event Action<Phrase?>? OnPhraseEdited;
@@ -28,15 +31,20 @@ public partial class EditeSubtitlePhraseViewModel : DialogueViewModelBase
     {
     }
 
-    public EditeSubtitlePhraseViewModel(int PhraseId)
+    public EditeSubtitlePhraseViewModel(
+        int PhraseId,
+        GetSubtitlePhraseByIdQueryHandler getSubtitlePhraseHandler,
+        EditPhraseCommandHandler editPhraseHandler)
     { 
         this.PhraseId = PhraseId;
+        this.getSubtitlePhraseHandler = getSubtitlePhraseHandler;
+        this.editPhraseHandler = editPhraseHandler;
     }
 
     public override async Task InitAsync(object? initValue)
     {
         var query = new GetSubtitlePhraseByIdQuery(this.PhraseId);
-        var result = await mediator.Send(query);
+        var result = await getSubtitlePhraseHandler.Handle(query, CancellationToken.None);
         if (result.IsError)
         {
             foreach(var err in result.Errors)
@@ -60,7 +68,7 @@ public partial class EditeSubtitlePhraseViewModel : DialogueViewModelBase
             StartTime = this.StartTime,
             EndTime = this.EndTime,
         };
-        var result = await this.mediator.Send(query);
+        var result = await editPhraseHandler.Handle(query, CancellationToken.None);
         if (result.IsError)
         {
             this.Message = "Failed to edit phrase:";

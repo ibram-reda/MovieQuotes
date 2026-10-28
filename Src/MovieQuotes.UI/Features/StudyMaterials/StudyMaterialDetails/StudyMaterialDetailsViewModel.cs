@@ -3,11 +3,12 @@ namespace MovieQuotes.UI.Features.StudyMaterials.StudyMaterialDetails;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
-using MediatR;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
+using MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
 using MovieQuotes.Application.Features.StudyMaterials;
 using MovieQuotes.Application.Features.VideoClips.Queries;
+using MovieQuotes.Application.Features.VideoClips.QueriesHandlers;
 using MovieQuotes.UI.Features.StudyMaterials.BrowseStudyMaterials;
 using MovieQuotes.UI.Features.StudyMaterials.EditStudyMaterial;
 using MovieQuotes.UI.Services;
@@ -21,6 +22,14 @@ using System.Threading.Tasks;
 
 public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposable
 {
+    private readonly GetStudyMaterialQueryHandler getStudyMaterialHandler;
+    private readonly AddStudyMaterialToLearningCommandHandler addStudyMaterialToLearningHandler;
+    private readonly DeleteStudyMaterialCommandHandler deleteStudyMaterialHandler;
+    private readonly AddPhraseToStudyMaterialCommandHandler addPhraseToStudyMaterialHandler;
+    private readonly UnlinkPhraseFromStudyMaterialCommandHandler unlinkPhraseFromStudyMaterialHandler;
+    private readonly VideoClipQueryHandler videoClipQueryHandler;
+    private readonly SearchForPhraseQueryHandler searchForPhraseHandler;
+    private readonly EditStudyMaterialCommandHandler editStudyMaterialHandler;
     private LibVLC MainLibVLC { get; } = null!;
     public MediaPlayer MainMediaPlayer { get; } = null!;
 
@@ -45,9 +54,27 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
     {
     }
 
-    public StudyMaterialDetailsViewModel(IMediator mediator, NavigationService navigation,INotificationService notificationService)
-        : base(mediator, navigation)
+    public StudyMaterialDetailsViewModel(
+        GetStudyMaterialQueryHandler getStudyMaterialHandler,
+        AddStudyMaterialToLearningCommandHandler addStudyMaterialToLearningHandler,
+        DeleteStudyMaterialCommandHandler deleteStudyMaterialHandler,
+        AddPhraseToStudyMaterialCommandHandler addPhraseToStudyMaterialHandler,
+        UnlinkPhraseFromStudyMaterialCommandHandler unlinkPhraseFromStudyMaterialHandler,
+        VideoClipQueryHandler videoClipQueryHandler,
+        SearchForPhraseQueryHandler searchForPhraseHandler,
+        EditStudyMaterialCommandHandler editStudyMaterialHandler,
+        NavigationService navigation,
+        INotificationService notificationService)
+        : base(navigation)
     {
+        this.getStudyMaterialHandler = getStudyMaterialHandler;
+        this.addStudyMaterialToLearningHandler = addStudyMaterialToLearningHandler;
+        this.deleteStudyMaterialHandler = deleteStudyMaterialHandler;
+        this.addPhraseToStudyMaterialHandler = addPhraseToStudyMaterialHandler;
+        this.unlinkPhraseFromStudyMaterialHandler = unlinkPhraseFromStudyMaterialHandler;
+        this.videoClipQueryHandler = videoClipQueryHandler;
+        this.searchForPhraseHandler = searchForPhraseHandler;
+        this.editStudyMaterialHandler = editStudyMaterialHandler;
         MainLibVLC = new("--no-video");
         MainMediaPlayer = new(MainLibVLC);
         this.notificationService = notificationService;
@@ -76,7 +103,9 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
 
     private async Task LoadDetailsAsync(int studyMaterialId)
     {
-        var result = await mediator.Send(new GetStudyMaterialQuery(studyMaterialId));
+        var result = await getStudyMaterialHandler.Handle(
+            new GetStudyMaterialQuery(studyMaterialId),
+            CancellationToken.None);
         if (result.IsError)
         {
             HandleErrors(result.Errors);
@@ -96,7 +125,9 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
         IsBusy = true;
         try
         {
-            var result = await mediator.Send(new AddStudyMaterialToLearningCommand(Details.Id));
+            var result = await addStudyMaterialToLearningHandler.Handle(
+                new AddStudyMaterialToLearningCommand(Details.Id),
+                CancellationToken.None);
             if (result.IsError)
             {
                 HandleErrors(result.Errors);
@@ -121,7 +152,10 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
         if (Details is null || Details.Id <= 0)
             return;
 
-        var dialogue = new EditStudyMaterialViewModel(Details.Id);
+        var dialogue = new EditStudyMaterialViewModel(
+            Details.Id,
+            getStudyMaterialHandler,
+            editStudyMaterialHandler);
         dialogue.OnSaved += async (isSaved, _) =>
         {
             if (isSaved)
@@ -167,7 +201,9 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
         IsBusy = true;
         try
         {
-            var result = await mediator.Send(new DeleteStudyMaterialCommand(Details.Id));
+            var result = await deleteStudyMaterialHandler.Handle(
+                new DeleteStudyMaterialCommand(Details.Id),
+                CancellationToken.None);
             if (result.IsError)
             {
                 HandleErrors(result.Errors);
@@ -192,7 +228,9 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
         IsBusy = true;
         try
         {
-            var result = await mediator.Send(new AddPhraseToStudyMaterialCommand(Details.Id, phrase.Id));
+            var result = await addPhraseToStudyMaterialHandler.Handle(
+                new AddPhraseToStudyMaterialCommand(Details.Id, phrase.Id),
+                CancellationToken.None);
             if (result.IsError)
             {
                 HandleErrors(result.Errors);
@@ -216,7 +254,9 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
         IsBusy = true;
         try
         {
-            var result = await mediator.Send(new UnlinkPhraseFromStudyMaterialCommand(Details.Id, phrase.PhraseId));
+            var result = await unlinkPhraseFromStudyMaterialHandler.Handle(
+                new UnlinkPhraseFromStudyMaterialCommand(Details.Id, phrase.PhraseId),
+                CancellationToken.None);
             if (result.IsError)
             {
                 HandleErrors(result.Errors);
@@ -243,7 +283,7 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
         {
             //Generate the Clip
             var vc = new VideoClipQuery(phrase.Id);
-            var r = await this.mediator.Send(vc);
+            var r = await this.videoClipQueryHandler.Handle(vc, CancellationToken.None);
             if (r.IsSuccess)
             {
                 phrase.VideoLocation = r.Payload ??"";
@@ -273,10 +313,10 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
         if (string.IsNullOrWhiteSpace(content))
             return;
 
-        var result = await mediator.Send(new SearchForPhraseQuery(content.Trim())
+        var result = await searchForPhraseHandler.Handle(new SearchForPhraseQuery(content.Trim())
         {
             ResultPerPage = 100
-        });
+        }, CancellationToken.None);
 
         if (result.IsError)
         {

@@ -3,10 +3,11 @@
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.Application.Features.Movies.Commands;
+using MovieQuotes.Application.Features.Movies.CommandsHandlers;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
+using MovieQuotes.Application.Features.Movies.QueriesHandlers;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using System;
@@ -21,6 +22,9 @@ using System.Threading.Tasks;
 public partial class MoviesListViewModel : PageViewModelBase
 {
     private readonly IFilesService filesService;
+    private readonly IsMovieExistQueryHandler isMovieExistHandler;
+    private readonly CreateMovieCommandHandler createMovieHandler;
+    private readonly GetAllMoviesQueryHandler getAllMoviesHandler;
 
     public ObservableCollection<MovieCardViewModel> DBMovies { get; } = new();
     public ObservableCollection<MovieCardViewModel> OutOfSyncMovies { get; } = new();
@@ -44,9 +48,17 @@ public partial class MoviesListViewModel : PageViewModelBase
         this.DBMovies.Add(new() { MovieTitle = "Pulp Fiction", ReleaseYear = 1994, CoverUrl = "e:/cover4.jpg", Tagline = "Just because you are a character doesn't mean you have character." });
     }
 
-    public MoviesListViewModel(IMediator mediator, NavigationService nav, IFilesService filesService) : base(mediator, nav)
+    public MoviesListViewModel(
+        IsMovieExistQueryHandler isMovieExistHandler,
+        CreateMovieCommandHandler createMovieHandler,
+        GetAllMoviesQueryHandler getAllMoviesHandler,
+        NavigationService nav,
+        IFilesService filesService) : base(nav)
     {
         this.filesService = filesService;
+        this.isMovieExistHandler = isMovieExistHandler;
+        this.createMovieHandler = createMovieHandler;
+        this.getAllMoviesHandler = getAllMoviesHandler;
         OutOfSyncMovies.CollectionChanged += (_, _) =>
             this.OnPropertyChanged(nameof(NeedToSync));
     }
@@ -78,7 +90,7 @@ public partial class MoviesListViewModel : PageViewModelBase
     private async Task<bool> IsMovieInDBAsync(string folderName)
     {
         var query = new IsMovieExistQuery { FolderName = folderName };
-        var result = await this.mediator.Send(query);
+        var result = await this.isMovieExistHandler.Handle(query, CancellationToken.None);
         return result.Payload;
     }
 
@@ -90,7 +102,7 @@ public partial class MoviesListViewModel : PageViewModelBase
         {
             var info = m.MovieInfo;
             var command = new CreateMovieCommand(info.BaseFolderDir, info.FolderName, info.Title, info.Year??0, info.LocalPath, info.Description, info.IMDBId, info.CoverUrl);
-            var result = await mediator.Send(command);
+            var result = await createMovieHandler.Handle(command, CancellationToken.None);
         
 
             if (result.IsError)
@@ -165,11 +177,7 @@ public partial class MoviesListViewModel : PageViewModelBase
     {
         var query = new GetAllMoviesQuery(FilterText);
         IsBusy = true;
-        if (mediator is null)
-        {
-            return;
-        }
-        var result = await this.mediator.Send(query);
+        var result = await this.getAllMoviesHandler.Handle(query, CancellationToken.None);
         IsBusy = false;
         if (result.IsError)
         {

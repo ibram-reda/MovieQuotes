@@ -1,9 +1,7 @@
-﻿namespace MovieQuotes.Application.Features.VideoClips.Queries;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.VideoClips.Queries;
 using MovieQuotes.Application.Common.Models;
 
-public class VideoClipQuery : IRequest<OperationResult<string>>
+public class VideoClipQuery
 {
     public int PhraseId { get; }
     public string? MovieName { get; }

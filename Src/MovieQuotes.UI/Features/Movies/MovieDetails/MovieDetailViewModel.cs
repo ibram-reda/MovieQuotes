@@ -4,10 +4,10 @@ using Avalonia.Controls.Generators;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
-using MediatR;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.Movies.Queries;
+using MovieQuotes.Application.Features.Movies.QueriesHandlers;
 using MovieQuotes.UI.Features.Movies.WatchMovie; 
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
@@ -18,16 +18,16 @@ using System.Threading.Tasks;
 
 internal partial class MovieDetailViewModel : PageViewModelBase
 {
- 
+    private readonly GetMovieDetailsQueryHandler getMovieDetailsHandler;
 
     [System.Obsolete("For design-time use only")]
     public MovieDetailViewModel()
     {
     }
 
-    public MovieDetailViewModel(IMediator mediator, NavigationService nav) : base(mediator, nav)
+    public MovieDetailViewModel(GetMovieDetailsQueryHandler getMovieDetailsHandler, NavigationService nav) : base(nav)
     {         
-
+        this.getMovieDetailsHandler = getMovieDetailsHandler;
     }
 
 
@@ -61,7 +61,7 @@ internal partial class MovieDetailViewModel : PageViewModelBase
     {
         var query = new GetMovieDetailsQuery { MovieId = movieId };
 
-        var reuslt = await this.mediator.Send(query);
+        var reuslt = await this.getMovieDetailsHandler.Handle(query, CancellationToken.None);
 
         if (reuslt.IsError)
             return;

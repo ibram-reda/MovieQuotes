@@ -1,10 +1,8 @@
-﻿namespace MovieQuotes.Application.Features.Movies.Commands;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.Movies.Commands;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Models;
 
-public class CreateMovieCommand : IRequest<OperationResult<MovieInfo>>
+public class CreateMovieCommand
 {
     public CreateMovieCommand(string baseFolder, string folderName, string title, int year, string videoLocation, string? description = null, string? iMDBId = null, string? coverUrl = null)
     {

@@ -4,7 +4,6 @@ using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 
@@ -27,8 +26,8 @@ public partial class StudySummaryViewModel : PageViewModelBase
             throw new Exception("This constructor is for design mode only.");
     }
 
-    public StudySummaryViewModel(IMediator mediator, NavigationService navigationService)
-        : base(mediator, navigationService)
+    public StudySummaryViewModel(NavigationService navigationService)
+        : base(navigationService)
     {
     }
 

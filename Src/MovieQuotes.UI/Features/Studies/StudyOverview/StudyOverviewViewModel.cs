@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.Application.Features.Study;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
@@ -31,9 +30,12 @@ public partial class StudyOverviewViewModel : PageViewModelBase
     {
     }
 
-    public StudyOverviewViewModel(IMediator mediator, NavigationService navigationService) 
-        : base(mediator, navigationService)
+    private readonly GetStudyOverviewQueryHandler studyOverviewHandler;
+
+    public StudyOverviewViewModel(GetStudyOverviewQueryHandler studyOverviewHandler, NavigationService navigationService)
+        : base(navigationService)
     {
+        this.studyOverviewHandler = studyOverviewHandler;
     }
 
     partial void OnStudyOverviewChanged(StudyOverview? value)
@@ -57,7 +59,7 @@ public partial class StudyOverviewViewModel : PageViewModelBase
             HasData = false;
 
             var query = new GetStudyOverviewQuery();
-            var result = await mediator.Send(query);
+            var result = await studyOverviewHandler.Handle(query, CancellationToken.None);
 
             if (result.IsSuccess && result.Payload != null)
             {

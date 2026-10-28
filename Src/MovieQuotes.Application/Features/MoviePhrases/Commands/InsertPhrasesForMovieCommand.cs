@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.MoviePhrases.Commands;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Application.Common.Models;
 
  
@@ -10,7 +8,7 @@ using MovieQuotes.Application.Common.Models;
 /// <remarks>This command is used to process and insert English phrases associated with a movie into the database. If <see
 /// cref="SubtitleLocation"/> is null or empty, the command will attempt to locate subtitle files in the movie's
 /// folder.</remarks>
-public class InsertPhrasesForMovieCommand : IRequest<OperationResult<bool>>
+public class InsertPhrasesForMovieCommand
 {
     public long MovieId { get; set; }
 

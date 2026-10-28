@@ -1,8 +1,7 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-using MediatR;
 using MovieQuotes.Application.Common.Models;
 
-public class AddStudyMaterialToLearningCommand : IRequest<OperationResult<bool>>
+public class AddStudyMaterialToLearningCommand
 {
     public AddStudyMaterialToLearningCommand(int studyMaterialId)
     {

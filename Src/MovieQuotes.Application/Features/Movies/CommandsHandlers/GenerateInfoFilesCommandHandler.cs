@@ -1,7 +1,4 @@
 namespace MovieQuotes.Application.Features.Movies.CommandsHandlers;
-
-using MediatR;
-using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
@@ -13,7 +10,7 @@ using MovieQuotes.Domain.Models;
 using MovieQuotes.Domain.Interfaces;
 using MovieQuotes.Application.Features.Movies.Services;
 
-public class GenerateInfoFilesCommandHandler : IRequestHandler<GenerateInfoFilesCommand, OperationResult<bool>>
+public class GenerateInfoFilesCommandHandler
 {
     private readonly IMovieQUnitOfWork movieQUnitOfWork;
     private readonly TmdbService tmdbService;

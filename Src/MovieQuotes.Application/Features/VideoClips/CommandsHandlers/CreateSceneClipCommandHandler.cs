@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.VideoClips.CommandsHandlers;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.VideoClips.CommandsHandlers;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.VideoClips.Commands;
 using MovieQuotes.Domain.Interfaces;
@@ -12,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-internal class CreateSceneClipCommandHandler : IRequestHandler<CreateSceneClipCommand, OperationResult<string>>
+public class CreateSceneClipCommandHandler
 {
 
     private readonly IMovieQUnitOfWork unitOfWork;

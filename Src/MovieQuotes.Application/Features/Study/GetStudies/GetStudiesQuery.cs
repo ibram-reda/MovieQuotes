@@ -1,6 +1,4 @@
 namespace MovieQuotes.Application.Features.Study;
-
-using MediatR;
 using MovieQuotes.Application.Common.Models; 
 
 public enum StudyType
@@ -9,7 +7,7 @@ public enum StudyType
      Recognition,
 }
 
-public class GetStudiesQuery : IRequest<OperationPageResult<StudyPhrase>>
+public class GetStudiesQuery
 {
 
     public GetStudiesQuery(StudyType studyType)

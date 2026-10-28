@@ -4,7 +4,6 @@ using Avalonia.Platform.Storage;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 
@@ -15,7 +14,7 @@ public partial class SettingsViewModel : PageViewModelBase
     private readonly IFilesService? filesService;
     private readonly INotificationService notification;
 
-    public SettingsViewModel(IMediator mediator, NavigationService nav, SettingsService settings, IFilesService filesService, INotificationService notification) : base(mediator, nav)
+    public SettingsViewModel(NavigationService nav, SettingsService settings, IFilesService filesService, INotificationService notification) : base(nav)
     {
         Settings = settings;
         this.filesService = filesService;

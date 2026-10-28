@@ -3,8 +3,8 @@
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.Application.Features.Movies.Commands;
+using MovieQuotes.Application.Features.Movies.CommandsHandlers;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.UI.Features.Movies.BrowseMovies;
 using MovieQuotes.UI.Services;
@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 internal partial class NewMovieViewModel : PageViewModelBase
 {
     private readonly IFilesService filesService;
+    private readonly CreateMovieCommandHandler createMovieHandler;
     private bool returnToPreviousPageAfterSave = false;
     [ObservableProperty] private string _movieVideoPath = string.Empty;
     [ObservableProperty] private string _folderName = string.Empty;
@@ -35,9 +36,10 @@ internal partial class NewMovieViewModel : PageViewModelBase
     {
     }
 
-    public NewMovieViewModel(IMediator mediator, NavigationService nav, IFilesService fileService) : base(mediator, nav)
+    public NewMovieViewModel(CreateMovieCommandHandler createMovieHandler, NavigationService nav, IFilesService fileService) : base(nav)
     {
         this.filesService = fileService;
+        this.createMovieHandler = createMovieHandler;
 
     }
 
@@ -91,7 +93,7 @@ internal partial class NewMovieViewModel : PageViewModelBase
         var command = new CreateMovieCommand(baseFolder ??"", FolderName, DisplayName, Year ?? 0, MovieVideoPath, Description, IMDBId, CoverURl);
 
         IsBusy = true;
-        var result = await mediator.Send(command);
+        var result = await createMovieHandler.Handle(command, token);
         IsBusy = false;
 
         if (result.IsError)

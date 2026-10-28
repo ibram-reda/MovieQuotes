@@ -1,12 +1,10 @@
 namespace MovieQuotes.Application.Features.Study;
-
-using MediatR;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Models;
 
-public class UpdateStudyProgressQuery : IRequest<OperationResult<bool>>
+public class UpdateStudyProgressCommand
 {
-    public UpdateStudyProgressQuery(int progressId, int reviewQuality)
+    public UpdateStudyProgressCommand(int progressId, int reviewQuality)
     {
         ProgessId = progressId;
         ReviewQuality = reviewQuality;

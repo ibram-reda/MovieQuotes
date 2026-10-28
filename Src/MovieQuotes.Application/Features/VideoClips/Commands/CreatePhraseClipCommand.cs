@@ -1,10 +1,8 @@
-﻿namespace MovieQuotes.Application.Features.VideoClips.Commands;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.VideoClips.Commands;
 using MovieQuotes.Application.Common.Models;
 
 
-internal class CreatePhraseClipCommand : IRequest<OperationResult<string>>
+public class CreatePhraseClipCommand
 {
     public CreatePhraseClipCommand(int phraseId)
     {

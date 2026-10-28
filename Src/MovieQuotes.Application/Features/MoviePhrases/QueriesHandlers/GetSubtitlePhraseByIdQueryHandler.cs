@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Mappings;
@@ -15,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-internal class GetSubtitlePhraseByIdQueryHandler : IRequestHandler<GetSubtitlePhraseByIdQuery, OperationResult<Phrase>>
+public class GetSubtitlePhraseByIdQueryHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
     private readonly AppSettings settings;

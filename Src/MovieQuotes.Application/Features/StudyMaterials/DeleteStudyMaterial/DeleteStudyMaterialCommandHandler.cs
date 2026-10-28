@@ -1,11 +1,9 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-
-using MediatR;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Interfaces;
 
-internal class DeleteStudyMaterialCommandHandler : IRequestHandler<DeleteStudyMaterialCommand, OperationResult<bool>>
+public class DeleteStudyMaterialCommandHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
 

@@ -1,8 +1,7 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-using MediatR;
 using MovieQuotes.Application.Common.Models;
 
-public class GetStudyMaterialQuery : IRequest<OperationResult<StudyMaterialDetails>>
+public class GetStudyMaterialQuery
 {
     public GetStudyMaterialQuery(int studyMaterialId)
     {

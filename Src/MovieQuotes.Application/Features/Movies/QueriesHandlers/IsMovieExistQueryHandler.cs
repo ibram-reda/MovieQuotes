@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.Movies.QueriesHandlers;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.Movies.QueriesHandlers;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Models;
@@ -13,7 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class IsMovieExistQueryHandler : IRequestHandler<IsMovieExistQuery, OperationResult<bool>>
+public class IsMovieExistQueryHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
     public IsMovieExistQueryHandler(IMovieQUnitOfWork unitOfWork)

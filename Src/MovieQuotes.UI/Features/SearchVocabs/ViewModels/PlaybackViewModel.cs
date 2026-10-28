@@ -5,10 +5,12 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
-using MediatR;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
+using MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
 using MovieQuotes.Application.Features.VideoClips.Queries;
+using MovieQuotes.Application.Features.VideoClips.QueriesHandlers;
+using MovieQuotes.Application.Features.StudyMaterials;
 using MovieQuotes.UI.Features.Movies.MovieDetails;
 using MovieQuotes.UI.Features.StudyMaterials;
 using MovieQuotes.UI.Features.StudyMaterials.CreateStudyMaterial;
@@ -23,6 +25,9 @@ using System.Threading.Tasks;
 public partial class PlaybackViewModel : PageViewModelBase
 {
     private MediaService mediaService;
+    private readonly SearchForPhraseQueryHandler searchForPhraseHandler;
+    private readonly VideoClipQueryHandler videoClipQueryHandler;
+    private readonly AddNewStudyMaterialCommandHandler addNewStudyMaterialHandler;
     public MediaPlayer MainMediaPlayer => mediaService.VideoPlayer;
 
     [System.Obsolete("For design-time use only")]
@@ -30,9 +35,17 @@ public partial class PlaybackViewModel : PageViewModelBase
     {
     }
 
-    public PlaybackViewModel(IMediator mediator, NavigationService nav, MediaService mediaService) : base(mediator, nav)
+    public PlaybackViewModel(
+        SearchForPhraseQueryHandler searchForPhraseHandler,
+        VideoClipQueryHandler videoClipQueryHandler,
+        AddNewStudyMaterialCommandHandler addNewStudyMaterialHandler,
+        NavigationService nav,
+        MediaService mediaService) : base(nav)
     {
         this.mediaService = mediaService;
+        this.searchForPhraseHandler = searchForPhraseHandler;
+        this.videoClipQueryHandler = videoClipQueryHandler;
+        this.addNewStudyMaterialHandler = addNewStudyMaterialHandler;
     }
     [ObservableProperty] private string searchText = "";
     [ObservableProperty] private int searchCount = 0;
@@ -97,7 +110,11 @@ public partial class PlaybackViewModel : PageViewModelBase
     [RelayCommand]
     void CreateStudy()
     {
-        CreateStudyMaterialViewModel createStudyMaterial = new(CurrentPlayingPhrase?.Id ?? 0, CurrentPlayingPhrase?.Text ?? "", "");
+        CreateStudyMaterialViewModel createStudyMaterial = new(
+            CurrentPlayingPhrase?.Id ?? 0,
+            CurrentPlayingPhrase?.Text ?? "",
+            "",
+            addNewStudyMaterialHandler);
 
         NavigationService.NavigateToPopup(createStudyMaterial);
         createStudyMaterial.OnSaved += (IsSuccess, result) =>
@@ -160,7 +177,7 @@ public partial class PlaybackViewModel : PageViewModelBase
             ResultPerPage = pageSize,
             PageNumber = PageNumber
         };
-        var result = await this.mediator.Send(query, token);
+        var result = await this.searchForPhraseHandler.Handle(query, token);
 
         if (!result.IsSuccess)
         {
@@ -179,7 +196,7 @@ public partial class PlaybackViewModel : PageViewModelBase
             if (String.IsNullOrEmpty(phrase.VideoLocation))
             {
                 var vc = new VideoClipQuery(phrase.Id);
-                var r = await this.mediator.Send(vc);
+                var r = await this.videoClipQueryHandler.Handle(vc, token);
                 if (r.IsSuccess)
                 {
                     phrase.VideoLocation = r.Payload ?? "";

@@ -1,7 +1,5 @@
 ﻿namespace MovieQuotes.Application.Features.Movies.CommandsHandlers;
 
-using MediatR;
-using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
@@ -14,7 +12,7 @@ using MovieQuotes.Domain.Models;
 using MovieQuotes.Domain.Interfaces; 
 using MovieQuotes.Application.Features.Movies.Jobs;
 
-public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, OperationResult<MovieInfo>>
+public class CreateMovieCommandHandler
 {
     private readonly IMovieQUnitOfWork movieQUnitOfWork;
     private readonly TmdbService tmdbService;
@@ -72,7 +70,7 @@ public class CreateMovieCommandHandler : IRequestHandler<CreateMovieCommand, Ope
 
 }
 
-public class CreateMovieCommandExceptionHandler : IRequestExceptionHandler<CreateMovieCommand, OperationResult<Movie>, Exception>
+public class CreateMovieCommandExceptionHandler
 {
     private readonly ILogger<CreateMovieCommandExceptionHandler> logger;
 
@@ -80,7 +78,7 @@ public class CreateMovieCommandExceptionHandler : IRequestExceptionHandler<Creat
     {
         this.logger = logger;
     }
-    public Task Handle(CreateMovieCommand request, Exception exception, RequestExceptionHandlerState<OperationResult<Movie>> state, CancellationToken cancellationToken)
+    public Task<OperationResult<Movie>> Handle(CreateMovieCommand request, Exception exception, CancellationToken cancellationToken)
     {
         logger.LogError(
             exception,
@@ -107,8 +105,6 @@ public class CreateMovieCommandExceptionHandler : IRequestExceptionHandler<Creat
                 break;
         }
 
-        state.SetHandled(result);
-        return Task.CompletedTask;
+        return Task.FromResult(result);
     }
 }
-

@@ -1,6 +1,4 @@
 namespace MovieQuotes.Application.Features.Study;
-
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Models;
@@ -9,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-internal class GetStudyOverviewQueryHandler : IRequestHandler<GetStudyOverviewQuery, OperationResult<StudyOverview>>
+public class GetStudyOverviewQueryHandler
 {
     private readonly MovieQuotesDbContext dbContext;
 

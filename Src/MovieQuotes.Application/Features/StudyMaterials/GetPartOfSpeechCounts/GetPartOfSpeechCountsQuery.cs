@@ -1,8 +1,7 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-using MediatR;
 using MovieQuotes.Application.Common.Models;
 
-public class GetPartOfSpeechCountsQuery : IRequest<OperationPageResult<PartOfSpeechCountDto>>
+public class GetPartOfSpeechCountsQuery
 {
     public GetPartOfSpeechCountsQuery(int movieId)
     {

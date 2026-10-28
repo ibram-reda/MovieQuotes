@@ -1,8 +1,7 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-using MediatR;
 using MovieQuotes.Application.Common.Models;
 
-public class EditStudyMaterialCommand : IRequest<OperationResult<StudyMaterial>>
+public class EditStudyMaterialCommand
 {
     public int StudyMaterialId { get; set; }
     public string? PartOfSpeech { get; set; }

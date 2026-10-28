@@ -1,12 +1,9 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Interfaces;
 
-internal sealed class GetStudyMaterialLevelsQueryHandler
-    : IRequestHandler<GetStudyMaterialLevelsQuery, OperationResult<IReadOnlyList<LevelFilter>>>
+public sealed class GetStudyMaterialLevelsQueryHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
 

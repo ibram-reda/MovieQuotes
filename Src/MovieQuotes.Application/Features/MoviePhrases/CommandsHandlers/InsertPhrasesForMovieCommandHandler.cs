@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.MoviePhrases.CommandsHandlers;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.MoviePhrases.CommandsHandlers;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
@@ -11,7 +9,7 @@ using MovieQuotes.Domain.Models;
 using System.Threading;
 using System.Threading.Tasks;
 
-internal class InsertPhrasesForMovieCommandHandler : IRequestHandler<InsertPhrasesForMovieCommand, OperationResult<bool>>
+public class InsertPhrasesForMovieCommandHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
 

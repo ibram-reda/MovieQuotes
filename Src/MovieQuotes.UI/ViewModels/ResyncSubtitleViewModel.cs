@@ -2,10 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.Application.Features.AI.GenerateAISuggestionForMaterials;
-using MovieQuotes.Application.Features.Movies.Commands;
-using MovieQuotes.Application.Features.Movies.CommandsHandlers;
 using MovieQuotes.Application.Features.SubtitleFiles.Commands;
 using MovieQuotes.UI.Services;
 using System;
@@ -14,6 +11,7 @@ using System.Threading.Tasks;
 
 partial class ResyncSubtitleViewModel : PageViewModelBase
 {
+    private readonly GenerateAISuggestionForMaterialsCommandHandler generateSuggestionHandler;
     public override string Title => "Resync Subtitle";
 
     [ObservableProperty] string path = "";
@@ -25,9 +23,11 @@ partial class ResyncSubtitleViewModel : PageViewModelBase
     {        
     }
 
-    public ResyncSubtitleViewModel(IMediator mediator, NavigationService nav) : base(mediator, nav)
+    public ResyncSubtitleViewModel(
+        GenerateAISuggestionForMaterialsCommandHandler generateSuggestionHandler,
+        NavigationService nav) : base(nav)
     {
-        
+        this.generateSuggestionHandler = generateSuggestionHandler;
     }
 
     [RelayCommand]
@@ -35,7 +35,7 @@ partial class ResyncSubtitleViewModel : PageViewModelBase
     {
         var cmd = new GenerateAISuggestionForMaterialsCommand();
         IsBusy = true;
-        var result = await this.mediator.Send(cmd);
+        var result = await this.generateSuggestionHandler.Handle(cmd, CancellationToken.None);
         IsBusy = false;
 
         if (result.IsError)

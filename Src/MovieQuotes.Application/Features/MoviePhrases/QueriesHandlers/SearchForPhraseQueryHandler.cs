@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Common.Enums;
@@ -13,7 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class SearchForPhraseQueryHandler : IRequestHandler<SearchForPhraseQuery, OperationPageResult<Phrase>>
+public class SearchForPhraseQueryHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
     private readonly ILogger<SearchForPhraseQueryHandler> logger;

@@ -1,10 +1,8 @@
-﻿namespace MovieQuotes.Application.Features.MoviePhrases.Commands;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 
-public class EditPhraseCommand : IRequest<OperationResult<Phrase>>
+public class EditPhraseCommand
 {
     public int PhraseId { get; set; }
     public int MovieId { get; set; }

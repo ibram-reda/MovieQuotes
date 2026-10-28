@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
@@ -15,7 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-internal class GetAllPhrasesForMovieQueryHandlers : IRequestHandler<GetAllPhrasesForMovieQuery, OperationResult<List<Phrase>>>
+public class GetAllPhrasesForMovieQueryHandlers
 {
     private readonly IMovieQUnitOfWork unitOfWork;
     private readonly AppSettings settings;

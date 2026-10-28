@@ -3,13 +3,14 @@ namespace MovieQuotes.UI.Features.StudyMaterials.CreateStudyMaterial;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MovieQuotes.Application.Common.Models;
-using MovieQuotes.Application.Features.StudyMaterials; 
+using MovieQuotes.Application.Features.StudyMaterials;
 using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
 using System.Threading.Tasks;
 
 public partial class CreateStudyMaterialViewModel : DialogueViewModelBase
 {
+    private readonly AddNewStudyMaterialCommandHandler addNewStudyMaterialHandler;
     public override string Title => "Create Study Material";
     public event Action<bool, OperationResult<StudyMaterial>>? OnSaved;
 
@@ -38,11 +39,16 @@ public partial class CreateStudyMaterialViewModel : DialogueViewModelBase
     {
     }
 
-    public CreateStudyMaterialViewModel(int phraseId, string phraseText, string arPhraseTranslation)
+    public CreateStudyMaterialViewModel(
+        int phraseId,
+        string phraseText,
+        string arPhraseTranslation,
+        AddNewStudyMaterialCommandHandler addNewStudyMaterialHandler)
     {
         PhraseId = phraseId;
         PhraseText = phraseText;
         ArPhraseTranslation = arPhraseTranslation;
+        this.addNewStudyMaterialHandler = addNewStudyMaterialHandler;
     }
 
     [RelayCommand]
@@ -67,7 +73,7 @@ public partial class CreateStudyMaterialViewModel : DialogueViewModelBase
             IsVulgar = IsVulgar
         };
 
-        var result = await mediator.Send(command);
+        var result = await addNewStudyMaterialHandler.Handle(command, CancellationToken.None);
         if (result.IsError)
         {
             HandleErrors(result.Errors);

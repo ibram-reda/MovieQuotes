@@ -4,10 +4,13 @@ using Avalonia.Controls.Generators;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
-using MediatR;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
+using MovieQuotes.Application.Features.MoviePhrases.CommandsHandlers;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
+using MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
 using MovieQuotes.Application.Features.Movies.Queries;
+using MovieQuotes.Application.Features.Movies.QueriesHandlers;
+using MovieQuotes.Application.Features.StudyMaterials;
 using MovieQuotes.UI.Features.StudyMaterials.CreateStudyMaterial;
 using MovieQuotes.UI.Models;
 using MovieQuotes.UI.Services;
@@ -19,6 +22,10 @@ using System.Threading.Tasks;
 
 internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
 {
+    private readonly GetMovieDetailsQueryHandler getMovieDetailsHandler;
+    private readonly GetAllPhrasesForMovieQueryHandlers getAllPhrasesForMovieHandler;
+    private readonly InsertPhrasesForMovieCommandHandler insertPhrasesHandler;
+    private readonly AddNewStudyMaterialCommandHandler addNewStudyMaterialHandler;
     private LibVLC MainLibVLC { get; }
     public MediaPlayer MainMediaPlayer { get; }
 
@@ -27,8 +34,18 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
     {
     }
 
-    public WatchMovieViewModel(IMediator mediator, NavigationService nav, SettingsService settings) : base(mediator, nav)
+    public WatchMovieViewModel(
+        GetMovieDetailsQueryHandler getMovieDetailsHandler,
+        GetAllPhrasesForMovieQueryHandlers getAllPhrasesForMovieHandler,
+        InsertPhrasesForMovieCommandHandler insertPhrasesHandler,
+        AddNewStudyMaterialCommandHandler addNewStudyMaterialHandler,
+        NavigationService nav,
+        SettingsService settings) : base(nav)
     {
+        this.getMovieDetailsHandler = getMovieDetailsHandler;
+        this.getAllPhrasesForMovieHandler = getAllPhrasesForMovieHandler;
+        this.insertPhrasesHandler = insertPhrasesHandler;
+        this.addNewStudyMaterialHandler = addNewStudyMaterialHandler;
         MainLibVLC = new();
         MainMediaPlayer = new(MainLibVLC)
         {
@@ -109,7 +126,7 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
     {
         var query = new GetMovieDetailsQuery { MovieId = movieId };
 
-        var reuslt = await this.mediator.Send(query);
+        var reuslt = await this.getMovieDetailsHandler.Handle(query, CancellationToken.None);
 
         if (reuslt.IsError)
             return;
@@ -126,7 +143,7 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
     private async Task LoadSubtitlesAsync()
     {
         var cmd = new GetAllPhrasesForMovieQuery() { MovieId = this.Id };
-        var result = await this.mediator.Send(cmd);
+        var result = await this.getAllPhrasesForMovieHandler.Handle(cmd, CancellationToken.None);
         if (result.IsSuccess)
         {
             this.EnSubtitleManager = new(result.Payload?.Select(a => new SubtitleEntry(a.Id, a.StartTime, a.EndTime, a.Text)) ?? []);
@@ -134,7 +151,7 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
                 OnPropertyChanged(nameof(CurrentPhrase));
         }
         cmd.Language = Language.ar;
-        result = await this.mediator.Send(cmd);
+        result = await this.getAllPhrasesForMovieHandler.Handle(cmd, CancellationToken.None);
         if (result.IsSuccess)
         {
             this.ArSubtitleManager = new(result.Payload?.Select(a => new SubtitleEntry(a.Id, a.StartTime, a.EndTime, a.Text)) ?? []);
@@ -202,7 +219,11 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
         
         if (this.MainMediaPlayer.IsPlaying)
             this.MainMediaPlayer.Pause();
-        this.CreateStudyMaterial = new(CurrentPhrase?.Id ?? 0, CurrentPhrase?.Text ?? "", CurrentArPhrase?.Text ?? "");
+        this.CreateStudyMaterial = new(
+            CurrentPhrase?.Id ?? 0,
+            CurrentPhrase?.Text ?? "",
+            CurrentArPhrase?.Text ?? "",
+            addNewStudyMaterialHandler);
         this.CreateStudyMaterial.OnSaved += (IsSuccess, result) =>
         {
             if (!IsSuccess)
@@ -234,7 +255,7 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
         if (this.CanLoadEnSubs)
         {
             var cmd = new InsertPhrasesForMovieCommand() { MovieId = this.Id };
-            var result = await this.mediator.Send(cmd);
+            var result = await this.insertPhrasesHandler.Handle(cmd, CancellationToken.None);
 
             if (result.IsSuccess)
             {

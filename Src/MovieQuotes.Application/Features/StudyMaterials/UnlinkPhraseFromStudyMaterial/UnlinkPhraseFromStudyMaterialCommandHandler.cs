@@ -1,10 +1,9 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-using MediatR;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Interfaces;
 
-internal class UnlinkPhraseFromStudyMaterialCommandHandler : IRequestHandler<UnlinkPhraseFromStudyMaterialCommand, OperationResult<bool>>
+public class UnlinkPhraseFromStudyMaterialCommandHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
 

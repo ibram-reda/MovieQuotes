@@ -16,7 +16,8 @@ The project follows a layered architecture designed to keep business rules indep
                          ┌─────────────────────┐
                          │    Application      │
                          │   Use Cases / CQRS  │
-                         │      MediatR        │
+                         │ Directly Injected   │
+                         │     Handlers        │
                          └──────────┬──────────┘
                                     │
                                     ▼
@@ -96,7 +97,7 @@ The Application layer contains the application's **use cases**.
 
 It coordinates domain objects and infrastructure without containing UI-specific implementation details.
 
-MovieQuotes uses **CQRS** with **MediatR** to organize application operations.
+MovieQuotes uses **CQRS** with separate command and query types and handlers. UI view models and API controllers receive the specific handlers they call through dependency injection; no mediator dispatches requests.
 
 ## Commands
 
@@ -518,7 +519,7 @@ MovieQuotes separates the application into focused components:
                       │
 ┌─────────────────────▼─────────────────────┐
 │               Application                 │
-│       Use Cases / CQRS / MediatR          │
+│       Use Cases / CQRS / Handlers         │
 └─────────────────────┬─────────────────────┘
                       │
 ┌─────────────────────▼─────────────────────┐

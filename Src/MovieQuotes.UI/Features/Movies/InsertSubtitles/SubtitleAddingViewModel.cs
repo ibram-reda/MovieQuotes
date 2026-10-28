@@ -1,11 +1,12 @@
 ﻿namespace MovieQuotes.UI.ViewModels;
 
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
+using MovieQuotes.Application.Features.MoviePhrases.CommandsHandlers;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
+using MovieQuotes.Application.Features.Movies.QueriesHandlers;
 using MovieQuotes.UI.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -29,15 +30,23 @@ internal partial class SubtitleAddingViewModel : PageViewModelBase
     public ObservableCollection<MovieInfoLoaded> Done { get; } = [];
 
     IFilesService _fileService;
+    private readonly InsertPhrasesForMovieCommandHandler insertPhrasesHandler;
+    private readonly GetAllMoviesWithoutSubtitlesQueryHandler getMoviesWithoutSubtitlesHandler;
 
     [System.Obsolete("For design-time use only")]
     public SubtitleAddingViewModel()
     {
         
     }
-    public SubtitleAddingViewModel(IMediator mediator,NavigationService nav,IFilesService filesService):base(mediator,nav)
+    public SubtitleAddingViewModel(
+        InsertPhrasesForMovieCommandHandler insertPhrasesHandler,
+        GetAllMoviesWithoutSubtitlesQueryHandler getMoviesWithoutSubtitlesHandler,
+        NavigationService nav,
+        IFilesService filesService) : base(nav)
     {
         _fileService = filesService;
+        this.insertPhrasesHandler = insertPhrasesHandler;
+        this.getMoviesWithoutSubtitlesHandler = getMoviesWithoutSubtitlesHandler;
         LoadAllCommand.Execute(null);
     }
 
@@ -59,7 +68,7 @@ internal partial class SubtitleAddingViewModel : PageViewModelBase
         MovieList.Remove(movie);
         Running.Add(movie);
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        var result = await this.mediator.Send(cmd);
+        var result = await this.insertPhrasesHandler.Handle(cmd, CancellationToken.None);
         stopwatch.Stop();
 
 
@@ -99,7 +108,7 @@ internal partial class SubtitleAddingViewModel : PageViewModelBase
     {
         var qury = new GetAllMoviesWithoutSubtitlesQuery();
 
-        var result = await this.mediator.Send(qury);
+        var result = await this.getMoviesWithoutSubtitlesHandler.Handle(qury, CancellationToken.None);
 
         if (result.IsSuccess)
         {

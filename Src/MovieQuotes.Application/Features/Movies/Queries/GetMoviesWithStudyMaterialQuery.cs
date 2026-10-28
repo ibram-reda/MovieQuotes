@@ -1,11 +1,9 @@
 namespace MovieQuotes.Application.Features.Movies.Queries;
-
-using MediatR;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Models;
 
 
-public class GetMoviesWithStudyMaterialQuery : IRequest<OperationPageResult<MovieWithStudyMaterialCount>>
+public class GetMoviesWithStudyMaterialQuery
 {
     /// <summary>
     /// get all movies in database that Has Study Meterial with it.

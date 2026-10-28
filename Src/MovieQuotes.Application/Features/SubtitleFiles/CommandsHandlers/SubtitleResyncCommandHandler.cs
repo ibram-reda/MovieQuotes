@@ -1,4 +1,3 @@
-﻿using MediatR;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Common.Services;
@@ -6,11 +5,11 @@ using MovieQuotes.Application.Features.SubtitleFiles.Commands;
 
 namespace MovieQuotes.Application.Features.SubtitleFiles.CommandsHandlers;
 
-internal class SubtitleResyncCommandHandler : IRequestHandler<SubtitleResyncCommand, OperationResult<Unit>>
+public class SubtitleResyncCommandHandler
 {
-    public async Task<OperationResult<Unit>> Handle(SubtitleResyncCommand request, CancellationToken cancellationToken)
+    public async Task<OperationResult<bool>> Handle(SubtitleResyncCommand request, CancellationToken cancellationToken)
     {
-        var result = new OperationResult<Unit>();
+        var result = new OperationResult<bool>();
         if (string.IsNullOrEmpty(request.SubtitleFilePath))
             result.AddError(ErrorCode.ValidationError, SubtitleFilesErrorMessages.ArgumentNullOrEmpty, nameof(request.SubtitleFilePath));
 

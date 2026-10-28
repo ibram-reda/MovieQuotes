@@ -1,8 +1,7 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-using MediatR;
 using MovieQuotes.Application.Common.Models;
 
-public class UnlinkPhraseFromStudyMaterialCommand : IRequest<OperationResult<bool>>
+public class UnlinkPhraseFromStudyMaterialCommand
 {
     public UnlinkPhraseFromStudyMaterialCommand(int studyMaterialId, int phraseId)
     {

@@ -1,6 +1,5 @@
 ﻿namespace MovieQuotes.Application.Common.Services;
 
-using MediatR;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Subtitles.Abstractions;
@@ -45,9 +44,9 @@ internal static class SubtitleManager
         return result;
     }
 
-    public static async Task<OperationResult<Unit>> WriteToDeskAsync(this IEnumerable<SubtitlePhrase> subtitles, string filePath, Encoding? encoding = null)
+    public static async Task<OperationResult<bool>> WriteToDeskAsync(this IEnumerable<SubtitlePhrase> subtitles, string filePath, Encoding? encoding = null)
     {
-        var result = new OperationResult<Unit>();
+        var result = new OperationResult<bool>();
 
         if (File.Exists(filePath))
         {

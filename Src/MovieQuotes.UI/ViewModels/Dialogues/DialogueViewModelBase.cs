@@ -2,7 +2,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using MovieQuotes.UI.Services;
 using System;
@@ -21,9 +20,8 @@ public class DialogueCloseEventArgs : EventArgs
 
 public abstract partial class DialogueViewModelBase :  ViewModelBase
 {
-    public DialogueViewModelBase():base(null,null)
+    public DialogueViewModelBase() : base()
     {
-        this.mediator= GetService<IMediator>();
         this.NavigationService= GetService<NavigationService>();
     }
     public event EventHandler<DialogueCloseEventArgs>? DialogueClosed;

@@ -1,7 +1,5 @@
 ﻿namespace MovieQuotes.Application.Features.Movies.QueriesHandlers;
 
-using MediatR;
-using MediatR.Pipeline;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Mappings;
@@ -14,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, OperationPageResult<MovieInfo>>
+public class GetAllMoviesQueryHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
 
@@ -98,9 +96,9 @@ public class GetAllMoviesQueryHandler : IRequestHandler<GetAllMoviesQuery, Opera
 }
 
 
-class GetAllMoviesQueryExceptionHandler : IRequestExceptionHandler<GetAllMoviesQuery, OperationPageResult<MovieInfo>, Exception>
+public class GetAllMoviesQueryExceptionHandler
 {
-    public Task Handle(GetAllMoviesQuery request, Exception exception, RequestExceptionHandlerState<OperationPageResult<MovieInfo>> state, CancellationToken cancellationToken)
+    public Task<OperationPageResult<MovieInfo>> Handle(GetAllMoviesQuery request, Exception exception, CancellationToken cancellationToken)
     {
         var result = new OperationPageResult<MovieInfo>();
         var ex = exception;
@@ -109,7 +107,6 @@ class GetAllMoviesQueryExceptionHandler : IRequestExceptionHandler<GetAllMoviesQ
             result.AddUnknownError(ex.Message);
             ex = ex.InnerException;
         }
-        state.SetHandled(result);
-        return Task.CompletedTask;
+        return Task.FromResult(result);
     }
 }

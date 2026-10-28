@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.MoviePhrases.Queries;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using System;
@@ -10,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-public class GetSubtitlePhraseByIdQuery : IRequest<OperationResult<Phrase>>
+public class GetSubtitlePhraseByIdQuery
 {
     public GetSubtitlePhraseByIdQuery(int id)
     {

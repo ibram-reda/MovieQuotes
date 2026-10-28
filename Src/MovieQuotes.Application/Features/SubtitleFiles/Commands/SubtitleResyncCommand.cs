@@ -1,10 +1,8 @@
-﻿namespace MovieQuotes.Application.Features.SubtitleFiles.Commands;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.SubtitleFiles.Commands;
 using MovieQuotes.Application.Common.Models;
 using System.Text;
 
-public class SubtitleResyncCommand : IRequest<OperationResult<Unit>>
+public class SubtitleResyncCommand
 {
     /// <summary>
     /// File Path of subtitle.

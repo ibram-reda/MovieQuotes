@@ -1,12 +1,10 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Interfaces;
 using Org.BouncyCastle.Ocsp;
 
-internal sealed class GetPartOfSpeechCountsQueryHandler : IRequestHandler<GetPartOfSpeechCountsQuery, OperationPageResult<PartOfSpeechCountDto>>
+public sealed class GetPartOfSpeechCountsQueryHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
 

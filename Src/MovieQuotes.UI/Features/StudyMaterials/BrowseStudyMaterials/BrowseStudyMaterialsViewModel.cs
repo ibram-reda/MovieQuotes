@@ -2,11 +2,12 @@ namespace MovieQuotes.UI.Features.StudyMaterials.BrowseStudyMaterials;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
+using MovieQuotes.Application.Features.Movies.QueriesHandlers;
 using MovieQuotes.Application.Features.StudyMaterials;
 using MovieQuotes.Application.Features.VideoClips.Queries;
+using MovieQuotes.Application.Features.VideoClips.QueriesHandlers;
 using MovieQuotes.UI.Features.StudyMaterials.EditStudyMaterial;
 using MovieQuotes.UI.Features.StudyMaterials.StudyMaterialDetails;
 using MovieQuotes.UI.Services;
@@ -22,6 +23,13 @@ public sealed record StudyMaterialSortOption(StudyMaterialSortOrder Value, strin
 
 public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
 {
+    private readonly GetMoviesWithStudyMaterialQueryHandler getMoviesWithStudyMaterialHandler;
+    private readonly GetStudyMaterialLevelsQueryHandler getStudyMaterialLevelsHandler;
+    private readonly GetPartOfSpeechCountsQueryHandler getPartOfSpeechCountsHandler;
+    private readonly GetStudyMaterialsQueryHandler getStudyMaterialsHandler;
+    private readonly VideoClipQueryHandler videoClipQueryHandler;
+    private readonly GetStudyMaterialQueryHandler getStudyMaterialHandler;
+    private readonly EditStudyMaterialCommandHandler editStudyMaterialHandler;
     public ObservableCollection<StudyMaterial> Materials { get; } = [];
     public ObservableCollection<MovieWithStudyMaterialCount> Movies { get; } = [];
     public ObservableCollection<LevelFilter> Levels { get; } = [];
@@ -105,9 +113,26 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         });
     }
 
-    public BrowseStudyMaterialsViewModel(IMediator mediator, NavigationService navigation, INotificationService notificationService, MediaService mediaService)
-        : base(mediator, navigation)
+    public BrowseStudyMaterialsViewModel(
+        GetMoviesWithStudyMaterialQueryHandler getMoviesWithStudyMaterialHandler,
+        GetStudyMaterialLevelsQueryHandler getStudyMaterialLevelsHandler,
+        GetPartOfSpeechCountsQueryHandler getPartOfSpeechCountsHandler,
+        GetStudyMaterialsQueryHandler getStudyMaterialsHandler,
+        VideoClipQueryHandler videoClipQueryHandler,
+        GetStudyMaterialQueryHandler getStudyMaterialHandler,
+        EditStudyMaterialCommandHandler editStudyMaterialHandler,
+        NavigationService navigation,
+        INotificationService notificationService,
+        MediaService mediaService)
+        : base(navigation)
     {
+        this.getMoviesWithStudyMaterialHandler = getMoviesWithStudyMaterialHandler;
+        this.getStudyMaterialLevelsHandler = getStudyMaterialLevelsHandler;
+        this.getPartOfSpeechCountsHandler = getPartOfSpeechCountsHandler;
+        this.getStudyMaterialsHandler = getStudyMaterialsHandler;
+        this.videoClipQueryHandler = videoClipQueryHandler;
+        this.getStudyMaterialHandler = getStudyMaterialHandler;
+        this.editStudyMaterialHandler = editStudyMaterialHandler;
         this.notificationService = notificationService;
         this.mediaService = mediaService;
     }
@@ -126,7 +151,7 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
     private async Task LoadMovies()
     {
         var query = new GetMoviesWithStudyMaterialQuery();
-        var result = await mediator.Send(query);
+        var result = await getMoviesWithStudyMaterialHandler.Handle(query, CancellationToken.None);
 
         if (result.IsError)
         {
@@ -144,7 +169,9 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
 
     private async Task LoadLevels()
     {
-        var result = await mediator.Send(new GetStudyMaterialLevelsQuery());
+        var result = await getStudyMaterialLevelsHandler.Handle(
+            new GetStudyMaterialLevelsQuery(),
+            CancellationToken.None);
 
         if (result.IsError)
         {
@@ -160,7 +187,7 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
     private async Task LoadPartOfSpeechCounts(int movieId = 0)
     {
         var query = new GetPartOfSpeechCountsQuery(movieId);
-        var result = await mediator.Send(query);
+        var result = await getPartOfSpeechCountsHandler.Handle(query, CancellationToken.None);
 
         if (result.IsError)
         {
@@ -182,7 +209,10 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
         if (material is null)
             return;
 
-        var dialogue = new EditStudyMaterialViewModel(material);
+        var dialogue = new EditStudyMaterialViewModel(
+            material,
+            getStudyMaterialHandler,
+            editStudyMaterialHandler);
         dialogue.OnSaved += async (isSaved, _) =>
         {
             if (isSaved)
@@ -201,7 +231,7 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
 
 
         var qury = new VideoClipQuery(material.SrcPhraseId);
-        var res = await this.mediator.Send(qury);
+        var res = await this.videoClipQueryHandler.Handle(qury, CancellationToken.None);
         if (res.IsError)
         {
             this.HandleErrors(res.Errors);
@@ -239,7 +269,7 @@ public partial class BrowseStudyMaterialsViewModel : PageViewModelBase
                 ResultPerPage = ResultPerPage
             };
 
-            var result = await mediator.Send(query);
+            var result = await getStudyMaterialsHandler.Handle(query, CancellationToken.None);
             if (result.IsError)
             {
                 HandleErrors(result.Errors);

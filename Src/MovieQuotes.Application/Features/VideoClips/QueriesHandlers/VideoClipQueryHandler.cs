@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.VideoClips.QueriesHandlers;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.VideoClips.QueriesHandlers;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
@@ -10,7 +8,7 @@ using MovieQuotes.Application.Features.VideoClips.CommandsHandlers;
 using MovieQuotes.Application.Features.VideoClips.Queries;
 using MovieQuotes.Domain.Interfaces; 
 
-internal class VideoClipQueryHandler(IMovieQUnitOfWork unitOfWork, AppSettings settings) : IRequestHandler<VideoClipQuery, OperationResult<string>>
+public class VideoClipQueryHandler(IMovieQUnitOfWork unitOfWork, AppSettings settings)
 { 
 
     public async Task<OperationResult<string>> Handle(VideoClipQuery request, CancellationToken cancellationToken)

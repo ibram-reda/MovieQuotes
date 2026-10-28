@@ -1,9 +1,7 @@
-﻿namespace MovieQuotes.Application.Features.VideoClips.Commands;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.VideoClips.Commands;
 using MovieQuotes.Application.Common.Models;
 
-public class CreateSceneClipCommand : IRequest<OperationResult<string>>
+public class CreateSceneClipCommand
 {
     public CreateSceneClipCommand(string movieLocation,TimeSpan startTime,TimeSpan endTime)
     {

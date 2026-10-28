@@ -1,5 +1,4 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-using MediatR;
 using MovieQuotes.Application.Common.Models;
 
 public enum StudyMaterialSortOrder
@@ -9,7 +8,7 @@ public enum StudyMaterialSortOrder
     Alphabetical
 }
 
-public class GetStudyMaterialsQuery : IRequest<OperationPageResult<StudyMaterial>>
+public class GetStudyMaterialsQuery
 {
     public int MovieId { get; init; }
     public string? Level { get; init; }

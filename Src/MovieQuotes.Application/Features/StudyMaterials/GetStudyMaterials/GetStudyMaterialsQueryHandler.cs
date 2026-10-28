@@ -1,12 +1,10 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models; 
 using MovieQuotes.Domain.Interfaces;
 
-internal class GetStudyMaterialsQueryHandler : IRequestHandler<GetStudyMaterialsQuery, OperationPageResult<StudyMaterial>>
+public class GetStudyMaterialsQueryHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
 

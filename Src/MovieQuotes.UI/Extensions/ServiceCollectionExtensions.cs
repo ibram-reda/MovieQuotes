@@ -65,8 +65,12 @@ public static class ServiceCollectionExtensions
         var TmdbApiKey = configuration["TmdbApiKey"];
         Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs), ServiceLifetime.Transient);
 
-        Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
-        
+        var applicationHandlers = typeof(CreateMovieCommand).Assembly.GetTypes()
+            .Where(type => type.IsClass && !type.IsAbstract &&
+                (type.Name.EndsWith("Handler", StringComparison.Ordinal) ||
+                 type.Name.EndsWith("Handlers", StringComparison.Ordinal)));
+        foreach (var handler in applicationHandlers)
+            Services.AddTransient(handler);
 
         Services.AddSingleton<AppSettings>(sp =>
         {

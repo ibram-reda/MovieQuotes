@@ -2,7 +2,6 @@ namespace MovieQuotes.UI.Features.StudyMaterials.EditStudyMaterial;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.AI;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.StudyMaterials;
@@ -14,6 +13,8 @@ using System.Threading.Tasks;
 
 public partial class EditStudyMaterialViewModel : DialogueViewModelBase
 {
+    private readonly GetStudyMaterialQueryHandler? getStudyMaterialHandler;
+    private readonly EditStudyMaterialCommandHandler? editStudyMaterialHandler;
     public override string Title => "Edit Study Material";
     public event Action<bool, OperationResult<StudyMaterial>>? OnSaved;
 
@@ -44,25 +45,36 @@ public partial class EditStudyMaterialViewModel : DialogueViewModelBase
     public EditStudyMaterialViewModel()
     {
     }
-    public EditStudyMaterialViewModel(int id)
+    public EditStudyMaterialViewModel(
+        int id,
+        GetStudyMaterialQueryHandler getStudyMaterialHandler,
+        EditStudyMaterialCommandHandler editStudyMaterialHandler)
     {
         this.StudyId = id;
         this.lLMService = this.GetService<LLMService>();
+        this.getStudyMaterialHandler = getStudyMaterialHandler;
+        this.editStudyMaterialHandler = editStudyMaterialHandler;
     }
 
-    public EditStudyMaterialViewModel(StudyMaterial studyMaterial)
+    public EditStudyMaterialViewModel(
+        StudyMaterial studyMaterial,
+        GetStudyMaterialQueryHandler getStudyMaterialHandler,
+        EditStudyMaterialCommandHandler editStudyMaterialHandler)
     {
         this.StudyId = studyMaterial.Id;
         _StudyMaterial = studyMaterial;
         this.lLMService = this.GetService<LLMService>();
-
+        this.getStudyMaterialHandler = getStudyMaterialHandler;
+        this.editStudyMaterialHandler = editStudyMaterialHandler;
     }
 
     public override async Task InitAsync(object? initValue)
     {
         if (_StudyMaterial is null)
         {
-            var result = await mediator.Send(new GetStudyMaterialQuery(StudyId));
+            var result = await (getStudyMaterialHandler ??
+                throw new InvalidOperationException("The study material query handler is not available."))
+                .Handle(new GetStudyMaterialQuery(StudyId), CancellationToken.None);
             if (result.IsSuccess)
             {
                 _StudyMaterial = result.Payload;
@@ -123,7 +135,9 @@ public partial class EditStudyMaterialViewModel : DialogueViewModelBase
             IsVulgar = IsVulgar
         };
 
-        var result = await mediator.Send(command);
+        var result = await (editStudyMaterialHandler ??
+            throw new InvalidOperationException("The study material command handler is not available."))
+            .Handle(command, CancellationToken.None);
         if (result.IsError)
         {
             HandleErrors(result.Errors);

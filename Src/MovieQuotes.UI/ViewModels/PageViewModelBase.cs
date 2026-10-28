@@ -2,7 +2,6 @@
 
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MediatR;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels.Dialogues;
 using System;
@@ -25,7 +24,7 @@ public abstract partial class PageViewModelBase : ViewModelBase
             throw new Exception("this is allowed in designMode only");
     }
 
-    protected PageViewModelBase(IMediator mediator, NavigationService navigation) : base(mediator, navigation)
+    protected PageViewModelBase(NavigationService navigation) : base(navigation)
     {
     }
 }

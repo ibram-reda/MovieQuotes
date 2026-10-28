@@ -1,22 +1,20 @@
 namespace MovieQuotes.Application.Features.Study;
-
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Infrastructure;
 
-internal class UpdateStudyProgressQueryHandler : IRequestHandler<UpdateStudyProgressQuery, OperationResult<bool>>
+public class UpdateStudyProgressCommandHandler
 {
     private readonly MovieQuotesDbContext dbContext;
 
-    public UpdateStudyProgressQueryHandler(MovieQuotesDbContext dbContext)
+    public UpdateStudyProgressCommandHandler(MovieQuotesDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
 
-    public async Task<OperationResult<bool>> Handle(UpdateStudyProgressQuery request, CancellationToken cancellationToken)
+    public async Task<OperationResult<bool>> Handle(UpdateStudyProgressCommand request, CancellationToken cancellationToken)
     {
         var result = new OperationResult<bool>();
 

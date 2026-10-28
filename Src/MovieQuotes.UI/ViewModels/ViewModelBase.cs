@@ -2,7 +2,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.UI.Services;
@@ -14,9 +13,6 @@ using System.Threading.Tasks;
 public abstract partial class ViewModelBase : ObservableObject
 {
     abstract public string Title { get; }
-    private IMediator? _mediator;
-    private NavigationService? _navigationService;
-    protected IMediator mediator { get; set; }
     protected NavigationService NavigationService { get; set; }
 
     public ObservableCollection<string> ErrorMessages { get; } = [];
@@ -32,9 +28,8 @@ public abstract partial class ViewModelBase : ObservableObject
     {
         this.ErrorMessages.Clear();
     }
-    protected ViewModelBase(IMediator mediator, NavigationService navigation)
+    protected ViewModelBase(NavigationService navigation)
     {
-        this.mediator = mediator;
         this.NavigationService = navigation;
     }
     protected T GetService<T>() where T : class

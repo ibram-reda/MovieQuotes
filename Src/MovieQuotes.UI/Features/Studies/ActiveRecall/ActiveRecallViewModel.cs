@@ -11,10 +11,11 @@ using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.Study;
+using MovieQuotes.Application.Features.MoviePhrases.CommandsHandlers;
+using MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
 using MovieQuotes.Application.Features.StudyMaterials;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.UI.Features.StudyMaterials.EditStudyMaterial;
@@ -26,6 +27,12 @@ using MovieQuotes.UI.ViewModels.Dialogues;
 public partial class ActiveRecallViewModel : PageViewModelBase
 {
     private readonly SpellingErrorAnalyzer _spellingAnalyzer;
+    private readonly GetStudiesQueryHandler getStudiesHandler;
+    private readonly UpdateStudyProgressCommandHandler updateStudyProgressHandler;
+    private readonly GetStudyMaterialQueryHandler getStudyMaterialHandler;
+    private readonly EditStudyMaterialCommandHandler editStudyMaterialHandler;
+    private readonly GetSubtitlePhraseByIdQueryHandler getSubtitlePhraseHandler;
+    private readonly EditPhraseCommandHandler editPhraseHandler;
     private MediaService MediaService { get; }
     [ObservableProperty] SpellingAnalysis? _spellingAnalysis;
     public bool ShowResult =>
@@ -106,8 +113,23 @@ public partial class ActiveRecallViewModel : PageViewModelBase
     }
     private readonly ILogger<ActiveRecallViewModel> logger;
 #pragma warning restore
-    public ActiveRecallViewModel(IMediator mediator, NavigationService nav, MediaService mediaService, ILogger<ActiveRecallViewModel> logger) : base(mediator, nav)
+    public ActiveRecallViewModel(
+        GetStudiesQueryHandler getStudiesHandler,
+        UpdateStudyProgressCommandHandler updateStudyProgressHandler,
+        GetStudyMaterialQueryHandler getStudyMaterialHandler,
+        EditStudyMaterialCommandHandler editStudyMaterialHandler,
+        GetSubtitlePhraseByIdQueryHandler getSubtitlePhraseHandler,
+        EditPhraseCommandHandler editPhraseHandler,
+        NavigationService nav,
+        MediaService mediaService,
+        ILogger<ActiveRecallViewModel> logger) : base(nav)
     {
+        this.getStudiesHandler = getStudiesHandler;
+        this.updateStudyProgressHandler = updateStudyProgressHandler;
+        this.getStudyMaterialHandler = getStudyMaterialHandler;
+        this.editStudyMaterialHandler = editStudyMaterialHandler;
+        this.getSubtitlePhraseHandler = getSubtitlePhraseHandler;
+        this.editPhraseHandler = editPhraseHandler;
         MediaService = mediaService;
         _spellingAnalyzer = new SpellingErrorAnalyzer();
         this.logger = logger;
@@ -122,7 +144,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
     [RelayCommand]
     async Task Init()
     {
-        var result = await this.mediator.Send(new GetStudiesQuery(studyType: StudyType.ContextRecall));
+        var result = await getStudiesHandler.Handle(new GetStudiesQuery(studyType: StudyType.ContextRecall), CancellationToken.None);
         if (result.IsError)
         {
             this.HandleErrors(result.Errors);
@@ -222,7 +244,10 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         if (CurrentPhrase is null)
             return;
 
-        var dialogue = new EditStudyMaterialViewModel(CurrentPhrase.MaterialId);
+        var dialogue = new EditStudyMaterialViewModel(
+            CurrentPhrase.MaterialId,
+            getStudyMaterialHandler,
+            editStudyMaterialHandler);
         dialogue.OnSaved += async (isSaved, result) =>
         {
             if (isSaved && result.Payload is Application.Features.StudyMaterials.StudyMaterial material)
@@ -249,7 +274,10 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         if (CurrentPhrase is null)
             return;
 
-        var dialouge = new EditeSubtitlePhraseViewModel(CurrentPhrase.PhraseId);
+        var dialouge = new EditeSubtitlePhraseViewModel(
+            CurrentPhrase.PhraseId,
+            getSubtitlePhraseHandler,
+            editPhraseHandler);
         dialouge.OnPhraseEdited += (phrase) =>
         {
             CurrentPhrase.PhraseText = phrase.Text;
@@ -330,7 +358,9 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         if (CurrentPhrase is null || CurrentPhrase.ProgressId <= 0)
             return;
 
-        var result = await mediator.Send(new UpdateStudyProgressQuery(CurrentPhrase.ProgressId, (int)reviewQuality));
+        var result = await updateStudyProgressHandler.Handle(
+            new UpdateStudyProgressCommand(CurrentPhrase.ProgressId, (int)reviewQuality),
+            CancellationToken.None);
 
         if (result.IsError)
         {

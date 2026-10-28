@@ -2,15 +2,22 @@
 
 using Microsoft.AspNetCore.Mvc;
 using MovieQuotes.Application.Features.VideoClips.Queries;
+using MovieQuotes.Application.Features.VideoClips.QueriesHandlers;
 
 public class VideoController : BaseController
 {
+    private readonly VideoClipQueryHandler videoClipQueryHandler;
+
+    public VideoController(VideoClipQueryHandler videoClipQueryHandler)
+    {
+        this.videoClipQueryHandler = videoClipQueryHandler;
+    }
 
     [HttpGet("{MovieName}/{sequence:int}")]
     public async Task<IActionResult> Get(string MovieName, int sequence)
     {
         var query = new VideoClipQuery(MovieName, sequence);
-        var result = await this.mediator.Send(query);
+        var result = await this.videoClipQueryHandler.Handle(query, CancellationToken.None);
         if (result.IsError)
             return this.HandelErrors(result.Errors);
 
@@ -30,7 +37,7 @@ public class VideoController : BaseController
     public async Task<IActionResult> GetById(int PhraseId)
     {
         var query = new VideoClipQuery(PhraseId);
-        var result = await this.mediator.Send(query);
+        var result = await this.videoClipQueryHandler.Handle(query, CancellationToken.None);
         if (result.IsError)
             return this.HandelErrors(result.Errors);
 

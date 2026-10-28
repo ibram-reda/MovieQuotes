@@ -29,7 +29,12 @@ builder.Services.AddScoped<IMovieQUnitOfWork, MovieQUnitOfWork>();
 var TmdbApiKey = builder.Configuration["TmdbApiKey"];
 builder.Services.AddSingleton(new TmdbService(TmdbApiKey ?? ""));
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(CreateMovieCommand).Assembly));
+var applicationHandlers = typeof(CreateMovieCommand).Assembly.GetTypes()
+    .Where(type => type.IsClass && !type.IsAbstract &&
+        (type.Name.EndsWith("Handler", StringComparison.Ordinal) ||
+         type.Name.EndsWith("Handlers", StringComparison.Ordinal)));
+foreach (var handler in applicationHandlers)
+    builder.Services.AddTransient(handler);
 
 
 builder.Services.AddControllers();

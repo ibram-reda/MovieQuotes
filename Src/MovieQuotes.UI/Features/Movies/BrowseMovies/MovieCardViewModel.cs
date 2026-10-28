@@ -2,7 +2,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MediatR;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.UI.Features.Movies.CreateMovie;
 using MovieQuotes.UI.Features.Movies.MovieDetails;
@@ -28,14 +27,9 @@ public partial class MovieCardViewModel : ViewModelBase
     {
     }
 
-    public MovieCardViewModel(MovieInfo movieInfo) : base(null, null)
+    public MovieCardViewModel(MovieInfo movieInfo) : base()
     {
-        this.mediator = GetService<IMediator>();
         this.NavigationService = GetService<NavigationService>();
-        this.Initialize(movieInfo);
-    }
-    public MovieCardViewModel(IMediator mediator, NavigationService nav, MovieInfo movieInfo) : base(mediator, nav)
-    {
         this.Initialize(movieInfo);
     }
     private void Initialize(MovieInfo movieInfo)

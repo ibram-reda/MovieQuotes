@@ -1,6 +1,4 @@
-﻿namespace MovieQuotes.Application.Features.Movies.QueriesHandlers;
-
-using MediatR;
+namespace MovieQuotes.Application.Features.Movies.QueriesHandlers;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.Movies.Mappings;
@@ -8,7 +6,7 @@ using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
 using MovieQuotes.Domain.Interfaces;
 
-internal class GetMovieDetailsQueryHandler : IRequestHandler<GetMovieDetailsQuery, OperationResult<MovieFullInfo>>
+public class GetMovieDetailsQueryHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
     public GetMovieDetailsQueryHandler(IMovieQUnitOfWork unitOfWork)

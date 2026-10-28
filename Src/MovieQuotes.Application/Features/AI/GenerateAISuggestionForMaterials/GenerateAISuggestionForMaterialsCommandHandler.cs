@@ -1,11 +1,9 @@
 namespace MovieQuotes.Application.Features.AI.GenerateAISuggestionForMaterials;
-
-using MediatR;
 using MovieQuotes.AI;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Interfaces;
 
-public sealed class GenerateAISuggestionForMaterialsCommandHandler : IRequestHandler<GenerateAISuggestionForMaterialsCommand, OperationResult<bool>>
+public sealed class GenerateAISuggestionForMaterialsCommandHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
     private readonly AppSettings appSettings;

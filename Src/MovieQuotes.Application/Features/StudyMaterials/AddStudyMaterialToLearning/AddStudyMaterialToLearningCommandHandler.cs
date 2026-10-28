@@ -1,11 +1,10 @@
 namespace MovieQuotes.Application.Features.StudyMaterials;
-using MediatR;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Interfaces;
 using MovieQuotes.Domain.Models;
 
-internal class AddStudyMaterialToLearningCommandHandler : IRequestHandler<AddStudyMaterialToLearningCommand, OperationResult<bool>>
+public class AddStudyMaterialToLearningCommandHandler
 {
     private readonly IMovieQUnitOfWork unitOfWork;
 
