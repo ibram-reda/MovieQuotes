@@ -1,4 +1,6 @@
-namespace MovieQuotes.Application.Features.StudyMaterials; 
+namespace MovieQuotes.Application.Features.StudyMaterials.Mappings;
+
+using MovieQuotes.Application.Features.StudyMaterials.Models;
 
 internal static class StudyMaterialMappings
 {

@@ -7,7 +7,6 @@ using LibVLCSharp.Shared;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.Application.Features.Movies.QueriesHandlers;
 using MovieQuotes.UI.Features.Movies.WatchMovie; 
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;

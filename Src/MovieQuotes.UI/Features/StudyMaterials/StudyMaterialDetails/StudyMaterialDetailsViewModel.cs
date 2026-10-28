@@ -5,10 +5,14 @@ using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
-using MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
-using MovieQuotes.Application.Features.StudyMaterials;
+using MovieQuotes.Application.Features.StudyMaterials.AddStudyMaterialToLearning;
+using MovieQuotes.Application.Features.StudyMaterials.AddPhraseToStudyMaterial;
+using MovieQuotes.Application.Features.StudyMaterials.DeleteStudyMaterial;
+using MovieQuotes.Application.Features.StudyMaterials.EditStudyMaterial;
+using MovieQuotes.Application.Features.StudyMaterials.GetStudyMaterial;
+using MovieQuotes.Application.Features.StudyMaterials.Models;
+using MovieQuotes.Application.Features.StudyMaterials.UnlinkPhraseFromStudyMaterial;
 using MovieQuotes.Application.Features.VideoClips.Queries;
-using MovieQuotes.Application.Features.VideoClips.QueriesHandlers;
 using MovieQuotes.UI.Features.StudyMaterials.BrowseStudyMaterials;
 using MovieQuotes.UI.Features.StudyMaterials.EditStudyMaterial;
 using MovieQuotes.UI.Services;
@@ -19,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using StudyMaterialDetailsModel = MovieQuotes.Application.Features.StudyMaterials.Models.StudyMaterialDetails;
 
 public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposable
 {
@@ -38,7 +43,7 @@ public partial class StudyMaterialDetailsViewModel : PageViewModelBase, IDisposa
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
     [NotifyPropertyChangedFor(nameof(HasProgressRecords))]
-    private StudyMaterialDetails? details;
+    private StudyMaterialDetailsModel? details;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AddToStudyCommand))]

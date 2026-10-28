@@ -1,4 +1,4 @@
-namespace MovieQuotes.Application.Features.Study;
+namespace MovieQuotes.Application.Features.Study.GetStudyOverview;
 
 /// <summary>
 /// Represents an overview of study statistics and progress.

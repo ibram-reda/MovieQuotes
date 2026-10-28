@@ -1,4 +1,4 @@
-namespace MovieQuotes.Application.Features.VideoClips.CommandsHandlers;
+namespace MovieQuotes.Application.Features.VideoClips.Commands;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.VideoClips.Commands;
 using MovieQuotes.Domain.Interfaces;

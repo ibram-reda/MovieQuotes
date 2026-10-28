@@ -1,7 +1,9 @@
-namespace MovieQuotes.Application.Features.StudyMaterials;
+namespace MovieQuotes.Application.Features.StudyMaterials.GetStudyMaterials;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models; 
+using MovieQuotes.Application.Features.StudyMaterials.Mappings;
+using MovieQuotes.Application.Features.StudyMaterials.Models;
 using MovieQuotes.Domain.Interfaces;
 
 public class GetStudyMaterialsQueryHandler

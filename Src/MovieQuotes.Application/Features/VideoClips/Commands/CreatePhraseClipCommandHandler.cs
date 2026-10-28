@@ -1,4 +1,4 @@
-namespace MovieQuotes.Application.Features.VideoClips.CommandsHandlers;
+namespace MovieQuotes.Application.Features.VideoClips.Commands;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;

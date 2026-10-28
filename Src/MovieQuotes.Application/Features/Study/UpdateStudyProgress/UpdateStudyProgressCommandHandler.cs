@@ -1,4 +1,4 @@
-namespace MovieQuotes.Application.Features.Study;
+namespace MovieQuotes.Application.Features.Study.UpdateStudyProgress;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;

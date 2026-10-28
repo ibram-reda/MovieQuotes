@@ -1,7 +1,19 @@
-namespace MovieQuotes.Application.Features.StudyMaterials;
+namespace MovieQuotes.Application.Features.StudyMaterials.GetStudyMaterial;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
+using MovieQuotes.Application.Features.StudyMaterials.AddNewStudyMaterial;
+using MovieQuotes.Application.Features.StudyMaterials.AddPhraseToStudyMaterial;
+using MovieQuotes.Application.Features.StudyMaterials.AddStudyMaterialToLearning;
+using MovieQuotes.Application.Features.StudyMaterials.DeleteStudyMaterial;
+using MovieQuotes.Application.Features.StudyMaterials.EditStudyMaterial;
+using MovieQuotes.Application.Features.StudyMaterials.GetPartOfSpeechCounts;
+using MovieQuotes.Application.Features.StudyMaterials.GetStudyMaterial;
+using MovieQuotes.Application.Features.StudyMaterials.GetStudyMaterialLevels;
+using MovieQuotes.Application.Features.StudyMaterials.GetStudyMaterials;
+using MovieQuotes.Application.Features.StudyMaterials.Mappings;
+using MovieQuotes.Application.Features.StudyMaterials.Models;
+using MovieQuotes.Application.Features.StudyMaterials.UnlinkPhraseFromStudyMaterial;
 using MovieQuotes.Application.Features.StudyMaterials;
 using MovieQuotes.Domain.Interfaces;
 

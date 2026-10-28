@@ -1,4 +1,4 @@
-namespace MovieQuotes.Application.Features.Study;
+namespace MovieQuotes.Application.Features.Study.UpdateStudyProgress;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Models;
 

@@ -1,10 +1,3 @@
-namespace MovieQuotes.Application.Features.StudyMaterials;
+namespace MovieQuotes.Application.Features.StudyMaterials.GetStudyMaterialLevels;
 using MovieQuotes.Application.Common.Models;
-
-
-public class LevelFilter(string level, int count)
-{
-    public string Level { get; } = level;
-    public int Count { get; } = count;
-};
 public sealed record GetStudyMaterialLevelsQuery;

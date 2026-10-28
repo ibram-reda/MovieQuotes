@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MovieQuotes.Application.Features.Study;
+using MovieQuotes.Application.Features.Study.GetStudyOverview;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 

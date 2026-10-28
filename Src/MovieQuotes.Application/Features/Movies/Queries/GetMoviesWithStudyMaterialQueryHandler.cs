@@ -1,4 +1,4 @@
-namespace MovieQuotes.Application.Features.Movies.QueriesHandlers;
+namespace MovieQuotes.Application.Features.Movies.Queries;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;

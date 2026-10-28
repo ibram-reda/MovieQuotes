@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:MovieQuotes.UI.Features.StudyMaterials.StudyMaterialDetails"
-             xmlns:study="using:MovieQuotes.Application.Features.StudyMaterials"
+             xmlns:study="using:MovieQuotes.Application.Features.StudyMaterials.Models"
              xmlns:phrase="using:MovieQuotes.Application.Features.MoviePhrases.Models"
              xmlns:converters="using:MovieQuotes.UI.Converters"
              x:Class="MovieQuotes.UI.Features.StudyMaterials.StudyMaterialDetails.StudyMaterialDetailsView"

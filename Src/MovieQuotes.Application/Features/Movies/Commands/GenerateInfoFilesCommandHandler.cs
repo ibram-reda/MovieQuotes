@@ -1,4 +1,4 @@
-namespace MovieQuotes.Application.Features.Movies.CommandsHandlers;
+namespace MovieQuotes.Application.Features.Movies.Commands;
 using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;

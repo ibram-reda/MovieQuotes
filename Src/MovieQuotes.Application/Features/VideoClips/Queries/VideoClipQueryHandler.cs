@@ -1,10 +1,10 @@
-namespace MovieQuotes.Application.Features.VideoClips.QueriesHandlers;
+namespace MovieQuotes.Application.Features.VideoClips.Queries;
+
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.VideoClips.Commands;
-using MovieQuotes.Application.Features.VideoClips.CommandsHandlers;
 using MovieQuotes.Application.Features.VideoClips.Queries;
 using MovieQuotes.Domain.Interfaces; 
 

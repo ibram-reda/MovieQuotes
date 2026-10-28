@@ -3,10 +3,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
-using MovieQuotes.Application.Features.MoviePhrases.CommandsHandlers;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
 using MovieQuotes.Application.Features.MoviePhrases.Queries;
-using MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
 using MovieQuotes.UI.Services;
 using MovieQuotes.UI.ViewModels;
 using MovieQuotes.UI.ViewModels.Dialogues;

@@ -1,4 +1,4 @@
-namespace MovieQuotes.Application.Features.Study;
+namespace MovieQuotes.Application.Features.Study.GetStudies;
 using MovieQuotes.Application.Common.Models; 
 
 public enum StudyType

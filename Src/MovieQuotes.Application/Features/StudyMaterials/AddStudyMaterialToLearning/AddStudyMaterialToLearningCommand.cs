@@ -1,4 +1,4 @@
-namespace MovieQuotes.Application.Features.StudyMaterials;
+namespace MovieQuotes.Application.Features.StudyMaterials.AddStudyMaterialToLearning;
 using MovieQuotes.Application.Common.Models;
 
 public class AddStudyMaterialToLearningCommand

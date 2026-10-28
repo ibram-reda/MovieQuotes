@@ -3,10 +3,8 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MovieQuotes.Application.Features.MoviePhrases.Commands;
-using MovieQuotes.Application.Features.MoviePhrases.CommandsHandlers;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.Application.Features.Movies.Queries;
-using MovieQuotes.Application.Features.Movies.QueriesHandlers;
 using MovieQuotes.UI.Services;
 using System;
 using System.Collections.ObjectModel;

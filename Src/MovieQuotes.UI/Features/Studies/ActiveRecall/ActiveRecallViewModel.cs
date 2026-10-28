@@ -13,10 +13,12 @@ using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
 using Microsoft.Extensions.Logging;
 using MovieQuotes.Application.Features.MoviePhrases.Models;
-using MovieQuotes.Application.Features.Study;
-using MovieQuotes.Application.Features.MoviePhrases.CommandsHandlers;
-using MovieQuotes.Application.Features.MoviePhrases.QueriesHandlers;
-using MovieQuotes.Application.Features.StudyMaterials;
+using MovieQuotes.Application.Features.Study.GetStudies;
+using MovieQuotes.Application.Features.Study.UpdateStudyProgress;
+using MovieQuotes.Application.Features.MoviePhrases.Commands;
+using MovieQuotes.Application.Features.MoviePhrases.Queries;
+using MovieQuotes.Application.Features.StudyMaterials.EditStudyMaterial;
+using MovieQuotes.Application.Features.StudyMaterials.GetStudyMaterial;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.UI.Features.StudyMaterials.EditStudyMaterial;
 using MovieQuotes.UI.Features.Subtitles.EditeSubtitlePhrase;
@@ -250,7 +252,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
             editStudyMaterialHandler);
         dialogue.OnSaved += async (isSaved, result) =>
         {
-            if (isSaved && result.Payload is Application.Features.StudyMaterials.StudyMaterial material)
+            if (isSaved && result.Payload is Application.Features.StudyMaterials.Models.StudyMaterial material)
             {
                 // Refflect on UI
                 CurrentPhrase.Content = material.Content;

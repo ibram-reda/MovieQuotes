@@ -4,7 +4,6 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MovieQuotes.Application.Features.Movies.Commands;
-using MovieQuotes.Application.Features.Movies.CommandsHandlers;
 using MovieQuotes.Application.Features.Movies.Models;
 using MovieQuotes.UI.Features.Movies.BrowseMovies;
 using MovieQuotes.UI.Services;

@@ -1,6 +1,7 @@
-namespace MovieQuotes.Application.Features.StudyMaterials;
+namespace MovieQuotes.Application.Features.StudyMaterials.GetPartOfSpeechCounts;
 using Microsoft.EntityFrameworkCore;
 using MovieQuotes.Application.Common.Models;
+using MovieQuotes.Application.Features.StudyMaterials.Models;
 using MovieQuotes.Domain.Interfaces;
 using Org.BouncyCastle.Ocsp;
 

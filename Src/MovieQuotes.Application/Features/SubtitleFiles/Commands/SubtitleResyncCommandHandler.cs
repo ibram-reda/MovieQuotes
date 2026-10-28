@@ -1,9 +1,9 @@
+namespace MovieQuotes.Application.Features.SubtitleFiles.Commands;
+
 using MovieQuotes.Application.Common.Enums;
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Application.Common.Services;
 using MovieQuotes.Application.Features.SubtitleFiles.Commands;
-
-namespace MovieQuotes.Application.Features.SubtitleFiles.CommandsHandlers;
 
 public class SubtitleResyncCommandHandler
 {

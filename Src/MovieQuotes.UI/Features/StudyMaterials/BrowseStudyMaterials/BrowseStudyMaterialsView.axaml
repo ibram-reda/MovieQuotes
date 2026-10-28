@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:MovieQuotes.UI.Features.StudyMaterials.BrowseStudyMaterials"
              xmlns:movieModels="using:MovieQuotes.Application.Features.Movies.Models"
-             xmlns:studyModels="using:MovieQuotes.Application.Features.StudyMaterials"
+             xmlns:studyModels="using:MovieQuotes.Application.Features.StudyMaterials.Models"
+             xmlns:studyFilters="using:MovieQuotes.Application.Features.StudyMaterials.GetStudyMaterialLevels"
              xmlns:controls="using:MovieQuotes.UI.Views.Controls"
              x:Class="MovieQuotes.UI.Features.StudyMaterials.BrowseStudyMaterials.BrowseStudyMaterialsView"
              x:DataType="vm:BrowseStudyMaterialsViewModel"
@@ -101,7 +102,7 @@
                     SelectedItem="{Binding SelectedLevel, Mode=TwoWay}"
                     PlaceholderText="Any level">
             <ComboBox.ItemTemplate>
-              <DataTemplate x:DataType="studyModels:LevelFilter">
+              <DataTemplate x:DataType="studyFilters:LevelFilter">
                 <StackPanel Orientation="Horizontal" Spacing="6">
                   <TextBlock Text="{Binding Level}" />
                   <TextBlock IsVisible="{Binding Count}" Text="{Binding Count, StringFormat='({0})'}" Opacity="0.7" />

@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using MovieQuotes.Application.Features.VideoClips.Queries;
-using MovieQuotes.Application.Features.VideoClips.QueriesHandlers;
+using MovieQuotes.Application.Features.VideoClips.Queries;
 
 public class VideoController : BaseController
 {
