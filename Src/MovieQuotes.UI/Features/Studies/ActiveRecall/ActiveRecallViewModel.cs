@@ -45,6 +45,8 @@ public partial class ActiveRecallViewModel : PageViewModelBase
 
     ObservableCollection<StudyPhrase> Phrases { get; } = new();
     private int _wrongAnswerAttemptsByPhrase = 0;
+    private int _correctAnswers;
+    private int _incorrectAnswers;
 
     public string? ErrorPattern
     {
@@ -121,17 +123,20 @@ public partial class ActiveRecallViewModel : PageViewModelBase
     async Task Init()
     {
         var result = await this.mediator.Send(new GetStudiesQuery(studyType: StudyType.ContextRecall));
-        TotalPhrases = result.Count;
         if (result.IsError)
         {
             this.HandleErrors(result.Errors);
             return;
         }
         Phrases.Clear();
+        CurrentPhraseIndex = 0;
+        _correctAnswers = 0;
+        _incorrectAnswers = 0;
         foreach (var phrase in result.Payload ?? [])
         {
             Phrases.Add(phrase);
         }
+        TotalPhrases = Phrases.Count;
 
         if (Phrases.Count > 0)
         {
@@ -142,7 +147,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
     [RelayCommand]
     async Task CheckAnswer()
     {
-        if (CurrentPhrase is null)
+        if (CurrentPhrase is null || HasChecked)
             return;
 
         string expected = CurrentPhrase.Content ?? string.Empty;
@@ -160,8 +165,13 @@ public partial class ActiveRecallViewModel : PageViewModelBase
             return;
         }
 
-        // corret go next  
-        var update = UpdateProgressForCurrentPhraseAsync();
+        var reviewQuality = GetReviewQuality(_wrongAnswerAttemptsByPhrase);
+        if (reviewQuality is ReviewQuality.Perfect or ReviewQuality.Correct)
+            _correctAnswers++;
+        else
+            _incorrectAnswers++;
+
+        var update = UpdateProgressForCurrentPhraseAsync(reviewQuality);
         this.MediaService?.PlayCorrectAnswerSound();
         await update;
     }
@@ -195,14 +205,13 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         }
         else
         {
-            // Handle end of phrases, e.g., show a message or reset
-            // await this.nav.NavigateToAsync<StudySummaryViewModel>(new StudySummaryViewModel.StudySummaryParameters
-            // {
-            //     TotalPhrases = TotalPhrases,
-            //     CorrectAnswers = Phrases.Count(p => p.Progress?.LastReviewQuality is ReviewQuality.Perfect or ReviewQuality.Correct),
-            //     IncorrectAnswers = Phrases.Count(p => p.Progress?.LastReviewQuality is ReviewQuality.Difficult or ReviewQuality.CompleteFailure)
-            // });
-            throw new NotImplementedException("Study summary view is not implemented yet.");
+            await NavigationService.NavigateToAsync<StudySummaryViewModel>(
+                new StudySummaryViewModel.StudySummaryParameters
+                {
+                    TotalPhrases = TotalPhrases,
+                    CorrectAnswers = _correctAnswers,
+                    IncorrectAnswers = _incorrectAnswers
+                });
         }
 
     }
@@ -316,13 +325,11 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         SpellingAnalysis = null;
     }
 
-    private async Task UpdateProgressForCurrentPhraseAsync()
+    private async Task UpdateProgressForCurrentPhraseAsync(ReviewQuality reviewQuality)
     {
         if (CurrentPhrase is null || CurrentPhrase.ProgressId <= 0)
             return;
 
-
-        var reviewQuality = GetReviewQuality(_wrongAnswerAttemptsByPhrase);
         var result = await mediator.Send(new UpdateStudyProgressQuery(CurrentPhrase.ProgressId, (int)reviewQuality));
 
         if (result.IsError)

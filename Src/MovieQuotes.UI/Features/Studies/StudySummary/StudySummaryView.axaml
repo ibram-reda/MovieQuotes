@@ -1,0 +1,83 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MovieQuotes.UI.Features.Study"
+             x:DataType="vm:StudySummaryViewModel"
+             x:Class="MovieQuotes.UI.Features.Study.StudySummaryView">
+
+    <UserControl.Styles>
+        <Style Selector="Border.StatCard">
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,*" Margin="24">
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
+            <TextBlock Text="Study complete" FontSize="28" FontWeight="Bold"
+                       Foreground="{DynamicResource PrimaryTextColor}"/>
+            <TextBlock Text="Here's how your study session went."
+                       FontSize="14" Foreground="{DynamicResource SecondaryTextColor}"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="20" MaxWidth="720" HorizontalAlignment="Center">
+                <Border Classes="StatCard">
+                    <StackPanel Spacing="12" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding AccuracyText}" FontSize="48" FontWeight="Bold"
+                                   Foreground="{DynamicResource HighlightPurpleTextColor}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Accuracy" FontSize="16"
+                                   Foreground="{DynamicResource SecondaryTextColor}"
+                                   HorizontalAlignment="Center"/>
+                        <ProgressBar Value="{Binding AccuracyRate}" Maximum="100" Height="8"/>
+                    </StackPanel>
+                </Border>
+
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                    <Border Grid.Column="0" Classes="StatCard">
+                        <StackPanel Spacing="8" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding TotalPhrases}" FontSize="30" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource HighlightPurpleTextColor}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Total phrases" TextAlignment="Center"
+                                       Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Classes="StatCard">
+                        <StackPanel Spacing="8" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding CorrectAnswers}" FontSize="30" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource CorrectGreenBrush}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Correct" TextAlignment="Center"
+                                       Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" Classes="StatCard">
+                        <StackPanel Spacing="8" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding IncorrectAnswers}" FontSize="30" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource ErrorStatusColor}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Needs practice" TextAlignment="Center"
+                                       Foreground="{DynamicResource SecondaryTextColor}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <TextBlock IsVisible="{Binding HasUnansweredPhrases}"
+                           Text="{Binding UnansweredPhrases, StringFormat='{}{0} phrases were not answered.'}"
+                           Foreground="{DynamicResource SecondaryTextColor}"
+                           HorizontalAlignment="Center"/>
+
+                <Button Content="Back to Study Overview"
+                        Command="{Binding ReturnToStudyOverviewCommand}"
+                        HorizontalAlignment="Center"
+                        Padding="20,10"
+                        Background="{DynamicResource PrimaryAccentBrush}"
+                        Foreground="White"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
