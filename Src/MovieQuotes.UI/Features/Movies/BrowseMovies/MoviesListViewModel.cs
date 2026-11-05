@@ -169,11 +169,21 @@ public partial class MoviesListViewModel : PageViewModelBase
 
         return movie;
     }
-
+    private int _page = 1;
+    private bool _hasMoreDate= true;
     [RelayCommand]
-    public async Task GetAllMovies()
+    public async Task GetAllMovies(object? pram)
     {
-        var query = new GetAllMoviesQuery(FilterText);
+        if(pram is string s && s == "Search")
+        {
+            // clear every things
+            _hasMoreDate = true;
+            _page = 1;
+            DBMovies.Clear();
+        }
+        if(!_hasMoreDate)return;
+        if(IsBusy) return;
+        var query = new GetAllMoviesQuery(FilterText){PageNumber=_page++};
         IsBusy = true;
         var result = await this.getAllMoviesHandler.Handle(query, CancellationToken.None);
         IsBusy = false;
@@ -183,7 +193,7 @@ public partial class MoviesListViewModel : PageViewModelBase
                 ErrorMessages?.Add(error.Message);
             return;
         }
-        DBMovies.Clear();
+        _hasMoreDate = result.HasNext;
         TotalCountOfMovieInDB = (int)result.Count;
         foreach (var movie in result?.Payload ?? [])
         {

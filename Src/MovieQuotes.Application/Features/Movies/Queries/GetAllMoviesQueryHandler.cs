@@ -78,6 +78,8 @@ public class GetAllMoviesQueryHandler
 
 
         query = query.OrderByDescending(m => m.AddedDate);
+        result.Count = await query.CountAsync();
+        int totalNumberOfPages = (int)Math.Round(result.Count*1.0/request.ItemsPerPage);
 
         var PayLoad = await query
             .Select(a => a.ToMovieInfo())
@@ -85,10 +87,10 @@ public class GetAllMoviesQueryHandler
             .Take(request.ItemsPerPage)
             .ToListAsync(cancellationToken);
 
-        result.Count = await query.CountAsync();
-        result.HasNext = result.Count > PayLoad.Count;
+
+        result.HasNext = request.PageNumber < totalNumberOfPages;
         result.Payload = PayLoad;
-        result.CurrentPageNumber = 1;
+        result.CurrentPageNumber = (uint)request.PageNumber;
         result.ItemPerPage = (uint)result.Count;
 
         return result;

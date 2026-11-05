@@ -52,7 +52,7 @@
 
 
     <Border Grid.Row="1">
-      <ScrollViewer Margin="0" VerticalScrollBarVisibility="Auto">
+      <ScrollViewer Name="scrollViewer" Margin="0" VerticalScrollBarVisibility="Auto" ScrollChanged="ScrollViewer_ScrollChanged">
         <Grid RowDefinitions="Auto,Auto" RowSpacing="24">
           <Border Grid.Row="0" IsVisible="{Binding NeedToSync}"
                   Background="{DynamicResource CardBackgroundBrush}"
@@ -89,7 +89,7 @@
               <TextBox Grid.Column="3" Text="{Binding FilterText}" PlaceholderText="Search movies"
                        Width="220" MinHeight="34">
                 <TextBox.KeyBindings>
-                  <KeyBinding Gesture="Enter" Command="{Binding GetAllMoviesCommand}"/>
+                  <KeyBinding Gesture="Enter" Command="{Binding GetAllMoviesCommand}" CommandParameter="Search" />
                 </TextBox.KeyBindings>
               </TextBox>
             </Grid>
