@@ -198,7 +198,7 @@
                                 FontSize="16"
                                 FontWeight="SemiBold"
                                 Foreground="{DynamicResource CorrectGreenBrush}"/>
-                                <TextBlock Text="{Binding CurrentPhrase.PhraseText}"
+                                <TextBlock Text="{Binding CurrentPhrase.MoviePhrase.PhraseText}"
                                 FontSize="18"
                                 FontWeight="SemiBold"
                                 TextWrapping="Wrap"
@@ -223,7 +223,7 @@
                             FontSize="16"
                             FontWeight="SemiBold"
                             Foreground="{DynamicResource ErrorRedBrush}"/>
-                            <TextBlock Text="{Binding CurrentPhrase.PhraseText}"
+                            <TextBlock Text="{Binding CurrentPhrase.MoviePhrase.PhraseText}"
                             FontSize="18"
                             FontWeight="SemiBold"
                             TextWrapping="Wrap"

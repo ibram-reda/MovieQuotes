@@ -2,25 +2,18 @@ namespace MovieQuotes.Application.Features.Study.GetStudies;
 
 public class StudyPhrase
 {
-    public int PhraseId {get; set;}
     public int MaterialId {get;set;}
     public int ProgressId {get;set;}
     public int StudyCardId { get; set; }
 
-    /// <summary>
-    /// the transcript of the phrase.
-    /// </summary>
-    public string PhraseText { get; set; } = string.Empty;
-    /// <summary>
-    /// the location of the video clip representing this phrase.
-    /// </summary>
-    public string VideoPath { get; set; } = string.Empty;
+    public MoviePhrase? MoviePhrase {get;set;}
+
+
 
     /// <summary>
     /// what you learn from this subtitle phrase.
     /// </summary>
     public string? Content { get; set; }
-
 
     /// <summary>
     /// what is the English Definition of the content part.
@@ -50,4 +43,25 @@ public class StudyPhrase
     public string Level { get; set; } = string.Empty;
     public string Pronunciation { get; set; } = string.Empty;
 
+}
+
+
+public class MoviePhrase
+{
+    public int PhraseId {get; set;}
+    /// <summary>
+    /// the transcript of the phrase.
+    /// </summary>
+    public string PhraseText { get; set; } = string.Empty;
+    /// <summary>
+    /// the location of the video clip representing this phrase.
+    /// </summary>
+    public string VideoPath { get; set; } = string.Empty;
+
+    public MoviePhrase(Domain.Models.SubtitlePhrase phrase,string VideoCashPath)
+    {
+        PhraseId = phrase.Id;
+        this.PhraseText = phrase.Text;
+        this.VideoPath= phrase.GetVideoClipPath(VideoCashPath)??"";        
+    }
 }

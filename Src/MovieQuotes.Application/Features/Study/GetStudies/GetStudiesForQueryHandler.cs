@@ -35,21 +35,22 @@ public class GetStudiesQueryHandler
 
         var qry = baseQuery.Include(p => p.Card)
                           .ThenInclude(card => card.StudyMaterial)
+                          .ThenInclude(material => material.Phrases)
+                          .ThenInclude(MaterialPhrase=>MaterialPhrase.Phrase)
                           .Where(p => p.Card.IsActive)
                           .Select(progress => new StudyPhrase
-                          {
-                              PhraseId = progress.Card.StudyMaterial.PhraseId,
+                          { 
                               MaterialId = progress.Card.StudyMaterialId,
                               StudyCardId = progress.Card.Id,
                               ProgressId = progress.Id,
-                              StudyType = progress.Card.StudyMaterial.PartOfSpeech,
-                              PhraseText = progress.Card.StudyMaterial.Phrase!.Text,
+                              StudyType = progress.Card.StudyMaterial.PartOfSpeech, 
                               Content = progress.Card.StudyMaterial.Content,
                               Origin = progress.Card.StudyMaterial.Origin,
                               Definition = progress.Card.StudyMaterial.Definition,
                               Synonyms = progress.Card.StudyMaterial.Synonyms,
                               Examples = progress.Card.StudyMaterial.Examples,
-                              VideoPath = progress.Card.StudyMaterial.Phrase.GetVideoClipPath(settings.VideoCashPath) ?? ""
+                              
+                              MoviePhrase = new(progress.Card.StudyMaterial.Phrases.OrderBy(p => EF.Functions.Random()).First().Phrase,settings.VideoCashPath) 
                           });
 
         var totalCount = await qry.CountAsync();

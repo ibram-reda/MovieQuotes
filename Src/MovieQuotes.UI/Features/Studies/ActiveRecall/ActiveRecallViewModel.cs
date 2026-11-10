@@ -277,12 +277,12 @@ public partial class ActiveRecallViewModel : PageViewModelBase
             return;
 
         var dialouge = new EditeSubtitlePhraseViewModel(
-            CurrentPhrase.PhraseId,
+            CurrentPhrase.MoviePhrase.PhraseId,
             getSubtitlePhraseHandler,
             editPhraseHandler);
         dialouge.OnPhraseEdited += (phrase) =>
         {
-            CurrentPhrase.PhraseText = phrase.Text;
+            CurrentPhrase.MoviePhrase.PhraseText = phrase.Text;
             this.ShowEditDialog = false;
             var EditedPhrase = CurrentPhrase;
             CurrentPhrase = null;
@@ -300,7 +300,7 @@ public partial class ActiveRecallViewModel : PageViewModelBase
         string hiddenContent = new string(value?.Content?.Select(c =>
             char.IsAsciiLetter(c) ? '_' : c
         ).ToArray());
-        var phrase = GetCleanPhrases(value?.PhraseText);
+        var phrase = GetCleanPhrases(value?.MoviePhrase?.PhraseText);
         QuestionText = phrase.Replace(value.Content ?? "", hiddenContent, StringComparison.OrdinalIgnoreCase) ?? string.Empty;
         AnswerText = value?.Content ?? string.Empty;
         Reset();
@@ -333,9 +333,9 @@ public partial class ActiveRecallViewModel : PageViewModelBase
     [RelayCommand]
     void PlayAudio()
     {
-        if (!string.IsNullOrEmpty(CurrentPhrase?.VideoPath))
+        if (!string.IsNullOrEmpty(CurrentPhrase?.MoviePhrase.VideoPath))
         {
-            this.MediaService.PlayAudio(CurrentPhrase.VideoPath);
+            this.MediaService.PlayAudio(CurrentPhrase.MoviePhrase.VideoPath);
         }
     }
     [RelayCommand]
