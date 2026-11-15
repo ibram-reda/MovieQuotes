@@ -76,9 +76,11 @@ public partial class MoviesListViewModel : PageViewModelBase
         {
             if (item is IStorageFolder movieBaseFolder)
             {
+                if (await IsMovieInDBAsync(movieBaseFolder.Name))
+                    continue;
+                
                 var movie = await ExtractMovieInfoAsync(movieBaseFolder);
-                if (!await IsMovieInDBAsync(movie.FolderName))
-                    OutOfSyncMovies.Add(new(movie));
+                OutOfSyncMovies.Add(new(movie));
             }
         }
     }
@@ -145,14 +147,14 @@ public partial class MoviesListViewModel : PageViewModelBase
 
                 var index = movieFilePart.Name.LastIndexOf('.');
                 var extension = movieFilePart.Name.Substring(index).ToLower();
-                var path = movieFilePart.Path.LocalPath; ;
+                var path = movieFilePart.Path.LocalPath;
+                List<string> videoForamtes = ["mp4","mkv","avi"];
+                List<string> photoFormates = ["jpg","webp"];
                 if (extension.EndsWith("srt"))
                     movie.SubtitlePath = path;
-                if (extension.EndsWith("mp4") || 
-                    extension.EndsWith("mkv") ||
-                    extension.EndsWith("avi"))
+                if (videoForamtes.Any(v=>extension.EndsWith(v)))
                     movie.LocalPath = path;
-                if (extension.EndsWith("jpg"))
+                if (photoFormates.Any(p=>extension.EndsWith(p)))
                     movie.CoverUrl = path;
             }
 
