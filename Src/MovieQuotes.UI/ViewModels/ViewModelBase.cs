@@ -28,6 +28,12 @@ public abstract partial class ViewModelBase : ObservableObject
     {
         this.ErrorMessages.Clear();
     }
+    [RelayCommand]
+    void RemoveError(string message)
+    {
+        this.ErrorMessages.Remove(message);
+    }
+
     protected ViewModelBase(NavigationService navigation)
     {
         this.NavigationService = navigation;
@@ -57,7 +63,6 @@ public abstract partial class ViewModelBase : ObservableObject
 
     public void HandleErrors(IEnumerable<Error> errors)
     {
-        this.ErrorMessages.Clear();
         foreach(var err in errors)
             this.ErrorMessages.Add(err.Message);
     }

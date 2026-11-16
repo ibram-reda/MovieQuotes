@@ -38,6 +38,7 @@ public class GetStudiesQueryHandler
                           .ThenInclude(material => material.Phrases)
                           .ThenInclude(MaterialPhrase=>MaterialPhrase.Phrase)
                           .Where(p => p.Card.IsActive)
+                          .OrderBy(a=>a.NextReviewAt)
                           .Select(progress => new StudyPhrase
                           { 
                               MaterialId = progress.Card.StudyMaterialId,

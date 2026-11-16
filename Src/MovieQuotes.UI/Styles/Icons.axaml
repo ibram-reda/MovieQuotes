@@ -28,6 +28,7 @@
         <PathIcon Data="{StaticResource text_font_regular}" /> 
         <PathIcon Data="{StaticResource arrow_sync_regular}" /> 
         <PathIcon Data="{StaticResource lightbulb_regular}" /> 
+        <PathIcon Data="{StaticResource delete_forever_regular}" /> 
         
       </WrapPanel>
     </Border>

@@ -57,7 +57,7 @@
                         OffContent="Light" />
         </StackPanel>
 
-        
+
       </Grid>
     </Border>
 
@@ -99,7 +99,22 @@
       <!--Error Messages-->
       <ItemsControl Grid.Row="1"
                     ItemsSource="{Binding CurrentViewModel.ErrorMessages}"
-                    Foreground="Red"/>
+                    Foreground="Red">
+
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="{Binding .}" VerticalAlignment="Center" />
+              <Button Classes="link"
+                      Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).CurrentViewModel.RemoveErrorCommand}"
+                      CommandParameter="{Binding .}">
+                <PathIcon Data="{StaticResource delete_forever_regular}" />
+              </Button>
+            </StackPanel>
+
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
     </Grid>
   </Grid>
 </Window>

@@ -3,6 +3,7 @@
 using MovieQuotes.Application.Common.Models;
 using MovieQuotes.Domain.Models;
 using MovieQuotes.Subtitles.Abstractions;
+using MovieQuotes.Subtitles.Models;
 using MovieQuotes.Subtitles.Srt;
 using System.Diagnostics;
 using System.Linq;
@@ -21,11 +22,22 @@ internal static class SubtitleManager
             return result;
         }
 
-        using var stream = File.OpenRead(filePath);
 
-        ISubtitleReader Reader = new SrtSubtitleReader();
 
-        var subtitles = await Reader.Read(stream);
+        IReadOnlyList<SubtitleEntry> subtitles;
+        try
+        {    
+            using var stream = File.OpenRead(filePath);
+            ISubtitleReader Reader = new SrtSubtitleReader();
+            subtitles = await Reader.Read(stream);
+        }
+        catch(Exception ex)
+        {
+            result.AddError(Enums.ErrorCode.UnKnownError,"Faild to load subtitle from '{0}'",filePath);
+            result.AddException(ex);
+            return result;
+        }
+
 
         // check for doplicate index
         var douplication = subtitles.GroupBy(m => m.Index).Where(group => group.Count() > 1);

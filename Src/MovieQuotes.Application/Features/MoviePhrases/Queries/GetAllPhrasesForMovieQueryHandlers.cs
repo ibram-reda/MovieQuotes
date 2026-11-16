@@ -68,7 +68,10 @@ public class GetAllPhrasesForMovieQueryHandlers
         if (file is null)
             result.AddError(ErrorCode.NotFound, "can't load Arabic subtitle file maybe not exist or not end with 'ar.srt'");
 
-        var subLoadResult = await SubtitleManager.LoadAsync(file);
+    
+        var subLoadResult = await SubtitleManager.LoadAsync(file);   
+    
+
         if (subLoadResult.IsError)
             result.AddErrorRange(subLoadResult.Errors);
 

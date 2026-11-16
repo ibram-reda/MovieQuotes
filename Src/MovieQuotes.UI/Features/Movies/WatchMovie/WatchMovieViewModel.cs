@@ -147,6 +147,10 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
             this.EnSubtitleManager.OnSubtitleChanged += _ =>
                 OnPropertyChanged(nameof(CurrentPhrase));
         }
+        else
+        {
+            this.HandleErrors(result.Errors);
+        }
         cmd.Language = Language.ar;
         result = await this.getAllPhrasesForMovieHandler.Handle(cmd, CancellationToken.None);
         if (result.IsSuccess)
@@ -154,6 +158,10 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
             this.ArSubtitleManager = new(result.Payload?.Select(a => new SubtitleEntry(a.Id, a.StartTime, a.EndTime, a.Text)) ?? []);
             this.ArSubtitleManager.OnSubtitleChanged += _ =>
                 OnPropertyChanged(nameof(CurrentArPhrase));
+        }
+        else
+        {
+            this.HandleErrors(result.Errors);
         }
 
         ResyncCurrentPhrase();
@@ -225,11 +233,7 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
         {
             if (!IsSuccess)
             {
-                this.ErrorMessages.Clear();
-                foreach (var err in result.Errors)
-                {
-                    this.ErrorMessages.Add(err.Message);
-                }
+                this.HandleErrors(result.Errors);
             }
             ClosePopUp();
         };
@@ -261,11 +265,7 @@ internal partial class WatchMovieViewModel : PageViewModelBase, IDisposable
 
             if (result.IsError)
             {
-                this.ErrorMessages.Clear();
-                foreach (var err in result.Errors)
-                {
-                    this.ErrorMessages.Add(err.Message);
-                }
+                this.HandleErrors(result.Errors); 
             }
 
             CanLoadEnSubs = false;
