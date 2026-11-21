@@ -82,23 +82,13 @@ public class Movie
 
     public async Task GenerateInfoFileAsync(bool overwrite = false)
     {
-        var info = new
-        {
-            IMDBId = this.IMDBId,
-            TMDBID = this.TMDbId,
-            Title = this.Title,
-            Description = this.Description,
-            Year = this.Year,
-            BackdropFilePath = this.BackdropFilePath,
-        };
-
         var infoFilePath = Path.Combine(BaseFolderDir, FolderName, $"{NameId}-info.json");
         if (File.Exists(infoFilePath))
         {
             if (!overwrite) return;
             File.Delete(infoFilePath);
         }
-        var json = System.Text.Json.JsonSerializer.Serialize(info, new System.Text.Json.JsonSerializerOptions() { WriteIndented = true });
+        var json = System.Text.Json.JsonSerializer.Serialize(this, new System.Text.Json.JsonSerializerOptions() { WriteIndented = true });
         await File.WriteAllTextAsync(infoFilePath, json);
     }
 

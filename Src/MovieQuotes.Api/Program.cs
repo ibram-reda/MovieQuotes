@@ -21,9 +21,8 @@ builder.Services.AddCors(options =>
                       });
 });
 
-var cs = builder.Configuration.GetConnectionString("DefaultConnection");
-var hangfire = builder.Configuration.GetConnectionString("HangfireConnection");
-builder.Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs));
+var cs = builder.Configuration.GetConnectionString("DefaultConnection"); 
+builder.Services.AddDbContext<MovieQuotesDbContext>(op => op.UseSqlite(cs));
 
 builder.Services.AddScoped<IMovieQUnitOfWork, MovieQUnitOfWork>();
 var TmdbApiKey = builder.Configuration["TmdbApiKey"];

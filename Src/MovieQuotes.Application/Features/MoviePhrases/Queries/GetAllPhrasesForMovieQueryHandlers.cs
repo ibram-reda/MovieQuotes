@@ -37,16 +37,16 @@ public class GetAllPhrasesForMovieQueryHandlers
         };
 
         var load = src
-            .OrderBy(a => a.StartTime)
             .Select(a => a.ToPhrase(settings.VideoCashPath));
 
-        result.Payload = request.Language switch
+        var phrases = request.Language switch
         {
             Language.ar => load.ToList(),
             Language.en => await load.ToListAsync(),
             _ => throw new NotSupportedException($"Language {request.Language} is not supported.")
         };
 
+        result.Payload = phrases.OrderBy(a=>a.StartTime).ToList();
 
         return result;
     }

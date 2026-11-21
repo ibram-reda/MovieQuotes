@@ -57,10 +57,8 @@ public class CreateMovieCommandHandler
 
 
         // Fetch TMDb data and update the movie with the fetched data
-        var t = Task.Run(async () =>
-        {
+
             await movieMetadataJob.ProcessAsync(movie.Id);
-        });
         this.logger.LogInformation($"Metadata job enqueued for movie '{movie.Title}' (ID: {movie.Id}).");
 
         result.Payload = movie.ToMovieInfo();

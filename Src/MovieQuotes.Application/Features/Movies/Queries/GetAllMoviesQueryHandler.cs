@@ -78,7 +78,14 @@ public class GetAllMoviesQueryHandler
 
 
         query = query.OrderByDescending(m => m.AddedDate);
-        result.Count = await query.CountAsync();
+        try
+        {            
+            result.Count = await query.CountAsync();
+        }catch(Exception ex)
+        {
+            result.AddException(ex);
+            return result;
+        }
         int totalNumberOfPages = (int)Math.Round(result.Count*1.0/request.ItemsPerPage);
 
         var PayLoad = await query

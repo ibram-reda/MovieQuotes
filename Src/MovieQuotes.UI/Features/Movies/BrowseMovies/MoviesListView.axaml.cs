@@ -12,7 +12,7 @@ public partial class MoviesListView : UserControl
     private void MoviesListView_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is MoviesListViewModel vm && vm is not null)
-            vm.GetAllMoviesCommand.Execute(null);
+            vm.InitAsync(null);
     }
 
     private void ScrollViewer_ScrollChanged(object? sender, Avalonia.Controls.ScrollChangedEventArgs e)
@@ -26,7 +26,7 @@ public partial class MoviesListView : UserControl
 
         if (isAtBottom)
         {
-            if (DataContext is MoviesListViewModel vm && vm is not null && !vm.IsBusy)
+            if (DataContext is MoviesListViewModel vm && vm is not null && !vm.IsBusy&& vm.IsInit)
                 vm.GetAllMoviesCommand.Execute(null);
         }
     }

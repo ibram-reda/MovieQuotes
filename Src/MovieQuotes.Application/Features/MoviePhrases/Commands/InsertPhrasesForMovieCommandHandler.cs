@@ -66,7 +66,10 @@ public class InsertPhrasesForMovieCommandHandler
 
         var loadingResult = await SubtitleManager.LoadAsync(request.SubtitleLocation);
         if (loadingResult.IsError)
+        {            
             result.AddErrorRange(loadingResult.Errors);
+            return result;
+        }
 
         loadingResult.Payload?.RemoveMarkupAndDuplicateSpaces();
 

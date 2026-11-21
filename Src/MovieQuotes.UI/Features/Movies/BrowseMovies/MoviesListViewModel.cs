@@ -1,5 +1,6 @@
 ﻿namespace MovieQuotes.UI.Features.Movies.BrowseMovies;
 
+using Avalonia.Controls.Documents;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -29,6 +30,7 @@ public partial class MoviesListViewModel : PageViewModelBase
     [ObservableProperty] private string _BaseFolder = string.Empty;
     [ObservableProperty] string? filterText;
     [ObservableProperty] int totalCountOfMovieInDB = 0;
+    [ObservableProperty] bool _isInit = false;
 
     public bool NeedToSync => OutOfSyncMovies.Any();
 
@@ -59,6 +61,12 @@ public partial class MoviesListViewModel : PageViewModelBase
         this.getAllMoviesHandler = getAllMoviesHandler;
         OutOfSyncMovies.CollectionChanged += (_, _) =>
             this.OnPropertyChanged(nameof(NeedToSync));
+    }
+
+    public override async Task InitAsync(object? initValue)
+    {
+        await this.GetAllMovies(null);
+        IsInit = true;
     }
 
 
@@ -116,8 +124,15 @@ public partial class MoviesListViewModel : PageViewModelBase
             this.DBMovies.Add(new(result.Payload!));
 
         }
+
     }
+    
     record MovieExportDto(string? IMDBId,string? Title ,int? Year ,string? Description);
+    private static string TitleToNameId(string title)
+    {
+        var n = new Regex(@"\s+").Replace(title, "-");
+        return new Regex(@"[^a-zA-Z\d-]").Replace(n, "");
+    }
     private static async Task<MovieInfo> ExtractMovieInfoAsync(IStorageFolder movieBaseFolder)
     {
         MovieInfo movie = new MovieInfo();
@@ -127,7 +142,7 @@ public partial class MoviesListViewModel : PageViewModelBase
         movie.Year = GetYearFromFolderName(movieBaseFolder.Name);
         await foreach (var file in movieBaseFolder.GetItemsAsync())
         {
-            if (file is IStorageFile info && info.Name =="info.json")
+            if (file is IStorageFile info && info.Name ==$"{TitleToNameId(movie.Title)}-info.json"  )
             {
                 try
                 {                    
@@ -185,10 +200,9 @@ public partial class MoviesListViewModel : PageViewModelBase
         }
         if(!_hasMoreDate)return;
         if(IsBusy) return;
-        var query = new GetAllMoviesQuery(FilterText){PageNumber=_page++};
         IsBusy = true;
+        var query = new GetAllMoviesQuery(FilterText){PageNumber=_page++};
         var result = await this.getAllMoviesHandler.Handle(query, CancellationToken.None);
-        IsBusy = false;
         if (result.IsError)
         {
             foreach (var error in result.Errors)
@@ -201,6 +215,7 @@ public partial class MoviesListViewModel : PageViewModelBase
         {
             DBMovies.Add(new(movie));
         }
+        IsBusy = false;
     }
 
 

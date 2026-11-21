@@ -1,9 +1,9 @@
 ## Addtional information
-MovieQuotes currently uses MySQL. Other relational databases may be possible because the data layer uses EF Core, but additional provider/configuration changes may be required.
+MovieQuotes currently uses SQLLite. Other relational databases may be possible because the data layer uses EF Core, but additional provider/configuration changes may be required.
 
 and get the connection strings add it update your connection string in AppSetting;
 
-get the correct [enity framework database providers] nuget package i use mysql 
+get the correct [enity framework database providers] nuget package for example use mysql 
 ```
 MySql.EntityFrameworkCore
 ```

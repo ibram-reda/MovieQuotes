@@ -63,7 +63,7 @@ public static class ServiceCollectionExtensions
         // add database
         var cs = configuration["ConnectionString"]; 
         var TmdbApiKey = configuration["TmdbApiKey"];
-        Services.AddDbContext<MovieQuotesDbContext>(op => op.UseMySQL(cs), ServiceLifetime.Transient);
+        Services.AddDbContext<MovieQuotesDbContext>(op => op.UseSqlite(cs), ServiceLifetime.Transient);
 
         var applicationHandlers = typeof(CreateMovieCommand).Assembly.GetTypes()
             .Where(type => type.IsClass && !type.IsAbstract &&

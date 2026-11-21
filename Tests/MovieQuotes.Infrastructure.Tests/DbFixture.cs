@@ -9,8 +9,8 @@ public class DbFixture : IDisposable
     public MovieQuotesDbContext Context { get; }
     public DbFixture()
     {
-        var factory= new MovieQoutesContextFatory();
-        Context = factory.CreateDbContext(Array.Empty<string>());
+        var factory = new MovieQoutesContextFatory();
+        Context = factory.CreateDbContext(["Data Source=MovieQuotes.Test.db"]);
 
         Context.Database.EnsureDeleted();
         Context.Database.EnsureCreated();
@@ -50,7 +50,7 @@ public class DbFixture : IDisposable
         };
 
         Context.Movies.First().AddSubtitlesFromList(subs1);
-        Context.Movies.Skip(1).First().AddSubtitlesFromList(subs2);        
+        Context.Movies.Skip(1).First().AddSubtitlesFromList(subs2);
         Context.SaveChanges();
     }
 }
